@@ -15,16 +15,10 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * This file contains the version information for the taskflowadapter_thour plugin
+ * This file contains language strings for the taskflow adapter.
  *
- * @package     taskflowadapter_thour
- * @copyright   2025 Wunderbyte GmbH <info@wunderbyte.at>
+ * @package     taskflowadapter_wintertthour
+ * @copyright   2025 Wunderbyte GmbH
  * @author      David Ala
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-defined('MOODLE_INTERNAL') || die();
-
-$plugin->version   = 2025062600;
-$plugin->requires  = 2024042200; // Requires this Moodle version. Current: Moodle 4.4.
-$plugin->component = 'taskflowadapter_winterthour';
-$plugin->supported = [401, 405];
