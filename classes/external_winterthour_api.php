@@ -40,7 +40,7 @@ use stdClass;
  * @copyright 2025 Wunderbyte GmbH
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class external_thour_api extends external_api_base implements external_api_interface {
+class external_winterthour_api extends external_api_base implements external_api_interface {
     /**
      * Private constructor to prevent direct instantiation.
      */
