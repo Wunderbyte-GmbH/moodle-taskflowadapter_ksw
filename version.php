@@ -26,5 +26,5 @@ defined('MOODLE_INTERNAL') || die();
 
 $plugin->version   = 2025062600;
 $plugin->requires  = 2024042200; // Requires this Moodle version. Current: Moodle 4.4.
-$plugin->component = 'taskflowadapter_winterthour';
+$plugin->component = 'local_taskflowadapter_winterthour';
 $plugin->supported = [401, 405];
