@@ -17,7 +17,7 @@
 /**
  * This file contains language strings for the taskflow adapter.
  *
- * @package     taskflowadapter_wintertthour
+ * @package     taskflowadapter_winterthour
  * @copyright   2025 Wunderbyte GmbH
  * @author      David Ala
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
