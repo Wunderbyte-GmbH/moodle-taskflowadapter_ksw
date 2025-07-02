@@ -28,6 +28,7 @@ namespace taskflowadapter_winterthour;
 use admin_setting_configselect;
 use admin_setting_configtext;
 use admin_setting_description;
+use admin_setting_heading;
 use local_taskflow\plugininfo\taskflowadapter;
 
 /**
@@ -35,88 +36,63 @@ use local_taskflow\plugininfo\taskflowadapter;
  */
 class taskflowadapter_winterthour extends taskflowadapter {
     /**
-     * [Description for load_settings]
+     * COMPONENTNAME
+     *
+     * @var string
+     */
+    private const COMPONENTNAME = 'taskflowadapter_winterthour';
+    /**
+     * Loads Subpluginsettings into local_taskflow
      *
      * @param \part_of_admin_tree $adminroot
      * @param mixed $parentnodename
      * @param mixed $hassiteconfig
      *
-     * @return [type]
+     * @return void
      *
      */
     public function load_settings(\part_of_admin_tree $adminroot, $parentnodename, $hassiteconfig) {
         if (!$hassiteconfig) {
             return;
         }
-        $componentname = 'taskflowadapter_winterthour';
+
         $allusercustomfields = profile_get_custom_fields();
         $usercustomfields = [];
         $settings = $adminroot->locate($parentnodename);
-        // @TODO: PLACEHOLDER FOR NOW make it constants.
-        $cohortlabelsettings = [
-           'translator_target_group_name' => get_string('name', $componentname),
-           'translator_target_group_description' => get_string('description', $componentname),
-           'translator_target_group_unitid' => get_string('unit', $componentname),
-        ];
+        $userlabelsettings = parent::return_user_label_settings();
+        $cohortlabelsettings = parent::return_target_label_settings();
 
-        $userlabelsettings = [
-            "" => "",
-            'translator_user_firstname' => get_string('firstname', $componentname),
-            'translator_user_lastname' => get_string('lastname', $componentname),
-            'translator_user_email' => get_string('email', $componentname),
-            'translator_user_units' => get_string('targetgroup', $componentname),
-            'translator_user_orgunit' => get_string('unit', $componentname),
-            'translator_user_supervisor' => get_string('supervisor', $componentname),
-            'translator_user_long_leave' => get_string('longleave', $componentname),
-            'translator_user_end' => get_string('contractend', $componentname),
-            'translator_user_internalid' => get_string('internalid', $componentname),
-        ];
-
+        $settings->add(
+            new admin_setting_heading(
+                self::COMPONENTNAME . '_api_settings',
+                get_string('apisettings', self::COMPONENTNAME),
+                get_string('apisettings_desc', self::COMPONENTNAME)
+            )
+        );
         if (!empty($allusercustomfields)) {
             foreach ($allusercustomfields as $userprofilefield) {
                 $usercustomfields["{$userprofilefield->shortname}"] = $userprofilefield->name;
             }
         }
-        $validation = 1;
-        foreach ($usercustomfields as $key => $label) {
-            if (!empty(get_config($componentname, $key . '_translator'))) {
-                $validation++;
-            }
-        }
-        if ($validation < count($userlabelsettings)) {
-            $settings->add(
-                new admin_setting_description(
-                    $componentname . '/lessfunctions',
-                    '',
-                    get_string('lessfunctions', $componentname)
-                )
-            );
-        }
-        if ($validation > count($userlabelsettings)) {
-            $settings->add(
-                new admin_setting_description(
-                    $componentname . '/manyfunctions',
-                    '',
-                    get_string('manyfunctions', $componentname)
-                )
-            );
-        }
+        // Returns the description for the Admin how the mapping works.
 
+        parent::check_functions_usage($usercustomfields, self::COMPONENTNAME, $settings);
+        parent::return_setting_special_treatment_fields($settings, self::COMPONENTNAME);
         foreach ($usercustomfields as $key => $label) {
             $settings->add(
                 new admin_setting_configtext(
-                    $componentname . '/' . $key,
-                    get_string('jsonkey', $componentname) . $label,
-                    get_string('enter_value', $componentname),
+                    self::COMPONENTNAME . '/' . $key,
+                    get_string('jsonkey', self::COMPONENTNAME) . $label,
+                    get_string('enter_value', self::COMPONENTNAME),
                     '',
                     PARAM_TEXT
                 )
             );
              $settings->add(
                  new admin_setting_configselect(
-                     $componentname . '/' . $key . '_translator',
-                     get_string('function', $componentname) . $label,
-                     get_string('set:function', $componentname),
+                     self::COMPONENTNAME . '/' . 'function_' . $key,
+                     get_string('function', self::COMPONENTNAME) . $label,
+                     get_string('set:function', self::COMPONENTNAME),
                      "",
                      $userlabelsettings,
                  )
@@ -125,9 +101,9 @@ class taskflowadapter_winterthour extends taskflowadapter {
         foreach ($cohortlabelsettings as $key => $label) {
             $settings->add(
                 new admin_setting_configtext(
-                    $componentname . '/' . $key,
-                    $label,
-                    get_string('enter_value', $componentname),
+                    self::COMPONENTNAME . '/' . $key,
+                    get_string('jsonkey', self::COMPONENTNAME) . $label,
+                    get_string('enter_value', self::COMPONENTNAME),
                     '',
                     PARAM_TEXT
                 )

@@ -22,4 +22,20 @@
  * @author      David Ala
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+defined('MOODLE_INTERNAL') || die();
+
+$string['apisettings'] = "Winterthour API Einstellungen";
+$string['apisettings_desc'] = "Konfiguriere Taskflow-Schlüssel-Wert-Paare.";
+$string['choose'] = "Wähle...";
+$string['enter_value'] = 'Gib einen passenden JSON- Schlüssel für diese Einstellung ein';
+$string['function'] = 'Funktion zuordnen zu Benutzerprofilfeld: ';
+$string['internalid'] = 'Interne-ID';
+$string['jsonkey'] = 'JSON Schlüssel für Benutzerprofilfeld: ';
+$string['lessfunctions'] = '<div class="alert alert-danger" role="alert">Nicht alle Funktionen wurden beim letzten Speichern ausgewählt. Dies kann zu Fehlern führen.</div>';
+$string['manyfunctions'] = '<div class="alert alert-danger" role="alert">Funktionen wurden mehrfach ausgewählt beim letzten Speichern. Dies kann zu Fehlern führen.</div>';
+$string['mappingdescription'] = 'Taskflow-Schlüssel-Wert-Paare Erklärung';
+$string['mappingdescription_desc'] = 'Hier wird die Verknüpfung erstellt. Das obere Feld gibt an zu welchen JSON- Feld mit dem Benutzerprofilfeld verknüpft werden soll. Das untere Feld gibt an, welche Fuktion dieses Feld representiert. Nicht jedes Benutzerprofilfeld muss eine Funktion haben.';
+$string['pluginname'] = "Winterthour";
+$string['set:function'] = 'Wählen Sie eine Funktion aus';
+$string['subplugintype_taskflowadapter_plural'] = 'Taskflow-Adapter-Erweiterungen';
 $string['winterthour'] = "Winterthour API";

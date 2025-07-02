@@ -22,4 +22,20 @@
  * @author      David Ala
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+defined('MOODLE_INTERNAL') || die();
+
+$string['apisettings'] = "Winterthour API Settings";
+$string['apisettings_desc'] = "Configure taskflow key-value pairs.";
+$string['choose'] = "Choose...";
+$string['enter_value'] = 'Enter a suitable JSON key for this setting';
+$string['function'] = 'Assign function to userprofilefield: ';
+$string['internalid'] = 'Internal ID';
+$string['jsonkey'] = 'JSON key for userprofilefield: ';
+$string['lessfunctions'] = '<div class="alert alert-danger" role="alert">Nicht alle Funktionen wurden beim letzten Speichern ausgewählt. Dies kann zu Fehlern führen.</div>';
+$string['manyfunctions'] = '<div class="alert alert-danger" role="alert">Funktionen wurden mehrfach ausgewählt beim letzten Speichern. Dies kann zu Fehlern führen.</div>';
+$string['mappingdescription'] = 'Taskflow key-value pair explanation';
+$string['mappingdescription_desc'] = 'This creates the mapping. The upper field indicates which JSON field is linked to the user profile field. The lower field indicates which function this field represents. Not every user profile field must have a function.';
+$string['pluginname'] = "Winterthour";
+$string['set:function'] = 'Select a function';
+$string['subplugintype_taskflowadapter_plural'] = 'Taskflow adapter extensions';
 $string['winterthour'] = "Winterthour API";
