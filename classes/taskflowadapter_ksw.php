@@ -32,15 +32,15 @@ use admin_setting_heading;
 use local_taskflow\plugininfo\taskflowadapter;
 
 /**
- * Class for the winterthour taskflow adapter.
+ * Class for the KSW taskflow adapter.
  */
-class taskflowadapter_winterthour extends taskflowadapter {
+class taskflowadapter_ksw extends taskflowadapter {
     /**
      * COMPONENTNAME
      *
      * @var string
      */
-    private const COMPONENTNAME = 'taskflowadapter_winterthour';
+    private const COMPONENTNAME = 'taskflowadapter_ksw';
     /**
      * Loads Subpluginsettings into local_taskflow
      *
@@ -55,7 +55,6 @@ class taskflowadapter_winterthour extends taskflowadapter {
         if (!$hassiteconfig) {
             return;
         }
-
         $allusercustomfields = profile_get_custom_fields();
         $usercustomfields = [];
         $settings = $adminroot->locate($parentnodename);
