@@ -15,15 +15,15 @@
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
- * Class taskflowadapter_winterthour.
+ * Class taskflowadapter_ksw.
  *
- * @package     taskflowadapter_winterthour
+ * @package     taskflowadapter_ksw
  * @copyright   2025 Wunderbyte GmbH <info@wunderbyte.at>
  * @author      David Ala
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace taskflowadapter_winterthour;
+namespace taskflowadapter_ksw;
 
 use admin_setting_configselect;
 use admin_setting_configtext;
@@ -80,7 +80,7 @@ class taskflowadapter_ksw extends taskflowadapter {
         foreach ($usercustomfields as $key => $label) {
             $settings->add(
                 new admin_setting_configtext(
-                    self::COMPONENTNAME . '/' . $key,
+                    self::COMPONENTNAME . '/' . 'translator_user_' . $key,
                     get_string('jsonkey', self::COMPONENTNAME) . $label,
                     get_string('enter_value', self::COMPONENTNAME),
                     '',
@@ -89,7 +89,7 @@ class taskflowadapter_ksw extends taskflowadapter {
             );
              $settings->add(
                  new admin_setting_configselect(
-                     self::COMPONENTNAME . '/' . 'function_' . $key,
+                     self::COMPONENTNAME . '/' . $key,
                      get_string('function', self::COMPONENTNAME) . $label,
                      get_string('set:function', self::COMPONENTNAME),
                      "",

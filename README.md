@@ -1,9 +1,9 @@
-# moodle-taskflowadapter_winterthour
-Taskflow adapter: Winterthour
+# moodle-taskflowadapter_ksw
+Taskflow adapter: ksw
 
-# Taskflow adapter: Winterthour #
+# Taskflow adapter: ksw #
 
-This is a taskflow adapter used in the Winterthour project for Wunderbyte's taskflow module.
+This is a taskflow adapter used in the ksw project for Wunderbyte's taskflow module.
 
 ## Installing via uploaded ZIP file ##
 

@@ -17,21 +17,21 @@
 /**
  * Unit class to manage users.
  *
- * @package taskflowadapter_winterthour
+ * @package taskflowadapter_ksw
  * @author Georg Maißer
  * @copyright 2025 Wunderbyte GmbH
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace taskflowadapter_winterthour;
+namespace taskflowadapter_ksw;
 
 use local_taskflow\local\external_adapter\external_api_interface;
 use local_taskflow\local\external_adapter\external_api_base;
-use local_taskflow\local\personas\moodle_users\types\moodle_user;
 use local_taskflow\local\personas\unit_members\types\unit_member;
 use local_taskflow\local\supervisor\supervisor;
 use local_taskflow\local\units\organisational_unit_factory;
 use local_taskflow\local\units\unit_relations;
+use local_taskflow\plugininfo\taskflowadapter;
 use stdClass;
 /**
  * Class unit
@@ -45,27 +45,24 @@ class adapter extends external_api_base implements external_api_interface {
      * Private constructor to prevent direct instantiation.
      */
     public function process_incoming_data() {
-        $translateduserdata = [];
         $updatedentities = [
             'relationupdate' => [],
             'unitmember' => [],
         ];
-
+        // Save data to users.
         foreach ($this->externaldata as $user) {
             $translateduser = $this->translate_incoming_data($user);
-            $translateduser['units'] = [$this->generate_units_data($user, $updatedentities)];
-            $translateduserdata[] = $translateduser;
+            $units = $this->return_shortname_for_functionname(taskflowadapter::TRANSLATOR_USER_ORGUNIT);
+            $translateduser[$units] = [$this->generate_units_data($user, $updatedentities)];
+            $user = $this->userrepo->update_or_create($translateduser);
+            $this->create_user_with_customfields($user, $translateduser);
+            $this->users[$user->email] = $user;
         }
-
-        foreach ($translateduserdata as $persondata) {
-            $user = $this->userrepo->update_or_create($persondata);
-            foreach ($persondata['units'] as $unit) {
-                if ($unit['manager']) {
-                    $supervisorinstance = new supervisor($unit['manager'], $user->id);
-                    $supervisorinstance->set_supervisor_for_user();
-                }
-            }
-            foreach ($persondata['units'] as $unit) {
+        foreach ($this->users as $user) {
+            $supervisorfield = $this->return_shortname_for_functionname(taskflowadapter::TRANSLATOR_USER_SUPERVISOR);
+            $supervisorinstance = new supervisor($user->profile[$supervisorfield], $user->id);
+            $supervisorinstance->set_supervisor_for_user($user->profile[$supervisorfield], $supervisorfield, $user, $this->users);
+            foreach ($user->profile[$units] as $unit) {
                 $unitmemberinstance =
                     $this->unitmemberrepo->update_or_create($user, $unit['unitid']);
                 if ($unitmemberinstance instanceof unit_member) {
@@ -74,7 +71,9 @@ class adapter extends external_api_base implements external_api_interface {
                     ];
                 }
             }
+            $this->users[] = $user;
         }
+        $this->save_all_user_infos($this->users);
         self::trigger_unit_relation_updated_events($updatedentities['relationupdate']);
         self::trigger_unit_member_updated_events($updatedentities['unitmember']);
     }
@@ -104,21 +103,12 @@ class adapter extends external_api_base implements external_api_interface {
             }
             $parent = $unit->name;
         }
-        if (!empty($user->Manager_Email)) {
-            $manager = [
-                'email' => $user->Manager_Email,
-                'firstname' => $user->Manager_Firstname,
-                'lastname' => $user->Manager_Lastname,
-            ];
-            $moodleuser = new moodle_user($manager);
-            $manageruser = $moodleuser->update_or_create();
-        }
+
         return [
             'unitid' => $unitinstance->get_id() ?? null,
             'role' => $user->KisimRolle1 ?? null,
             'since' => $user->EntryDate,
             'exit' => $user->ExitDate,
-            'manager' => $manageruser->id ?? null,
         ];
     }
 }

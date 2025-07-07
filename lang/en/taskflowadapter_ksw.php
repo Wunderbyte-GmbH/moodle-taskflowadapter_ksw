@@ -31,6 +31,7 @@ $string['enter_value'] = 'Enter a suitable JSON key for this setting';
 $string['function'] = 'Assign function to userprofilefield: ';
 $string['internalid'] = 'Internal ID';
 $string['jsonkey'] = 'JSON key for userprofilefield: ';
+$string['ksw'] = "KSW API";
 $string['lessfunctions'] = '<div class="alert alert-danger" role="alert">Nicht alle Funktionen wurden beim letzten Speichern ausgewählt. Dies kann zu Fehlern führen.</div>';
 $string['manyfunctions'] = '<div class="alert alert-danger" role="alert">Funktionen wurden mehrfach ausgewählt beim letzten Speichern. Dies kann zu Fehlern führen.</div>';
 $string['mappingdescription'] = 'Taskflow key-value pair explanation';
@@ -38,4 +39,3 @@ $string['mappingdescription_desc'] = 'This creates the mapping. The upper field 
 $string['pluginname'] = "KSW";
 $string['set:function'] = 'Select a function';
 $string['subplugintype_taskflowadapter_plural'] = 'Taskflow adapter extensions';
-$string['ksw'] = "KSW API";

@@ -17,7 +17,7 @@
 /**
  * This file contains language strings for the taskflow adapter.
  *
- * @package     taskflowadapter_winterthour
+ * @package     taskflowadapter_ksw
  * @copyright   2025 Wunderbyte GmbH
  * @author      David Ala
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -31,6 +31,7 @@ $string['enter_value'] = 'Gib einen passenden JSON- Schlüssel für diese Einste
 $string['function'] = 'Funktion zuordnen zu Benutzerprofilfeld: ';
 $string['internalid'] = 'Interne-ID';
 $string['jsonkey'] = 'JSON Schlüssel für Benutzerprofilfeld: ';
+$string['ksw'] = "KSW API";
 $string['lessfunctions'] = '<div class="alert alert-danger" role="alert">Nicht alle Funktionen wurden beim letzten Speichern ausgewählt. Dies kann zu Fehlern führen.</div>';
 $string['manyfunctions'] = '<div class="alert alert-danger" role="alert">Funktionen wurden mehrfach ausgewählt beim letzten Speichern. Dies kann zu Fehlern führen.</div>';
 $string['mappingdescription'] = 'Taskflow-Schlüssel-Wert-Paare Erklärung';
@@ -38,4 +39,3 @@ $string['mappingdescription_desc'] = 'Hier wird die Verknüpfung erstellt. Das o
 $string['pluginname'] = "KSW";
 $string['set:function'] = 'Wählen Sie eine Funktion aus';
 $string['subplugintype_taskflowadapter_plural'] = 'Taskflow-Adapter-Erweiterungen';
-$string['winterthour'] = "KSW API";
