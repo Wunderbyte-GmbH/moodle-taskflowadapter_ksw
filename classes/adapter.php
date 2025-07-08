@@ -52,24 +52,27 @@ class adapter extends external_api_base implements external_api_interface {
         // Save data to users.
         foreach ($this->externaldata as $user) {
             $translateduser = $this->translate_incoming_data($user);
-            $units = $this->return_shortname_for_functionname(taskflowadapter::TRANSLATOR_USER_ORGUNIT);
-            $translateduser[$units] = [$this->generate_units_data($user, $updatedentities)];
+            $unitsfield = $this->return_shortname_for_functionname(taskflowadapter::TRANSLATOR_USER_ORGUNIT);
+            // Resolve Units and give them the translated user.
+            $translateduser[$unitsfield] = $this->generate_units_data($translateduser, $updatedentities);
             $user = $this->userrepo->update_or_create($translateduser);
             $this->create_user_with_customfields($user, $translateduser);
             $this->users[$user->email] = $user;
         }
+        // Set supervisors.
         foreach ($this->users as $user) {
             $supervisorfield = $this->return_shortname_for_functionname(taskflowadapter::TRANSLATOR_USER_SUPERVISOR);
             $supervisorinstance = new supervisor($user->profile[$supervisorfield], $user->id);
             $supervisorinstance->set_supervisor_for_user($user->profile[$supervisorfield], $supervisorfield, $user, $this->users);
-            foreach ($user->profile[$units] as $unit) {
                 $unitmemberinstance =
-                    $this->unitmemberrepo->update_or_create($user, $unit['unitid']);
-                if ($unitmemberinstance instanceof unit_member) {
-                    $updatedentities['unitmember'][$unitmemberinstance->get_userid()][] = [
-                        'unit' => $unitmemberinstance->get_unitid(),
-                    ];
-                }
+                    $this->unitmemberrepo->update_or_create($user, (int)$user->profile[$unitsfield]);
+            if (get_config('local_taskflow', 'organisational_unit_option') == 'cohort') {
+                cohort_add_member((int)$user->profile[$unitsfield], (int) $user->id);
+            }
+            if ($unitmemberinstance instanceof unit_member) {
+                $updatedentities['unitmember'][$unitmemberinstance->get_userid()][] = [
+                    'unit' => $unitmemberinstance->get_unitid(),
+                ];
             }
             $this->users[] = $user;
         }
@@ -80,12 +83,14 @@ class adapter extends external_api_base implements external_api_interface {
 
     /**
      * Private constructor to prevent direct instantiation.
-     * @param stdClass $user
+     * @param array $user
      * @param array $updatedentities
      * @return array
      */
-    private function generate_units_data($user, &$updatedentities) {
-        $organisations = explode("\\", $user->Organisation);
+    private function generate_units_data(array &$user, $updatedentities) {
+        $organisationfieldname = $this->return_shortname_for_functionname(taskflowadapter::TRANSLATOR_USER_ORGUNIT);
+        // Rollen sind anders definiert.
+        $organisations = explode("\\", $user[$organisationfieldname]);
         $unit = null;
         $parent = null;
         $unitinstance = null;
@@ -103,12 +108,6 @@ class adapter extends external_api_base implements external_api_interface {
             }
             $parent = $unit->name;
         }
-
-        return [
-            'unitid' => $unitinstance->get_id() ?? null,
-            'role' => $user->KisimRolle1 ?? null,
-            'since' => $user->EntryDate,
-            'exit' => $user->ExitDate,
-        ];
+        return $unitinstance->get_id() ?? null;
     }
 }
