@@ -25,6 +25,8 @@
 
 namespace taskflowadapter_ksw;
 
+use DateTime;
+use local_taskflow\local\assignments\assignments_facade;
 use local_taskflow\local\external_adapter\external_api_interface;
 use local_taskflow\local\external_adapter\external_api_base;
 use local_taskflow\local\personas\unit_members\types\unit_member;
@@ -53,32 +55,69 @@ class adapter extends external_api_base implements external_api_interface {
         foreach ($this->externaldata as $user) {
             $translateduser = $this->translate_incoming_data($user);
             $unitsfield = $this->return_shortname_for_functionname(taskflowadapter::TRANSLATOR_USER_ORGUNIT);
-            // Resolve Units and give them the translated user.
+            // Create units and give the the translated user.
             $translateduser[$unitsfield] = $this->generate_units_data($translateduser, $updatedentities);
+            if (empty(self::$usersbyemail[$translateduser['email']])) {
+                // If the user does not exist, we create a new one.
+                $olduser = $this->userrepo->get_user_by_mail(
+                    $translateduser['email']
+                );
+            } else {
+                // If the user exists, we get the old user.
+                $olduser = self::$usersbyemail[$translateduser['email']];
+            }
+            if ($olduser) {
+                 // We store the user for the whole process.
+                self::$usersbyid[$olduser->id] = $olduser;
+                self::$usersbyemail[$olduser->email] = $olduser;
+
+                $oldunit = $this->return_value_for_functionname(
+                    taskflowadapter::TRANSLATOR_USER_ORGUNIT,
+                    $olduser
+                );
+            } else {
+                $oldunit = 0;
+            }
+            $oldunit = !empty($oldtargetgroup) ? $oldtargetgroup : 0;
+            // Create a new user.
             $user = $this->userrepo->update_or_create($translateduser);
-            $this->create_user_with_customfields($user, $translateduser);
-            $this->users[$user->email] = $user;
+            $this->create_user_with_customfields($user, $translateduser, 'email');
+            $newunit = $this->return_value_for_functionname(taskflowadapter::TRANSLATOR_USER_ORGUNIT, $user);
+            if ($oldunit != $newunit) {
+                assignments_facade::set_user_units_assignments_inactive($user->id, [$oldunit]);
+            }
         }
-        // Set supervisors.
-        foreach ($this->users as $user) {
-            $supervisorfield = $this->return_shortname_for_functionname(taskflowadapter::TRANSLATOR_USER_SUPERVISOR);
-            $supervisorinstance = new supervisor($user->profile[$supervisorfield], $user->id);
-            $supervisorinstance->set_supervisor_for_user($user->profile[$supervisorfield], $supervisorfield, $user, $this->users);
+            $onlongleave = $this->return_value_for_functionname(taskflowadapter::TRANSLATOR_USER_LONG_LEAVE, $user) ?? 0;
+        if (
+                        $this->contract_ended($user) ||
+                        $onlongleave
+        ) {
+            assignments_facade::set_all_assignments_inactive($user->id);
+        } else {
+            // Set supervisors.
+            foreach ($this->users as $user) {
+                $supervisorfield = $this->return_shortname_for_functionname(taskflowadapter::TRANSLATOR_USER_SUPERVISOR);
+                $supervisorinstance = new supervisor($user->profile[$supervisorfield], $user->id);
+                $supervisorid = $user->profile[$supervisorfield];
+                $supervisorinstance->set_supervisor_for_user($supervisorid, $supervisorfield, $user, $this->users);
+
+                // Create or update unit member.
                 $unitmemberinstance =
-                    $this->unitmemberrepo->update_or_create($user, (int)$user->profile[$unitsfield]);
-            if (get_config('local_taskflow', 'organisational_unit_option') == 'cohort') {
-                cohort_add_member((int)$user->profile[$unitsfield], (int) $user->id);
-            }
-            if ($unitmemberinstance instanceof unit_member) {
-                $updatedentities['unitmember'][$unitmemberinstance->get_userid()][] = [
+                $this->unitmemberrepo->update_or_create($user, (int)$user->profile[$unitsfield]);
+                if (get_config('local_taskflow', 'organisational_unit_option') == 'cohort') {
+                    cohort_add_member((int)$user->profile[$unitsfield], (int) $user->id);
+                }
+                if ($unitmemberinstance instanceof unit_member) {
+                    $updatedentities['unitmember'][$unitmemberinstance->get_userid()][] = [
                     'unit' => $unitmemberinstance->get_unitid(),
-                ];
+                    ];
+                }
+                $this->users[] = $user;
             }
-            $this->users[] = $user;
+            $this->save_all_user_infos($this->users);
+            self::trigger_unit_relation_updated_events($updatedentities['relationupdate']);
+            self::trigger_unit_member_updated_events($updatedentities['unitmember']);
         }
-        $this->save_all_user_infos($this->users);
-        self::trigger_unit_relation_updated_events($updatedentities['relationupdate']);
-        self::trigger_unit_member_updated_events($updatedentities['unitmember']);
     }
 
     /**
@@ -94,10 +133,12 @@ class adapter extends external_api_base implements external_api_interface {
         $unit = null;
         $parent = null;
         $unitinstance = null;
+        $path = "";
         foreach ($organisations as $organisation) {
             $unit = (object) [
                 'name' => $organisation,
                 'parent' => $parent,
+                'path' => $path,
             ];
             $unitinstance = organisational_unit_factory::create_unit($unit);
             if ($unitinstance instanceof unit_relations) {
@@ -107,7 +148,35 @@ class adapter extends external_api_base implements external_api_interface {
                 ];
             }
             $parent = $unit->name;
+            $path .= "$parent//";
         }
         return $unitinstance->get_id() ?? null;
+    }
+
+     /**
+      * Private constructor to prevent direct instantiation.
+      * @param array $translateduser
+      * @return bool
+      */
+    private function contract_ended($user) {
+        $storedenddate = $this->return_value_for_functionname(
+            taskflowadapter::TRANSLATOR_USER_CONTRACTEND,
+            $user
+        ) ?? '';
+        $enddate = DateTime::createFromFormat(
+            'Y-m-d',
+            $storedenddate
+        );
+
+        $this->dates_validation($enddate, $storedenddate);
+
+        $now = new DateTime();
+        if (
+            $enddate &&
+            $enddate < $now
+        ) {
+            return true;
+        }
+        return false;
     }
 }
