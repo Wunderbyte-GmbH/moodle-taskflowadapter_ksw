@@ -133,12 +133,10 @@ class adapter extends external_api_base implements external_api_interface {
         $unit = null;
         $parent = null;
         $unitinstance = null;
-        $path = "";
         foreach ($organisations as $organisation) {
             $unit = (object) [
                 'name' => $organisation,
                 'parent' => $parent,
-                'path' => $path,
             ];
             $unitinstance = organisational_unit_factory::create_unit($unit);
             if ($unitinstance instanceof unit_relations) {
@@ -148,7 +146,6 @@ class adapter extends external_api_base implements external_api_interface {
                 ];
             }
             $parent = $unit->name;
-            $path .= "$parent//";
         }
         return $unitinstance->get_id() ?? null;
     }
