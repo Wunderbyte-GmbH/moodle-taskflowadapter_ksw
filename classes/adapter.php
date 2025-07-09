@@ -137,6 +137,7 @@ class adapter extends external_api_base implements external_api_interface {
             $unit = (object) [
                 'name' => $organisation,
                 'parent' => $parent,
+                'parentunitid' => $parentunitid ?? null,
             ];
             $unitinstance = organisational_unit_factory::create_unit($unit);
             if ($unitinstance instanceof unit_relations) {
@@ -145,6 +146,7 @@ class adapter extends external_api_base implements external_api_interface {
                     'parent' => $unitinstance->get_parentid(),
                 ];
             }
+            $parentunitid = $unitinstance->get_id();
             $parent = $unit->name;
         }
         return $unitinstance->get_id() ?? null;
