@@ -178,4 +178,35 @@ class adapter extends external_api_base implements external_api_interface {
         }
         return false;
     }
+
+    /**
+     * This function maps values to unix timestamps.
+     * This can be overwritten in taskflowadapters to match more values.
+     *
+     * @param mixed $value
+     * @param string $jsonkey
+     *
+     * @return string
+     *
+     */
+    private function map_value($value, string $jsonkey, array &$user) {
+        $functionname = self::return_function_by_jsonkey($jsonkey);
+        switch ($functionname) {
+            case taskflowadapter::TRANSLATOR_USER_LONG_LEAVE:
+                $value = $value ? 1 : 0;
+                break;
+            case taskflowadapter::TRANSLATOR_USER_CONTRACTEND:
+                $value = strtotime($value);
+                break;
+            case taskflowadapter::TRANSLATOR_USER_ORGUNIT:
+                $additonalfields = explode('//', $value);
+                foreach ($additonalfields as $counter => $fieldvalue) {
+                    $key = 'Org' . ($counter +1);
+                    $user[$key] = $fieldvalue;
+                }
+                break;
+        }
+
+        return $value;
+    }
 }
