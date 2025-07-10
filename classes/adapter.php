@@ -201,7 +201,7 @@ class adapter extends external_api_base implements external_api_interface {
             case taskflowadapter::TRANSLATOR_USER_ORGUNIT:
                 $additonalfields = explode('//', $value);
                 foreach ($additonalfields as $counter => $fieldvalue) {
-                    $key = 'Org' . ($counter +1);
+                    $key = 'Org' . ($counter + 1);
                     $user[$key] = $fieldvalue;
                 }
                 break;
