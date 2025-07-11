@@ -29,9 +29,11 @@ use DateTime;
 use local_taskflow\local\assignments\assignments_facade;
 use local_taskflow\local\external_adapter\external_api_interface;
 use local_taskflow\local\external_adapter\external_api_base;
+use local_taskflow\local\personas\moodle_users\types\moodle_user;
 use local_taskflow\local\personas\unit_members\types\unit_member;
 use local_taskflow\local\supervisor\supervisor;
 use local_taskflow\local\units\organisational_unit_factory;
+use local_taskflow\local\units\organisational_units_factory;
 use local_taskflow\local\units\unit_relations;
 use local_taskflow\plugininfo\taskflowadapter;
 use stdClass;
@@ -55,13 +57,16 @@ class adapter extends external_api_base implements external_api_interface {
             'relationupdate' => [],
             'unitmember' => [],
         ];
-        if (!empty($this->externaldata)) {
-            $this->translate_user();
+        if (!empty(get_object_vars($this->externaldata))) {
+            external_api_base::$importing = true;
+            $this->translate_users();
         }
-        $this->create_or_update_users();
         $this->create_or_update_units($updatedentities);
+        $this->create_or_update_users();
         $this->create_or_update_supervisor();
-        $this->save_all_user_infos($this->users);
+        if (external_api_base::$importing) {
+            $this->save_all_user_infos($this->users);
+        }
         // Left in there for units.
         self::trigger_unit_relation_updated_events($updatedentities['relationupdate']);
         self::trigger_unit_member_updated_events($updatedentities['unitmember']);
@@ -180,9 +185,9 @@ class adapter extends external_api_base implements external_api_interface {
      *
      */
     private function create_update_unitmemberrepo(stdClass $user) {
-        $unitsfield = $this->return_shortname_for_functionname(taskflowadapter::TRANSLATOR_USER_ORGUNIT);
+
          $unitmemberinstance =
-            $this->unitmemberrepo->update_or_create($user, (int)$user->profile[$unitsfield]);
+            $this->unitmemberrepo->update_or_create($user, (int)$user->cohortid);
         if ($unitmemberinstance instanceof unit_member) {
             $updatedentities['unitmember'][$unitmemberinstance->get_userid()][] = [
             'unit' => $unitmemberinstance->get_unitid(),
@@ -198,15 +203,18 @@ class adapter extends external_api_base implements external_api_interface {
     private function create_or_update_users() {
         global $DB;
         foreach ($this->users as $user) {
-            $organisation = $this->build_organisation_path($user);
-            $newunit = end($organisation);
-            $oldunit = $this->get_oldunit($user->id);
+            $newunits = $this->users[$user->email]->newunits;
+            $oldunits = $this->users[$user->email]->oldunits;
             // If there is no old unit we set them the same so that the checks are still correct.
-            if (empty($oldunit)) {
-                $oldunit = $newunit;
-            }
-            if ($oldunit != $newunit) {
-                assignments_facade::set_user_units_assignments_inactive($user->id, [$oldunit]);
+            if (
+                  is_array($oldunits)
+                  && is_array($newunits)
+            ) {
+                $this->invalidate_units_on_change(
+                    $oldunits,
+                    $newunits,
+                    $user->id
+                );
             }
             $onlongleave = $this->return_value_for_functionname(taskflowadapter::TRANSLATOR_USER_LONG_LEAVE, $user) ?? 0;
             if (
@@ -226,10 +234,13 @@ class adapter extends external_api_base implements external_api_interface {
          *
          */
     private function create_or_update_units($updatedentities) {
-        foreach ($this->users as $user) {
-            $cohortid = self::generate_units_data($user, $updatedentities);
+        foreach ($this->users as $key => $user) {
+            $this->users[$key]->oldunits = moodle_user::get_all_units_of_user($user->id);
+            $cohortid = $this->generate_units_data($user, $updatedentities);
+            $user->cohortid = $cohortid;
             if (get_config('local_taskflow', 'organisational_unit_option') == 'cohort') {
                 cohort_add_member($cohortid, (int) $user->id);
+                $this->users[$key]->newunits[] = $cohortid;
             }
         }
     }
@@ -243,14 +254,11 @@ class adapter extends external_api_base implements external_api_interface {
      */
     private function build_organisation_path(stdClass $user) {
         $userprofilefields = $user->profile;
-        $organisationfield = $this->return_shortname_for_functionname(taskflowadapter::TRANSLATOR_USER_ORGUNIT);
-        if (!empty($oranisationfield)) {
-            unset($userprofilefields[$organisationfield]);
-        }
         $path = array_values(array_filter(
             $userprofilefields,
             function ($value, $key) {
-                return str_starts_with($key, 'Org') && !empty($value);
+                // Look for Fields with org and number.
+                return preg_match('/^Org\d+$/', $key) && !empty($value);
             },
             ARRAY_FILTER_USE_BOTH
         ));
@@ -262,7 +270,7 @@ class adapter extends external_api_base implements external_api_interface {
      * @return void
      *
      */
-    private function translate_user() {
+    private function translate_users() {
         foreach ($this->externaldata as $user) {
             $translateduser = $this->translate_incoming_data($user);
             $unitsfield = $this->return_shortname_for_functionname(taskflowadapter::TRANSLATOR_USER_ORGUNIT);
@@ -271,24 +279,38 @@ class adapter extends external_api_base implements external_api_interface {
             $this->map_value($translateduser[$unitsfield], $unitsfieljsonkey, $translateduser);
             $user = $this->userrepo->update_or_create($translateduser);
             $this->create_user_with_customfields($user, $translateduser, 'email');
-            $this->users[] = $user;
+        }
+    }
+
+    /**
+     * Private constructor to prevent direct instantiation.
+     * @param array $olduserunits
+     * @param array $newuserunits
+     * @param int $userid
+     * @return void
+     */
+    private function invalidate_units_on_change(
+        $olduserunits,
+        $newuserunits,
+        $userid
+    ) {
+        $invalidunits = array_diff($olduserunits, $newuserunits);
+        if (count($invalidunits) >= 1) {
+            assignments_facade::set_user_units_assignments_inactive(
+                $userid,
+                $invalidunits,
+            );
         }
     }
     /**
-     * Returns the old with SQL join.
+     * Setter function for users array.
      *
-     * @param int $userid
+     * @param stdClass $user
      *
-     * @return mixed
+     * @return void
      *
      */
-    private function get_oldunit(int $userid) {
-        global $DB;
-        $sql = "SELECT c.name
-                FROM m_local_taskflow_unit_members u
-                JOIN m_cohort c ON u.unitid = c.id
-                WHERE u.userid = :userid";
-        $params = ['userid' => $userid];
-        return $DB->get_record_sql($sql, $params, IGNORE_MISSING);
+    public function set_users(stdClass $user) {
+        $this->users[$user->email] = $user;
     }
 }
