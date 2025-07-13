@@ -105,7 +105,7 @@ class adapter extends external_api_base implements external_api_interface {
 
      /**
       * Private constructor to prevent direct instantiation.
-      * @param array $translateduser
+      * @param stdClass $user
       * @return bool
       */
     private function contract_ended($user) {
@@ -136,6 +136,7 @@ class adapter extends external_api_base implements external_api_interface {
      *
      * @param mixed $value
      * @param string $jsonkey
+     * @param array $user
      *
      * @return string
      *
@@ -161,8 +162,6 @@ class adapter extends external_api_base implements external_api_interface {
     }
     /**
      * Sets the supervisor for the user.
-     *
-     * @param stdClass $user
      *
      * @return void
      *
@@ -229,6 +228,8 @@ class adapter extends external_api_base implements external_api_interface {
     }
         /**
          * Creates or updates the units and enrolls them into cohorts.
+         *
+         * @param array $updatedentities
          *
          * @return void
          *
