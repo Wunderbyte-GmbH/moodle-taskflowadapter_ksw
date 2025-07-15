@@ -314,4 +314,33 @@ class adapter extends external_api_base implements external_api_interface {
     public function set_users(stdClass $user) {
         $this->users[$user->email] = $user;
     }
+
+    /**
+     * Checks if necessary Customfields are set for user created or updated.
+     *
+     * @param stdClass $user
+     *
+     * @return boolean
+     *
+     */
+    public function necessary_customfields_exist(stdClass $user) {
+        $customfields = get_config('taskflowadapter_ksw', "necessaryuserprofilefields");
+        // Need to check first if it is one customfield that was checked or multiple.
+        if (empty($customfields)) {
+            return true;
+        }
+        if (is_string($customfields)) {
+            if (empty($user->profile[$customfields])) {
+                return false;
+            }
+        }
+        if (is_array($customfields)) {
+            foreach ($customfields as $customfield) {
+                if (empty($user->profile[$customfield])) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
 }
