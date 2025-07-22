@@ -33,7 +33,6 @@ use local_taskflow\local\personas\moodle_users\types\moodle_user;
 use local_taskflow\local\personas\unit_members\types\unit_member;
 use local_taskflow\local\supervisor\supervisor;
 use local_taskflow\local\units\organisational_unit_factory;
-use local_taskflow\local\units\organisational_units_factory;
 use local_taskflow\local\units\unit_relations;
 use local_taskflow\plugininfo\taskflowadapter;
 use stdClass;
@@ -85,22 +84,26 @@ class adapter extends external_api_base implements external_api_interface {
         $unitinstance = null;
         foreach ($organisations as $organisation) {
             $unit = (object) [
-            'name' => $organisation,
-            'parent' => $parent,
-            'parentunitid' => $parentunitid ?? null,
+                'name' => $organisation,
+                'parent' => $parent,
+                'parentunitid' => $parentunitid ?? null,
             ];
             $unitinstance = organisational_unit_factory::create_unit($unit);
             // Left in there for units.
+            $parentunitid = $unitinstance->get_id();
             if ($unitinstance instanceof unit_relations) {
                 $updatedentities['relationupdate'][$unitinstance->get_id()][] = [
-                'child' => $unitinstance->get_childid(),
-                'parent' => $unitinstance->get_parentid(),
+                    'child' => $unitinstance->get_childid(),
+                    'parent' => $unitinstance->get_parentid(),
                 ];
+                $parentunitid = $unitinstance->get_childid();
             }
-            $parentunitid = $unitinstance->get_id();
             $parent = $unit->name;
         }
-         return $unitinstance->get_id() ?? 0;
+        if ($unitinstance instanceof unit_relations) {
+            return $unitinstance->get_childid();
+        }
+        return $unitinstance->get_id() ?? 0;
     }
 
      /**
