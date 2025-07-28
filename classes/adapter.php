@@ -346,4 +346,13 @@ class adapter extends external_api_base implements external_api_interface {
         }
         return true;
     }
+    /**
+     * Gives the Adapter the information to react on user created/updated.
+     *
+     * @return boolean
+     *
+     */
+    public static function is_allowed_to_react_on_user_events() {
+        return true;
+    }
 }
