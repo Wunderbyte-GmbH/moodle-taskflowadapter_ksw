@@ -26,6 +26,7 @@ defined('MOODLE_INTERNAL') || die();
 
 $string['apisettings'] = "KSW API Settings";
 $string['apisettings_desc'] = "Configure taskflow key-value pairs.";
+$string['bookingoptiondescription'] = "Pretty Description for certificate renering.";
 $string['choose'] = "Choose...";
 $string['enter_value'] = 'Enter a suitable JSON key for this setting';
 $string['function'] = 'Assign function to userprofilefield: ';
@@ -37,7 +38,7 @@ $string['manyfunctions'] = '<div class="alert alert-danger" role="alert">Funktio
 $string['mappingdescription'] = 'Taskflow key-value pair explanation';
 $string['mappingdescription_desc'] = 'This creates the mapping. The upper field indicates which JSON field is linked to the user profile field. The lower field indicates which function this field represents. Not every user profile field must have a function.';
 $string['necessaryuserprofilefields'] = "User profile fields required to be filled in for Taskflow";
-$string['necessaryuserprofilefieldsdesc'] = "User profile fields that are required for a user to be included in a Taskflow update. If these fields are not filled in, any updates of users in Wunderbyte Taskflow will be ignored.";
+$string['necessaryuserprofilefieldsdesc'] = "User profile fields that are not allowed to be empty for the user to be considered in a Taskflow update. If the selected fields are empty, user updates will not be processed in Wunderbyte Taskflow. Leave this setting empty if no fields are required.";
 $string['pluginname'] = "KSW";
 $string['set:function'] = 'Select a function';
 $string['subplugintype_taskflowadapter_plural'] = 'Taskflow adapter extensions';

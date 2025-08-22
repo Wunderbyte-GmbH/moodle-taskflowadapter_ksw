@@ -15,16 +15,19 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * This file contains the version information for the taskflowadapter_ksw plugin
+ * Shortcodes for local_taskflow
  *
- * @package     taskflowadapter_ksw
- * @copyright   2025 Wunderbyte GmbH <info@wunderbyte.at>
- * @author      David Ala
- * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package taskflowadapter_ksw
+ * @copyright 2025 Georg Maißer
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2025082200;
-$plugin->requires  = 2024042200; // Requires this Moodle version. Current: Moodle 4.4.
-$plugin->component = 'taskflowadapter_ksw';
-$plugin->supported = [401, 405];
+$shortcodes = [
+    'bookingoptiondescription' => [
+        'callback' => 'taskflowadapter_ksw\shortcodes::bookingoptiondescription',
+        'wraps' => false,
+        'description' => 'bookingoptiondescription',
+    ],
+];
