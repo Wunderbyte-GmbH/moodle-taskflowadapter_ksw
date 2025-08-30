@@ -103,6 +103,9 @@ class adapter extends external_api_base implements external_api_interface {
         if ($unitinstance instanceof unit_relations) {
             return $unitinstance->get_childid();
         }
+        if (empty($unitinstance)) {
+            return 0;
+        }
         return $unitinstance->get_id() ?? 0;
     }
 
@@ -172,9 +175,10 @@ class adapter extends external_api_base implements external_api_interface {
     private function create_or_update_supervisor() {
         foreach ($this->users as $user) {
             $supervisorfield = $this->return_shortname_for_functionname(taskflowadapter::TRANSLATOR_USER_SUPERVISOR);
+            $internalsupervisorfield = $this->return_shortname_for_functionname(taskflowadapter::TRANSLATOR_USER_SUPERVISOR_INTERNAL);
             $supervisorinstance = new supervisor($user->profile[$supervisorfield], $user->id);
             $supervisorid = $user->profile[$supervisorfield];
-            $supervisorinstance->set_supervisor_for_user($supervisorid, $supervisorfield, $user, $this->users);
+            $supervisorinstance->set_supervisor_for_user($supervisorid, $supervisorfield, $user, $this->users, $internalsupervisorfield);
         }
     }
 
@@ -189,7 +193,7 @@ class adapter extends external_api_base implements external_api_interface {
     private function create_update_unitmemberrepo(stdClass $user) {
 
          $unitmemberinstance =
-            $this->unitmemberrepo->update_or_create($user, (int)$user->cohortid);
+            $this->unitmemberrepo->update_or_create($user, (int)($user->cohortid ?? 0));
         if ($unitmemberinstance instanceof unit_member) {
             $updatedentities['unitmember'][$unitmemberinstance->get_userid()][] = [
             'unit' => $unitmemberinstance->get_unitid(),
@@ -205,8 +209,8 @@ class adapter extends external_api_base implements external_api_interface {
     private function create_or_update_users() {
         global $DB;
         foreach ($this->users as $user) {
-            $newunits = $this->users[$user->email]->newunits;
-            $oldunits = $this->users[$user->email]->oldunits;
+            $newunits = $this->users[$user->email]->newunits ?? [];
+            $oldunits = $this->users[$user->email]->oldunits ?? [];
             // If there is no old unit we set them the same so that the checks are still correct.
             if (
                   is_array($oldunits)
@@ -241,10 +245,12 @@ class adapter extends external_api_base implements external_api_interface {
         foreach ($this->users as $key => $user) {
             $this->users[$key]->oldunits = moodle_user::get_all_units_of_user($user->id);
             $cohortid = $this->generate_units_data($user, $updatedentities);
-            $user->cohortid = $cohortid;
-            if (get_config('local_taskflow', 'organisational_unit_option') == 'cohort') {
-                cohort_add_member($cohortid, (int) $user->id);
-                $this->users[$key]->newunits[] = $cohortid;
+            if (!empty($cohortid)) {
+                $user->cohortid = $cohortid;
+                if (get_config('local_taskflow', 'organisational_unit_option') == 'cohort') {
+                    cohort_add_member($cohortid, (int) $user->id);
+                    $this->users[$key]->newunits[] = $cohortid;
+                }
             }
         }
     }
