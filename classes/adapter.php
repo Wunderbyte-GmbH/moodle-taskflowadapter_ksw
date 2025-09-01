@@ -63,12 +63,13 @@ class adapter extends external_api_base implements external_api_interface {
         $this->create_or_update_units($updatedentities);
         $this->create_or_update_users();
         $this->create_or_update_supervisor();
-        if (external_api_base::$importing) {
-            $this->save_all_user_infos($this->users);
-        }
+
+        $this->save_all_user_infos($this->users);
+
         // Left in there for units.
         self::trigger_unit_relation_updated_events($updatedentities['relationupdate']);
         self::trigger_unit_member_updated_events($updatedentities['unitmember']);
+        external_api_base::$importing = false;
     }
 
     /**
@@ -175,10 +176,9 @@ class adapter extends external_api_base implements external_api_interface {
     private function create_or_update_supervisor() {
         foreach ($this->users as $user) {
             $supervisorfield = $this->return_shortname_for_functionname(taskflowadapter::TRANSLATOR_USER_SUPERVISOR);
-            $internalsupervisorfield = $this->return_shortname_for_functionname(taskflowadapter::TRANSLATOR_USER_SUPERVISOR_INTERNAL);
             $supervisorinstance = new supervisor($user->profile[$supervisorfield], $user->id);
             $supervisorid = $user->profile[$supervisorfield];
-            $supervisorinstance->set_supervisor_for_user($supervisorid, $supervisorfield, $user, $this->users, $internalsupervisorfield);
+            $supervisorinstance->set_supervisor_for_user($supervisorid, $supervisorfield, $user, $this->users);
         }
     }
 
@@ -211,6 +211,9 @@ class adapter extends external_api_base implements external_api_interface {
         foreach ($this->users as $user) {
             $newunits = $this->users[$user->email]->newunits ?? [];
             $oldunits = $this->users[$user->email]->oldunits ?? [];
+
+            $this->set_supervisor_internal_id($user);
+
             // If there is no old unit we set them the same so that the checks are still correct.
             if (
                   is_array($oldunits)
@@ -233,6 +236,34 @@ class adapter extends external_api_base implements external_api_interface {
             }
         }
     }
+
+    /**
+     * Creates or updates the units and enrolls them into cohorts.
+     * @param array $updatedentities
+     * @return void
+     */
+    private function set_supervisor_internal_id(&$user) {
+        global $DB;
+        $externalsupervisoridfield = $this->return_shortname_for_functionname(taskflowadapter::TRANSLATOR_USER_SUPERVISOR_EXTERNAL);
+        $externalidfield = $this->return_shortname_for_functionname(taskflowadapter::TRANSLATOR_USER_EXTERNALID);
+        if (!empty($user->profile[$externalsupervisoridfield])) {
+            $field = $DB->get_record('user_info_field', ['shortname' => $externalidfield], '*', MUST_EXIST);
+            $sql = "SELECT u.*
+                    FROM {user} u
+                    JOIN {user_info_data} d ON d.userid = u.id
+                    WHERE d.fieldid = :fieldid AND d.data = :dataval";
+            $params = [
+                'fieldid'  => $field->id,
+                'dataval'  => $user->profile[$externalsupervisoridfield],
+            ];
+            $supervisor = $DB->get_record_sql($sql, $params);
+            if ($supervisor) {
+                $internalsupervisoridfield = $this->return_shortname_for_functionname(taskflowadapter::TRANSLATOR_USER_SUPERVISOR);
+                $user->profile[$internalsupervisoridfield] = $supervisor->id;
+            }
+        }
+    }
+
         /**
          * Creates or updates the units and enrolls them into cohorts.
          *
