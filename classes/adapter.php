@@ -29,6 +29,7 @@ use DateTime;
 use local_taskflow\local\assignments\assignments_facade;
 use local_taskflow\local\external_adapter\external_api_interface;
 use local_taskflow\local\external_adapter\external_api_base;
+use local_taskflow\local\personas\moodle_users\moodle_user_factory;
 use local_taskflow\local\personas\moodle_users\types\moodle_user;
 use local_taskflow\local\personas\unit_members\types\unit_member;
 use local_taskflow\local\supervisor\supervisor;
@@ -234,6 +235,10 @@ class adapter extends external_api_base implements external_api_interface {
                 $onlongleave
             ) {
                 assignments_facade::set_all_assignments_inactive($user->id);
+                if ($this->contract_ended($user)) {
+                    $userinterface = new moodle_user_factory();
+                    $userinterface->inactivate_moodle_users([$user]);
+                }
             } else {
                 $this->create_update_unitmemberrepo($user);
             }
