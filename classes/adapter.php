@@ -125,6 +125,9 @@ class adapter extends external_api_base implements external_api_interface {
             $storedenddate
         );
 
+        if (empty($storedenddate)) {
+            return false;
+        }
         $this->dates_validation($enddate, $storedenddate);
 
         $now = new DateTime();
