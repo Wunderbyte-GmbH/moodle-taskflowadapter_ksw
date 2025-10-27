@@ -1,0 +1,18 @@
+[
+    {
+      "fullname": "Forced ID Course",
+      "shortname": "FRC1",
+      "category": 1,
+      "summary": "",
+      "format": "topics",
+      "visible": 1
+    },
+    {
+      "fullname": "Forced ID Course",
+      "shortname": "FRC2",
+      "category": 1,
+      "summary": "",
+      "format": "topics",
+      "visible": 1
+    }
+  ]

@@ -1,0 +1,43 @@
+{
+    "persons": [
+        {
+          "tissId": 123456,
+          "firstName": "Berta",
+          "middleName": null,
+          "lastName": "Boss",
+          "eMailAddress": "berta.boss@tuwien.ac.at",
+          "orgUnit": ["E230-00", "E230-01"],
+          "mainOrgUnit": "E230-00",
+          "headOfOrgUnit": ["E230-00"],
+          "workingHours": 40,
+          "contractEnd": "9999-12-31",
+          "currentlyOnLongLeave": false,
+          "directSupervisor": 222222,
+          "targetGroup": [101]
+      },
+      {
+          "tissId": 222222,
+          "firstName": "Sara",
+          "middleName": null,
+          "lastName": "Sick",
+          "eMailAddress": "sara.sick@tuwien.ac.at",
+          "orgUnit": ["E230-01"],
+          "mainOrgUnit": "E230-01",
+          "headOfOrgUnit": [null],
+          "workingHours": 10,
+          "contractEnd": "9999-12-31",
+          "currentlyOnLongLeave": false,
+          "directSupervisor": 123456,
+          "targetGroup": [101]
+      }
+    ],
+    "targetGroups": [
+      {
+          "number": 101,
+          "displayNameDE": "beschäftigt bis 6 Monate und/oder 10 Stunden",
+          "displayNameEN": "employed up to 6 months and/or 10 hours",
+          "descriptionDE": "bis 6 Monate und/oder 10 Stunden beschäftigte Mitarbeiter_innen (ohne tageweise Beschäftigte",
+          "descriptionEN": "up to 6 months and/or 10 hours employed employees (without employees employed on a daily basis)"
+      }
+    ]
+  }

@@ -1,0 +1,32 @@
+  [
+  {
+    "id": 1,
+    "class": "standard",
+    "message": "{\"heading\": \"Taskflow - Warning 1\", \"body\":{\"text\": \"Some important stuff\", \"format\":1}}",
+    "priority": 20,
+    "sending_settings": "{\"recipientrole\":[\"assignee\"],\"userid\":\"\",\"carboncopyrole\":[],\"ccuserid\":\"\",\"senddirection\":\"before\",\"eventlist\":[],\"sendingcondition\":0,\"sendstart\":\"end\",\"senddays\":10,\"timeunit\":\"days\"}",
+    "usermodified": 0,
+    "timecreated": 23234233223,
+    "timemodified": 23234233223
+  },
+  {
+    "id": 2,
+    "class": "standard",
+    "message": "{\"heading\": \"Taskflow - Warning 2\", \"body\":{\"text\": \"Some important stuff\", \"format\":1}}",
+    "priority": 20,
+    "sending_settings": "{\"recipientrole\":[\"assignee\"],\"userid\":\"\",\"carboncopyrole\":[],\"ccuserid\":\"\",\"senddirection\":\"before\",\"eventlist\":[],\"sendingcondition\":0,\"sendstart\":\"end\",\"senddays\":5,\"timeunit\":\"days\"}",
+    "usermodified": 0,
+    "timecreated": 23234233223,
+    "timemodified": 23234233223
+  },
+    {
+    "id": 2,
+    "class": "standard",
+    "message": "{\"heading\": \"Taskflow - Overdue\", \"body\":{\"text\": \"Some important stuff\", \"format\":1}}",
+    "priority": 20,
+    "sending_settings": "{\"recipientrole\":[\"assignee\"],\"userid\":\"\",\"carboncopyrole\":[],\"ccuserid\":\"\",\"senddirection\":\"after\",\"eventlist\":[],\"sendingcondition\":0,\"sendstart\":\"end\",\"senddays\":10,\"timeunit\":\"minutes\"}",
+    "usermodified": 0,
+    "timecreated": 23234233223,
+    "timemodified": 23234233223
+  }
+]

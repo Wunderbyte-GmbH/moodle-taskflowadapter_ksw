@@ -1,0 +1,219 @@
+{
+    "persons": [
+      {
+          "tissId": 223344,
+          "firstName": "Sabine",
+          "middleName": null,
+          "lastName": "Subordinate",
+          "eMailAddress": "sabine.subordinate@tuwien.ac.at",
+          "orgUnit": ["E230-01","E230-02"],
+          "mainOrgUnit": "E230-01",
+          "headOfOrgUnit": ["E230-01"],
+          "workingHours": 40,
+          "contractEnd": "9999-12-31",
+          "currentlyOnLongLeave": false,
+          "directSupervisor": 556677,
+          "targetGroup": [102,103]
+      },
+      {
+          "tissId": 556677,
+          "firstName": "David",
+          "middleName": null,
+          "lastName": "Drunter",
+          "eMailAddress": "david.drunter@tuwien.ac.at",
+          "orgUnit": ["E230-02"],
+          "mainOrgUnit": "E230-02",
+          "headOfOrgUnit": ["E230-02"],
+          "workingHours": 40,
+          "contractEnd": "9999-12-31",
+          "currentlyOnLongLeave": false,
+          "directSupervisor": 223344,
+          "targetGroup": [102,103]
+      },
+      {
+          "tissId": 111111,
+          "firstName": "Betty",
+          "middleName": "Boop",
+          "lastName": "Best",
+          "eMailAddress": "betty.best@tuwien.ac.at",
+          "orgUnit": ["E230-01"],
+          "mainOrgUnit": "E230-01",
+          "headOfOrgUnit": [null],
+          "workingHours": 40,
+          "contractEnd": "9999-12-31",
+          "currentlyOnLongLeave": false,
+          "directSupervisor": 223344,
+          "targetGroup": [102]
+      },
+      {
+          "tissId": 222222,
+          "firstName": "Garry",
+          "middleName": null,
+          "lastName": "Gone",
+          "eMailAddress": "garry.gone@tuwien.ac.at",
+          "orgUnit": ["E230-01"],
+          "mainOrgUnit": "E230-01",
+          "headOfOrgUnit": [null],
+          "workingHours": 10,
+          "contractEnd": "2025-05-31",
+          "currentlyOnLongLeave": false,
+          "directSupervisor": 111111,
+          "targetGroup": [101]
+      },
+      {
+          "tissId": 333333,
+          "firstName": "Sarah",
+          "middleName": null,
+          "lastName": "Sick",
+          "eMailAddress": "sarah.sick@tuwien.ac.at",
+          "orgUnit": ["E230-01"],
+          "mainOrgUnit": "E230-01",
+          "headOfOrgUnit": [null],
+          "workingHours": 40,
+          "contractEnd": "9999-12-31",
+          "currentlyOnLongLeave": false,
+          "directSupervisor": 111111,
+          "targetGroup": [102]
+      },
+      {
+          "tissId": 555555,
+          "firstName": "Lucy",
+          "middleName": null,
+          "lastName": "Lazy",
+          "eMailAddress": "lucy.lazy@tuwien.ac.at",
+          "orgUnit": ["E230-01"],
+          "mainOrgUnit": "E230-01",
+          "headOfOrgUnit": [null],
+          "workingHours": 30,
+          "contractEnd": "9999-12-31",
+          "currentlyOnLongLeave": false,
+          "directSupervisor": 111111,
+          "targetGroup": [102]
+      },
+      {
+          "tissId": 666666,
+          "firstName": "Chris",
+          "middleName": null,
+          "lastName": "Change",
+          "eMailAddress": "chris.change@tuwien.ac.at",
+          "orgUnit": ["E230-01"],
+          "mainOrgUnit": "E230-01",
+          "headOfOrgUnit": [null],
+          "workingHours": 30,
+          "contractEnd": "2025-05-31",
+          "currentlyOnLongLeave": false,
+          "directSupervisor": 111111,
+          "targetGroup": [101]
+      },
+      {
+          "tissId": 777777,
+          "firstName": "Rudi",
+          "middleName": null,
+          "lastName": "Return",
+          "eMailAddress": "rudi.Return@tuwien.ac.at",
+          "orgUnit": ["E230-01"],
+          "mainOrgUnit": "E230-01",
+          "headOfOrgUnit": [null],
+          "workingHours": 40,
+          "contractEnd": "9999-12-31",
+          "currentlyOnLongLeave": false,
+          "directSupervisor": 111111,
+          "targetGroup": [102]
+      },
+      {
+          "tissId": 888888,
+          "firstName": "Ewald",
+          "middleName": null,
+          "lastName": "Eskal",
+          "eMailAddress": "ewald.eskal@tuwien.ac.at",
+          "orgUnit": ["E230-01"],
+          "mainOrgUnit": "E230-01",
+          "headOfOrgUnit": [null],
+          "workingHours": 8,
+          "contractEnd": "9999-12-31",
+          "currentlyOnLongLeave": false,
+          "directSupervisor": 111111,
+          "targetGroup": [101]
+      },
+      {
+          "tissId": 999999,
+          "firstName": "Robert",
+          "middleName": null,
+          "lastName": "Routine",
+          "eMailAddress": "robert.routine@tuwien.ac.at",
+          "orgUnit": ["E230-01"],
+          "mainOrgUnit": "E230-01",
+          "headOfOrgUnit": [null],
+          "workingHours": 40,
+          "contractEnd": "9999-12-31",
+          "currentlyOnLongLeave": false,
+          "directSupervisor": 111111,
+          "targetGroup": [102]
+      },
+      {
+          "tissId": 999998,
+          "firstName": "Felix",
+          "middleName": null,
+          "lastName": "Fleißig",
+          "eMailAddress": "felix.fleissig@tuwien.ac.at",
+          "orgUnit": ["E230-01"],
+          "mainOrgUnit": "E230-01",
+          "headOfOrgUnit": [null],
+          "workingHours": 40,
+          "contractEnd": "9999-12-31",
+          "currentlyOnLongLeave": false,
+          "directSupervisor": 111111,
+          "targetGroup": [102]
+      },
+      {
+          "tissId": 999998,
+          "firstName": "Felix",
+          "middleName": null,
+          "lastName": "Fleißig",
+          "eMailAddress": "felix.fleissig@tuwien.ac.at",
+          "orgUnit": ["E230-01"],
+          "mainOrgUnit": "E230-01",
+          "headOfOrgUnit": [null],
+          "workingHours": 40,
+          "contractEnd": "9999-12-31",
+          "currentlyOnLongLeave": false,
+          "directSupervisor": 999999,
+          "targetGroup": [102]
+      }
+      ],
+    "targetGroups": [
+      {
+          "number": 100,
+          "displayNameDE": "tageweise beschäftigt",
+          "displayNameEN": "employed on a daily basis",
+          "descriptionDE": "nur tageweise beschäftigte Mitarbeiter_innen",
+          "descriptionEN": "only on a daily basis employed employees"
+      },
+      {
+          "number": 101,
+          "displayNameDE": "beschäftigt bis 6 Monate und/oder 10 Stunden",
+          "displayNameEN": "employed up to 6 months and/or 10 hours",
+          "descriptionDE": "bis 6 Monate und/oder 10 Stunden beschäftigte Mitarbeiter_innen (ohne tageweise Beschäftigte",
+          "descriptionEN": "up to 6 months and/or 10 hours employed employees (without employees employed on a daily basis)"
+      },
+      {
+          "number": 102,
+          "displayNameDE": "beschäftigt über 6 Monate und 10 Stunden",
+          "displayNameEN": "employed for more than 6 months and 10 hours",
+          "descriptionDE": "über 6 Monate und 10 Stunden beschäftigte Mitarbeiter_innen",
+          "descriptionEN": "more than 6 months and 10 hours employed employees"
+      },
+      {
+          "number": 103,
+          "displayNameDE": "Führungskraft",
+          "displayNameEN": "Manager",
+          "descriptionDE": "alle Personen, die im SAP als Leiter_innen markiert sind",
+          "descriptionEN": "all personas who are marked as manager in SAP"
+      }
+    ],
+    "comment": [
+       {
+           "JSONInfo": "JSON mit allen MA zum 01.02.2025"
+       }
+    ]
+  }

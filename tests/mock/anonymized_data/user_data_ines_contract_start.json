@@ -1,0 +1,50 @@
+{
+    "persons": [
+      {
+          "tissId": 556677,
+          "firstName": "Berta",
+          "middleName": null,
+          "lastName": "Boss",
+          "eMailAddress": "berta.boss@tuwien.ac.at",
+          "orgUnit": ["E230-00", "E230-01"],
+          "mainOrgUnit": "E230-00",
+          "headOfOrgUnit": ["E230-00"],
+          "workingHours": 40,
+          "contractEnd": "9999-12-31",
+          "contractStart": "2024-05-31",
+          "currentlyOnLongLeave": false,
+          "directSupervisor": 223344,
+          "targetGroup": [182]
+      },
+      {
+          "tissId": 223344,
+          "firstName": "Sabine",
+          "middleName": null,
+          "lastName": "Subordinate",
+          "eMailAddress": "sabine.subordinate@tuwien.ac.at",
+          "orgUnit": ["E230-01","E230-02"],
+          "mainOrgUnit": "E230-01",
+          "headOfOrgUnit": ["E230-01"],
+          "workingHours": 40,
+          "contractEnd": "9999-12-31",
+          "contractStart": "2025-05-31",
+          "currentlyOnLongLeave": false,
+          "directSupervisor": 556677,
+          "targetGroup": [182]
+      }
+      ],
+    "targetGroups": [
+      {
+          "number": 182,
+          "displayNameDE": "beschäftigt für Droppedout",
+          "displayNameEN": "employed for more than 6 months and 10 hours",
+          "descriptionDE": "über 6 Monate und 10 Stunden beschäftigte Mitarbeiter_innen",
+          "descriptionEN": "more than 6 months and 10 hours employed employees"
+      }
+    ],
+    "comment": [
+       {
+           "JSONInfo": "JSON mit allen MA zum 01.02.2025"
+       }
+    ]
+  }

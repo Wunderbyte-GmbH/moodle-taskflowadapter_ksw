@@ -1,0 +1,42 @@
+[
+  {
+    "id": 1,
+    "class": "standard",
+    "message": "{\"heading\": \"Testing\", \"body\":{\"text\": \"Some important stuff <firstname> <lastname> <targets> <due_date> <status>\",\"format\":1}}",
+    "priority": 10,
+    "sending_settings": "{\"recipientrole\":[\"assignee\"], \"senddirection\": \"before\", \"sendstart\": \"end\", \"senddays\": \"0\"}",
+    "usermodified": 0,
+    "timecreated": 23234233223,
+    "timemodified": 23234233223
+  },
+  {
+    "id": 2,
+    "class": "standard",
+    "message": "{\"heading\": \"INES - Standardschulungen – Warnung TN\", \"body\":{\"text\": \"++++ English version below ++++\\nGuten Tag <firstname> <lastname> (Supervisor: <supervisor_firstname> <supervisor_lastname>),\\nSie sind für folgenden Kurs angemeldet:\\n<targets>\\nSie sind der verpflichtenden Absolvierung des Kurses (gemäß <Richtlinie für Standardschulungen>) bisher nicht nachgekommen, weshalb entsprechende Konsequenzen in die Wege geleitet werden müssen.\\nSollten berechtigte Gründe vorliegen, weshalb der Kurs bisher nicht absolviert wurde, setzen Sie sich bitte umgehend mit Ihrer_Ihrem Vorgesetzen in Verbindung und nehmen Sie Kontakt mit der Personalentwicklung auf.\\nBeachten Sie, dass Ihr_e Vorgesetzte_r ebenfalls eine automatische Verständigung diesbezüglich erhalten hat.\\n<FOOTER-HR-DE>\\n========================================\\n++++ English version ++++\\nHello <Vorname> <Nachname>,\\nYou are registered for the following course:\\n<Name des Kurses :: Link zu Kurs>\\nYou have not yet completed the mandatory course (according to the <Guidelines for Standard Training>), which is why appropriate consequences must be initiated.\\nIf there are legitimate reasons why the course has not yet been completed, please contact your line superior immediately and get in touch with HR Development.\\nPlease note that your line superior has also received an automatic notification in this regard.\\n<FOOTER-HR-EN>\",\"format\":1}}",
+    "priority": 20,
+    "sending_settings": "{\"recipientrole\":[\"supervisor\"], \"senddirection\": \"after\", \"sendstart\": \"start\", \"senddays\": \"0\"}",
+    "usermodified": 0,
+    "timecreated": 23234233223,
+    "timemodified": 23234233223
+  },
+  {
+    "id": 3,
+    "class": "onevent",
+    "message": "{\"heading\": \"INES - Standardschulungen – Warnung TN\", \"body\":{\"text\": \"++++ English version below ++++\\nGuten Tag <firstname> <lastname> (Supervisor: <supervisor_firstname> <supervisor_lastname>),\\nSie sind für folgenden Kurs angemeldet:\\n<targets>\\nSie sind der verpflichtenden Absolvierung des Kurses (gemäß <Richtlinie für Standardschulungen>) bisher nicht nachgekommen, weshalb entsprechende Konsequenzen in die Wege geleitet werden müssen.\\nSollten berechtigte Gründe vorliegen, weshalb der Kurs bisher nicht absolviert wurde, setzen Sie sich bitte umgehend mit Ihrer_Ihrem Vorgesetzen in Verbindung und nehmen Sie Kontakt mit der Personalentwicklung auf.\\nBeachten Sie, dass Ihr_e Vorgesetzte_r ebenfalls eine automatische Verständigung diesbezüglich erhalten hat.\\n<FOOTER-HR-DE>\\n========================================\\n++++ English version ++++\\nHello <Vorname> <Nachname>,\\nYou are registered for the following course:\\n<Name des Kurses :: Link zu Kurs>\\nYou have not yet completed the mandatory course (according to the <Guidelines for Standard Training>), which is why appropriate consequences must be initiated.\\nIf there are legitimate reasons why the course has not yet been completed, please contact your line superior immediately and get in touch with HR Development.\\nPlease note that your line superior has also received an automatic notification in this regard.\\n<FOOTER-HR-EN>\",\"format\":1}}",
+    "priority": 20,
+    "sending_settings": "{\"recipientrole\":[\"assignee\"], \"senddirection\": \"after\", \"sendstart\": \"status_change\", \"eventlist\": \"[0, 10]\", \"senddays\": \"0\"}",
+    "usermodified": 0,
+    "timecreated": 23234233223,
+    "timemodified": 23234233223
+  },
+  {
+    "id": 4,
+    "class": "onevent",
+    "message": "{\"heading\": \"INES - Standardschulungen – Warnung TN\", \"body\":{\"text\": \"++++ English version below ++++\\nGuten Tag <firstname> <lastname> (Supervisor: <supervisor_firstname> <supervisor_lastname>),\\nSie sind für folgenden Kurs angemeldet:\\n<targets>\\nSie sind der verpflichtenden Absolvierung des Kurses (gemäß <Richtlinie für Standardschulungen>) bisher nicht nachgekommen, weshalb entsprechende Konsequenzen in die Wege geleitet werden müssen.\\nSollten berechtigte Gründe vorliegen, weshalb der Kurs bisher nicht absolviert wurde, setzen Sie sich bitte umgehend mit Ihrer_Ihrem Vorgesetzen in Verbindung und nehmen Sie Kontakt mit der Personalentwicklung auf.\\nBeachten Sie, dass Ihr_e Vorgesetzte_r ebenfalls eine automatische Verständigung diesbezüglich erhalten hat.\\n<FOOTER-HR-DE>\\n========================================\\n++++ English version ++++\\nHello <Vorname> <Nachname>,\\nYou are registered for the following course:\\n<Name des Kurses :: Link zu Kurs>\\nYou have not yet completed the mandatory course (according to the <Guidelines for Standard Training>), which is why appropriate consequences must be initiated.\\nIf there are legitimate reasons why the course has not yet been completed, please contact your line superior immediately and get in touch with HR Development.\\nPlease note that your line superior has also received an automatic notification in this regard.\\n<FOOTER-HR-EN>\",\"format\":1}}",
+    "priority": 20,
+    "sending_settings": "{\"recipientrole\":[\"assignee\"], \"senddirection\": \"after\", \"sendstart\": \"status_change\", \"eventlist\": \"[5]\", \"senddays\": \"0\"}",
+    "usermodified": 0,
+    "timecreated": 23234233223,
+    "timemodified": 23234233223
+  }
+]

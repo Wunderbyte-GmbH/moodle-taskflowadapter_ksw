@@ -1,0 +1,82 @@
+[
+  {
+    "id": 3,
+    "unitid": 142,
+    "rulename": "rule_daysbefore",
+    "rulejson": "{\"conditionname\":\"select_teacher_in_bo\",\"name\":\"vorank\\u00fcndigungb\",\"actionname\":\"send_mail\",\"actiondata\":{\"subject\":\"test\",\"template\":\"<p>Deine Veranstaltung {title} <br><br>Beginnt bald {datesandentities}<\\/p>\\r\\n<p><\\/p>\\r\\n<p>{bookingoptiondetaillink}<br><br>Ver\\u00e4nderter Text, noch malver\\u00e4nderter Text, ein weiteres Mal ver\\u00e4nderter Text<\\/p>\",\"templateformat\":\"1\"},\"rulename\":\"rule_daysbefore\",\"ruledata\":{\"days\":\"4\",\"datefield\":\"coursestarttime\"},\"useastemplate\":\"0\"}",
+    "eventname": null,
+    "isactive": 1
+  },
+  {
+    "id": 4,
+    "unitid": 142,
+    "rulename": "rule_daysbefore",
+    "rulejson": "{\"conditionname\":\"select_users\",\"conditiondata\":{\"userids\":[\"2\"]},\"name\":\"vorank\\u00fcndigung booked students\",\"actionname\":\"send_mail\",\"actiondata\":{\"subject\":\"your courses will start\",\"template\":\"<p>Dein Kurs startet demn\\u00e4chst: {Title}<br><br>{datesandentities}<br><br>Vorank\\u00fcndigung ge\\u00e4ndert.<\\/p>\",\"templateformat\":\"1\"},\"rulename\":\"rule_daysbefore\",\"ruledata\":{\"days\":\"4\",\"datefield\":\"coursestarttime\"},\"useastemplate\":\"0\"}",
+    "eventname": null,
+    "isactive": 1
+  },
+  {
+    "id": 5,
+    "unitid": 1,
+    "rulename": "rule_daysbefore",
+    "rulejson": "{\"conditionname\":\"select_student_in_bo\",\"conditiondata\":{\"borole\":\"0\"},\"name\":\"System rule Vorank\\u00fcndigung\",\"actionname\":\"send_mail\",\"actiondata\":{\"subject\":\"Systemregel Vorank\\u00fcndigung c\",\"template\":\"<p>Systemregel Vorank\\u00fcndigung a<br><br>{datesandentities}<\\/p>\",\"templateformat\":\"1\"},\"rulename\":\"rule_daysbefore\",\"ruledata\":{\"days\":\"4\",\"datefield\":\"coursestarttime\"},\"useastemplate\":\"0\"}",
+    "eventname": null,
+    "isactive": 1
+  },
+  {
+    "id": 6,
+    "unitid": 1,
+    "rulename": "rule_react_on_event",
+    "rulejson": "{\"conditionname\":\"select_users\",\"conditiondata\":{\"userids\":[\"2\"]},\"name\":\"new teacher\",\"actionname\":\"send_mail\",\"actiondata\":{\"subject\":\"Teacher was added\",\"template\":\"<p>dsfa<\\/p>\",\"templateformat\":\"1\"},\"rulename\":\"rule_react_on_event\",\"ruledata\":{\"boevent\":\"\\\\local_taskflow\\\\event\\\\optiondates_teacher_added\",\"condition\":\"0\",\"aftercompletion\":0,\"cancelrules\":[]}}",
+    "eventname": "\\local_taskflow\\event\\optiondates_teacher_added",
+    "isactive": 1
+  },
+  {
+    "id": 7,
+    "unitid": 1,
+    "rulename": "rule_react_on_event",
+    "rulejson": "{\"conditionname\":\"select_student_in_bo\",\"conditiondata\":{\"borole\":\"0\"},\"name\":\"booked\",\"actionname\":\"send_mail\",\"actiondata\":{\"subject\":\"you booked this option\",\"template\":\"<p>user {firstname} {lastname} was booked<br><br>{bookingoptiondetaillink}<br><br><\\/p>\\r\\n<p>{datesandentities}<\\/p>\\r\\n<p>{customform}<\\/p>\\r\\n<p>{status}<\\/p>\\r\\n<p><br><br>Thank you for booking!<\\/p>\",\"templateformat\":\"1\"},\"rulename\":\"rule_react_on_event\",\"ruledata\":{\"boevent\":\"\\\\local_taskflow\\\\event\\\\bookingoption_booked\",\"condition\":\"0\",\"aftercompletion\":0,\"cancelrules\":[]}}",
+    "eventname": "\\local_taskflow\\event\\bookingoption_booked",
+    "isactive": 1
+  },
+  {
+    "id": 8,
+    "unitid": 1,
+    "rulename": "rule_react_on_event",
+    "rulejson": "{\"conditionname\":\"select_student_in_bo\",\"conditiondata\":{\"borole\":\"0\"},\"name\":\"updated\",\"actionname\":\"send_mail\",\"actiondata\":{\"subject\":\"sth has changed\",\"template\":\"<p>sth has changed<br><br>{changes}<\\/p>\",\"templateformat\":\"1\"},\"rulename\":\"rule_react_on_event\",\"ruledata\":{\"boevent\":\"\\\\local_taskflow\\\\event\\\\bookingoption_updated\",\"condition\":\"0\",\"aftercompletion\":0,\"cancelrules\":[]}}",
+    "eventname": "\\local_taskflow\\event\\bookingoption_updated",
+    "isactive": 1
+  },
+  {
+    "id": 9,
+    "unitid": 142,
+    "rulename": "rule_react_on_event",
+    "rulejson": "{\"conditionname\":\"select_user_from_event\",\"conditiondata\":{\"userfromeventtype\":\"userid\"},\"name\":\"Send license\",\"actionname\":\"send_mail\",\"actiondata\":{\"subject\":\"thank you for your puchase\",\"template\":\"<p dir=\\\"ltr\\\" id=\\\"yui_3_17_2_1_1726644248155_487\\\">{mlang en}Dear customer,<\\/p>\\r\\n<p dir=\\\"ltr\\\" id=\\\"yui_3_17_2_1_1726644248155_488\\\">thank you very much for your purchase of the Wunderbyte Booking Pro License for one year!<\\/p>\\r\\n<p dir=\\\"ltr\\\" id=\\\"yui_3_17_2_1_1726644248155_444\\\"><span id=\\\"yui_3_17_2_1_1726644248155_489\\\">{rest_response}<\\/span><\\/p>\\r\\n<p>If you have any problems, please contact contact@wunderbyte.at.<br id=\\\"yui_3_17_2_1_1726644248155_490\\\"><br id=\\\"yui_3_17_2_1_1726644248155_491\\\">You'll receive your invoice in a separate email from Wunderbyte.;<\\/p>\\r\\n<p id=\\\"yui_3_17_2_1_1726644248155_492\\\"><\\/p>\\r\\n<p id=\\\"yui_3_17_2_1_1726644248155_494\\\">All the best<br id=\\\"yui_3_17_2_1_1726644248155_495\\\">Wunderbyte Support Team{mlang}<\\/p>\\r\\n<p id=\\\"yui_3_17_2_1_1726644248155_496\\\"><\\/p>\\r\\n<p dir=\\\"ltr\\\" id=\\\"yui_3_17_2_1_1726644248155_497\\\">{mlang de}Sehr geehrte Kundin, sehr geehrter Kunde,<\\/p>\\r\\n<p id=\\\"yui_3_17_2_1_1726644248155_498\\\">vielen Dank f\\u00fcr Ihren Kauf der Wunderbyte Booking Pro Lizenz f\\u00fcr ein Jahr!<\\/p>\\r\\n<p id=\\\"yui_3_17_2_1_1726644248155_499\\\">{rest_response}<\\/p>\\r\\n<p id=\\\"yui_3_17_2_1_1726644248155_500\\\">Falls Sie irgendwelche Probleme haben, kontaktieren Sie bitte unter\\u00a0<a id=\\\"yui_3_17_2_1_1726644248155_501\\\" rel=\\\"noreferrer\\\"><\\/a>contact@wunderbyte.at.<\\/p>\\r\\n<p>Ihre Rechnung erhalten Sie in einer separaten E-Mail von Wunderbyte.<\\/p>\\r\\n<p>Mit freundlichen Gr\\u00fc\\u00dfen<br>Ihr Wunderbyte Support Team{mlang}<\\/p>\",\"templateformat\":\"1\"},\"rulename\":\"rule_react_on_event\",\"ruledata\":{\"boevent\":\"\\\\local_taskflow\\\\event\\\\rest_script_success\",\"condition\":\"0\",\"aftercompletion\":\"\",\"cancelrules\":[]}}",
+    "eventname": "\\local_taskflow\\event\\rest_script_success",
+    "isactive": 1
+  },
+  {
+    "id": 10,
+    "unitid": 204,
+    "rulename": "rule_react_on_event",
+    "rulejson": "{\"conditionname\":\"select_student_in_bo\",\"conditiondata\":{\"borole\":\"1\"},\"name\":\"Interval notification\",\"actionname\":\"send_mail_interval\",\"actiondata\":{\"interval\":1,\"subject\":\"you can book now, place free\",\"template\":\"<p>Hallo {firstname} {lastname},<br><br>bitte gehen sie hierher:<br>{bookingoptiondetaillink}<\\/p>\",\"templateformat\":\"1\"},\"rulename\":\"rule_react_on_event\",\"ruledata\":{\"boevent\":\"\\\\local_taskflow\\\\event\\\\bookingoption_freetobookagain\",\"condition\":\"2\",\"aftercompletion\":0,\"cancelrules\":[]}}",
+    "eventname": "\\local_taskflow\\event\\bookingoption_freetobookagain",
+    "isactive": 1
+  },
+  {
+    "id": 11,
+    "unitid": 184,
+    "rulename": "rule_daysbefore",
+    "rulejson": "{\"conditionname\":\"select_student_in_bo\",\"conditiondata\":{\"borole\":\"0\"},\"name\":\"nachricht ende\",\"actionname\":\"send_mail\",\"actiondata\":{\"subject\":\"die buchung ist aus\",\"template\":\"<p>die buchung ist aus<\\/p>\",\"templateformat\":\"1\"},\"rulename\":\"rule_daysbefore\",\"ruledata\":{\"days\":\"0\",\"datefield\":\"courseendtime\"},\"useastemplate\":\"0\"}",
+    "eventname": null,
+    "isactive": 1
+  },
+  {
+    "id": 12,
+    "unitid": 1,
+    "rulename": "rule_react_on_event",
+    "rulejson": "{\"conditionname\":\"select_users\",\"conditiondata\":{\"userids\":[\"36\"]},\"name\":\"Kopie der Anmeldebest\\u00e4tigung\",\"actionname\":\"send_mail\",\"actiondata\":{\"subject\":\"a user has booked\",\"template\":\"<p>{firstnamerelated} {lastnamerelated} hast booked<\\/p>\",\"templateformat\":\"1\"},\"rulename\":\"rule_react_on_event\",\"ruledata\":{\"boevent\":\"\\\\local_taskflow\\\\event\\\\bookingoption_booked\",\"condition\":\"0\",\"aftercompletion\":0,\"cancelrules\":[]}}",
+    "eventname": "\\local_taskflow\\event\\bookingoption_booked",
+    "isactive": 1
+  }
+]

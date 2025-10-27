@@ -1,0 +1,74 @@
+{
+    "rulejson": {
+        "rule": {
+            "name": "test_rule",
+            "description": "test_rule_description",
+            "type": "taskflow",
+            "enabled": true,
+            "duedatetype": "fixeddate",
+            "fixeddate": 23233232222,
+            "duration": 23233232222,
+            "timemodified": 23233232222,
+            "timecreated": 23233232222,
+            "usermodified": 1,
+            "filter": [
+                {
+                    "filtertype": "user_profile_field",
+                    "userprofilefield": "unit_info",
+                    "key": "since",
+                    "operator": "smaller",
+                    "value": "32503680000"
+                }
+            ],
+            "actions": [
+                {
+                    "targets": [
+                        {
+                            "targetid": 2,
+                            "targettype": "competency",
+                            "targetname": "mytargetname2",
+                            "sortorder": 2,
+                            "actiontype": "propose",
+                            "completebeforenext": false,
+                            "duedate": {
+                                "fixeddate": null,
+                                "duration": 23234233223
+                            }
+                        },
+                        {
+                            "targetid": 2,
+                            "targettype": "moodlecourse",
+                            "targetname": "mytargetname2",
+                            "sortorder": 2,
+                            "actiontype": "enroll",
+                            "completebeforenext": false,
+                            "duedate": {
+                                "fixeddate": null,
+                                "duration": 23234233223
+                            }
+                        }
+                        ,
+                        {
+                            "targetid": "CHANGECOURSEID",
+                            "targettype": "moodlecourse",
+                            "targetname": "mytargetname2",
+                            "sortorder": 2,
+                            "actiontype": "enroll",
+                            "completebeforenext": false,
+                            "duedate": {
+                                "fixeddate": null,
+                                "duration": 23234233223
+                            }
+                        }
+                    ],
+                    "messages": [
+                        {
+                            "messagetype": "standard",
+                            "messageid": 1
+                        }
+                    ]
+                }
+            ]
+        }
+    }
+}

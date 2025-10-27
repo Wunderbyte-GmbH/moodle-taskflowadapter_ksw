@@ -1,0 +1,10 @@
+[
+  {
+    "id": 25,
+    "unitid": 142,
+    "rulename": "rule_daysbefore",
+    "rulejson": "{\"conditionname\":\"select_teacher_in_bo\",\"name\":\"vorank\\u00fcndigungb\",\"actionname\":\"send_mail\",\"actiondata\":{\"subject\":\"test\",\"template\":\"<p>Deine Veranstaltung {title} <br><br>Beginnt bald {datesandentities}<\\/p>\\r\\n<p><\\/p>\\r\\n<p>{bookingoptiondetaillink}<br><br>Ver\\u00e4nderter Text, noch malver\\u00e4nderter Text, ein weiteres Mal ver\\u00e4nderter Text<\\/p>\",\"templateformat\":\"1\"},\"rulename\":\"rule_daysbefore\",\"ruledata\":{\"days\":\"4\",\"datefield\":\"coursestarttime\"},\"useastemplate\":\"0\"}",
+    "eventname": null,
+    "isactive": 1
+  }
+]

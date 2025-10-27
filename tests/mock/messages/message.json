@@ -1,0 +1,10 @@
+{
+  "id": 1,
+  "class": "standard",
+  "message": "{\"heading\":\"Testing {unit_member}\",\"body\":{\"text\":\"Some important stuff {targets}\"},\"format\":1}",
+  "priority": 10,
+  "sending_settings": "{\"recipientrole\":[\"assignee\",\"supervisor\"],\"userid\":\"\",\"carboncopyrole\":[\"personaladmin\"],\"ccuserid\":\"\",\"senddirection\":\"after\",\"eventlist\":[],\"sendstart\":\"start\",\"senddays\":12}",
+  "usermodified": 0,
+  "timecreated": 23234233223,
+  "timemodified": 23234233223
+}

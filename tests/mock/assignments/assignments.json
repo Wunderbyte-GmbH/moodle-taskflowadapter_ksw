@@ -1,0 +1,112 @@
+[
+    {
+      "targets": [
+        {
+          "targetid": "2",
+          "targettype": "moodlecourse",
+          "targetname": "mytargetname2",
+          "sortorder": 2,
+          "actiontype": "enroll",
+          "completebeforenext": false,
+          "duedate": {
+            "fixeddate": null,
+            "duration": 23234233223
+          }
+        }
+      ],
+      "messages": [
+        {
+          "messagetype": "standard",
+          "messageid": 1
+        },
+        {
+          "messagetype": "standard",
+          "messageid": 2
+        }
+      ],
+      "userid": 3,
+      "ruleid": 688000,
+      "unitid": "259000",
+      "active": 1,
+      "assigneddate": 1744792975,
+      "usermodified": 0,
+      "timecreated": 1744792975,
+      "timemodified": 1744792975
+    },
+    {
+      "targets": [
+        {
+          "targetid": "2",
+          "targettype": "moodlecourse",
+          "targetname": "mytargetname2",
+          "sortorder": 2,
+          "actiontype": "enroll",
+          "completebeforenext": false,
+          "duedate": {
+            "fixeddate": null,
+            "duration": 23234233223
+          }
+        }
+      ],
+      "messages": [
+        {
+          "messagetype": "standard",
+          "messageid": 2
+        }
+      ],
+      "userid": 3,
+      "ruleid": 688000,
+      "unitid": "259000",
+      "active": 0,
+      "assigneddate": null,
+      "usermodified": 0,
+      "timecreated": 1744792975,
+      "timemodified": 1744792975
+    },
+    {
+      "targets": [
+        {
+          "targetid": 2,
+          "targettype": "moodlecourse",
+          "targetname": "mytargetname2",
+          "sortorder": 2,
+          "actiontype": "enroll",
+          "completebeforenext": false,
+          "duedate": {
+            "fixeddate": null,
+            "duration": 23234233223
+          }
+        },
+        {
+          "targetid": 3,
+          "targettype": "moodlecourse",
+          "targetname": "mytargetname2",
+          "sortorder": 2,
+          "actiontype": "enroll",
+          "completebeforenext": false,
+          "duedate": {
+            "fixeddate": null,
+            "duration": 23234233223
+          }
+        }
+      ],
+      "messages": [
+        {
+          "messagetype": "standard",
+          "messageid": 1
+        },
+        {
+          "messagetype": "standard",
+          "messageid": 2
+        }
+      ],
+      "userid": 3,
+      "ruleid": 688000,
+      "unitid": "259000",
+      "active": 1,
+      "assigneddate": null,
+      "usermodified": 0,
+      "timecreated": 1744792975,
+      "timemodified": 1744792975
+    }
+]

@@ -1,0 +1,33 @@
+{
+    "persons": [
+      {
+          "tissId": 556677,
+          "firstName": "David",
+          "middleName": null,
+          "lastName": "Drunter",
+          "eMailAddress": "david.drunter@tuwien.ac.at",
+          "orgUnit": ["E230-02"],
+          "mainOrgUnit": "E230-02",
+          "headOfOrgUnit": ["E230-02"],
+          "workingHours": 40,
+          "contractEnd": "9999-12-31",
+          "currentlyOnLongLeave": false,
+          "directSupervisor": 223344,
+          "targetGroup": [102]
+      }
+      ],
+    "targetGroups": [
+      {
+          "number": 102,
+          "displayNameDE": "beschäftigt über 6 Monate und 10 Stunden",
+          "displayNameEN": "employed for more than 6 months and 10 hours",
+          "descriptionDE": "über 6 Monate und 10 Stunden beschäftigte Mitarbeiter_innen",
+          "descriptionEN": "more than 6 months and 10 hours employed employees"
+      }
+    ],
+    "comment": [
+       {
+           "JSONInfo": "JSON mit allen MA zum 01.02.2025"
+       }
+    ]
+  }

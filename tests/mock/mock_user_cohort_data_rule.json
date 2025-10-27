@@ -1,0 +1,14 @@
+[
+    {
+        "id": 1,
+        "name": {
+            "firstname": "Alice",
+            "lastname": "Example"
+        },
+        "mail": "alice@example.com",
+        "ou": [
+            { "id": "1", "unit": "IT Department", "role": "member", "since": "1589241600", "parent":"Management"},
+            { "id": "2", "unit": "Management", "role": "member", "since": "1589241600"}
+        ]
+    }
+]

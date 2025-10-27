@@ -1,0 +1,42 @@
+[
+  {
+    "id": 1,
+    "class": "standard",
+    "message": "{\"heading\": \"Testing\", \"body\":{\"text\": \"Some important stuff <firstname> <lastname> <targets> <due_date> <status>\", \"format\":1}}",
+    "priority": 10,
+    "sending_settings": "{\"recipientrole\": \"assignee\", \"senddirection\": \"before\", \"sendstart\": \"end\", \"senddays\": \"0\"}",
+    "usermodified": 0,
+    "timecreated": 23234233223,
+    "timemodified": 23234233223
+  },
+  {
+    "id": 2,
+    "class": "standard",
+    "message": "{\"heading\": \"Testing\", \"body\":{\"text\": \"Some important stuff\", \"format\":1}}",
+    "priority": 20,
+    "sending_settings": "{\"recipientrole\": \"supervisor\", \"senddirection\": \"after\", \"sendstart\": \"start\", \"senddays\": \"0\"}",
+    "usermodified": 0,
+    "timecreated": 23234233223,
+    "timemodified": 23234233223
+  },
+  {
+    "id": 3,
+    "class": "standard",
+    "message": "{\"heading\": \"Testing first warning\", \"body\":{\"text\": \"Some important stuff\", \"format\":1}}",
+    "priority": 20,
+    "sending_settings": "{\"recipientrole\": \"assignee\", \"senddirection\": \"after\", \"sendstart\": \"end\", \"senddays\": \"1\"}",
+    "usermodified": 0,
+    "timecreated": 23234233223,
+    "timemodified": 23234233223
+  },
+  {
+    "id": 4,
+    "class": "standard",
+    "message": "{\"heading\": \"Testing second warning\", \"body\":{\"text\": \"Some important stuff\", \"format\":1}}",
+    "priority": 20,
+    "sending_settings": "{\"recipientrole\": \"assignee\", \"senddirection\": \"after\", \"sendstart\": \"end\", \"senddays\": \"2\"}",
+    "usermodified": 0,
+    "timecreated": 23234233223,
+    "timemodified": 23234233223
+  }
+]

@@ -1,0 +1,12 @@
+[
+  {
+    "id": 1,
+    "class": "onevent",
+    "message": "{\"heading\": \"Testing\", \"body\":{\"text\": \"Some important stuff <firstname> <lastname> <targets> <due_date> <status>\",\"format\":1}}",
+    "priority": 10,
+    "sending_settings": "{\"recipientrole\":[\"assignee\"], \"eventlist\":[\"0\"], \"senddirection\": \"after\", \"sendstart\": \"status_change\", \"senddays\": \"0\"}",
+    "usermodified": 0,
+    "timecreated": 23234233223,
+    "timemodified": 23234233223
+  }
+]
