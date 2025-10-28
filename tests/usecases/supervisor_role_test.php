@@ -50,7 +50,7 @@ final class supervisor_role_test extends advanced_testcase {
             'units',
             'externalid',
         ]);
-        $plugingenerator->set_config_values('tuines');
+        $plugingenerator->set_config_values('ksw');
         $plugingenerator->create_supervisorrole();
     }
 

@@ -53,7 +53,7 @@ final class change_email_test extends advanced_testcase {
             'units',
             'externalid',
         ]);
-        $plugingenerator->set_config_values('tuines');
+        $plugingenerator->set_config_values('ksw');
         $this->preventResetByRollback();
     }
 

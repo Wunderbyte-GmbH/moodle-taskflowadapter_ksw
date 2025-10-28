@@ -59,7 +59,7 @@ final class peter_prolonged_test extends advanced_testcase {
             'externalid',
             'longleave',
         ]);
-        $plugingenerator->set_config_values('tuines');
+        $plugingenerator->set_config_values('ksw');
     }
 
     /**

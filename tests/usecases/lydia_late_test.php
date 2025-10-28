@@ -57,7 +57,7 @@ final class lydia_late_test extends advanced_testcase {
             'units',
             'externalid',
         ]);
-        $plugingenerator->set_config_values('tuines');
+        $plugingenerator->set_config_values('ksw');
         $this->preventResetByRollback();
         get_log_manager(true);
     }

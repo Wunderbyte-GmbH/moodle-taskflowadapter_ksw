@@ -53,7 +53,7 @@ final class betty_best_partially_rule_update_test extends advanced_testcase {
             'supervisor',
             'units',
         ]);
-        $plugingenerator->set_config_values('tuines');
+        $plugingenerator->set_config_values('ksw');
         $this->create_custom_profile_field();
         $this->preventResetByRollback();
     }

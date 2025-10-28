@@ -55,8 +55,22 @@ final class betty_best_test extends advanced_testcase {
             'supervisor',
             'units',
         ]);
-        $plugingenerator->set_config_values('tuines');
         $this->create_custom_profile_field();
+                $plugingenerator->create_custom_profile_fields([
+            'supervisor',
+            'orgunit',
+            'externalid',
+            'contractend',
+            'exitdate',
+            'Org1',
+            'Org2',
+            'Org3',
+            'Org4',
+            'Org5',
+            'Org6',
+            'Org7',
+        ]);
+        $plugingenerator->set_config_values('ksw');
         $this->preventResetByRollback();
     }
 

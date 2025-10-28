@@ -49,27 +49,35 @@ final class garry_gone_test extends advanced_testcase {
         time_mock::set_mock_time(strtotime('now'));
         $this->resetAfterTest(true);
         \local_taskflow\local\units\unit_relations::reset_instances();
-        $this->externaldata = file_get_contents(__DIR__ . '/external_json/garry_gone.json');
+        $this->externaldata = file_get_contents(__DIR__ . '/external_json/garry_gone_ksw.json');
         $date = new DateTime();
         $date->modify('+1 year');
-        $formatted = $date->format('Y-m-d');
+        $formatted = $date->getTimestamp();
         $jsondecoded = json_decode($this->externaldata);
         $endinfo = external_api_base::return_jsonkey_for_functionname(taskflowadapter::TRANSLATOR_USER_CONTRACTEND);
-        $jsondecoded->persons[1]->{$endinfo} = $formatted;
+        $jsondecoded[1]->{$endinfo} = $formatted;
         $this->externaldata = json_encode($jsondecoded);
         singleton_service::destroy_instance();
         rules::reset_instances();
         $plugingenerator = self::getDataGenerator()->get_plugin_generator('local_taskflow');
-
         $plugingenerator->create_custom_profile_fields([
             'supervisor',
-            'units',
+            'orgunit',
             'externalid',
             'contractend',
+            'exitdate',
+            'Org1',
+            'Org2',
+            'Org3',
+            'Org4',
+            'Org5',
+            'Org6',
+            'Org7',
         ]);
-        $plugingenerator->set_config_values('tuines');
+        $plugingenerator->set_config_values('ksw');
         $this->preventResetByRollback();
     }
+
 
     /**
      * Tear down the test environment.

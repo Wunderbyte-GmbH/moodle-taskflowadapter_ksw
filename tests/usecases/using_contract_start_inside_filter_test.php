@@ -60,7 +60,7 @@ final class using_contract_start_inside_filter_test extends advanced_testcase {
             'contractstart',
         ]);
 
-        $plugingenerator->set_config_values('tuines');
+        $plugingenerator->set_config_values('ksw');
         set_config("tissid_info", 'tissid_info', 'taskflowadapter_tuines');
     }
 
