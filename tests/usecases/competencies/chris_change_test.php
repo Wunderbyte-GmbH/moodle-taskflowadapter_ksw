@@ -45,16 +45,26 @@ final class chris_change_test extends advanced_testcase {
         time_mock::set_mock_time(strtotime('now'));
         $this->resetAfterTest(true);
         \local_taskflow\local\units\unit_relations::reset_instances();
-        $this->externaldata = file_get_contents(__DIR__ . '/external_json/chris_change.json');
+        $this->externaldata = file_get_contents(__DIR__ . '/external_json/chris_change_ksw.json');
         $this->create_custom_profile_field();
         $plugingenerator = self::getDataGenerator()->get_plugin_generator('local_taskflow');
 
         $plugingenerator->create_custom_profile_fields([
             'supervisor',
-            'units',
+            'orgunit',
             'externalid',
+            'contractend',
+            'exitdate',
+            'Org1',
+            'Org2',
+            'Org3',
+            'Org4',
+            'Org5',
+            'Org6',
+            'Org7',
         ]);
         $plugingenerator->set_config_values('ksw');
+        $this->preventResetByRollback();
     }
 
     /**
@@ -159,15 +169,6 @@ final class chris_change_test extends advanced_testcase {
                         "timemodified" => 23233232222,
                         "timecreated" => 23233232222,
                         "usermodified" => 1,
-                        "filter" => [
-                            [
-                                "filtertype" => "user_profile_field",
-                                "userprofilefield" => "supervisor",
-                                "operator" => "not_equals",
-                                "value" => "124",
-                                "key" => "role",
-                            ],
-                        ],
                         "actions" => [
                             [
                                 "targets" => [
@@ -229,15 +230,6 @@ final class chris_change_test extends advanced_testcase {
                         "timemodified" => 23233232222,
                         "timecreated" => 23233232222,
                         "usermodified" => 1,
-                        "filter" => [
-                            [
-                                "filtertype" => "user_profile_field",
-                                "userprofilefield" => "supervisor",
-                                "operator" => "not_equals",
-                                "value" => "124566775",
-                                "key" => "role",
-                            ],
-                        ],
                         "actions" => [
                             [
                                 "targets" => [
@@ -312,6 +304,7 @@ final class chris_change_test extends advanced_testcase {
             ],
         ]);
         $event->trigger();
+        time_mock::set_mock_time(strtotime('+ 5 seconds', time()));
         $plugingenerator->runtaskswithintime($cronlock, $lock, time());
         $userchrisid = $DB->get_record('user', ['firstname' => 'Chris'])->id;
         $userbertaid = $DB->get_record('user', ['firstname' => 'Berta'])->id;
@@ -348,7 +341,9 @@ final class chris_change_test extends advanced_testcase {
         });
 
         time_mock::set_mock_time(strtotime('+ 30 days', time()));
-        $externaldata->persons[1]->targetGroup = [102];
+        $temp = (array)$externaldata;
+        $temp[1]->Organisation = $temp[1]->Organisation . '\\' . $secondcohort->name;
+        $externaldata = (object)$temp;
         $apidatamanager->process_incoming_data();
         $activecohortpostchange = $DB->get_records('local_taskflow_unit_members', ['active' => 1, 'userid' => $userchrisid]);
         $inactiveassignmentspostchange = $DB->get_records('local_taskflow_assignment', ['userid' => $userchrisid, 'active' => 0]);
@@ -374,30 +369,16 @@ final class chris_change_test extends advanced_testcase {
         $messagesink = array_filter($sink->get_messages(), function ($message) {
             return strpos($message->subject, 'Taskflow -') === 0;
         });
-        $this->assertCount(2, $sentmessages);
+        $this->assertCount(1, $sentmessages);
         $user1msg = array_filter($sentmessages, function ($sentmessage) use ($userchrisid) {
             return $sentmessage->userid === $userchrisid;
         });
-        $user2msg = array_filter($sentmessages, function ($sentmessage) use ($userbertaid) {
-            return $sentmessage->userid === $userbertaid;
-        });
         $this->assertCount(1, $user1msg);
-        $this->assertCount(1, $user2msg);
-        $this->assertCount(3, $messagesink);
+        $this->assertCount(2, $messagesink);
         $chrismsgsink = array_filter($messagesink, function ($msg) use ($userchrisemail) {
             return $msg->to === $userchrisemail;
         });
         $this->assertCount(2, $chrismsgsink);
-        $bertamsgsink = array_filter($messagesink, function ($msg) use ($userbertaemail) {
-            return $msg->to === $userbertaemail;
-        });
-        $this->assertCount(2, $chrismsgsink);
-        foreach ($bertamsgsink as $msg) {
-            $this->assertSame(
-                $dbmsg[3]->subject,
-                $msg->subject,
-            );
-        }
         foreach ($chrismsgsink as $msg) {
             $this->assertSame(
                 $dbmsg[3]->subject,
