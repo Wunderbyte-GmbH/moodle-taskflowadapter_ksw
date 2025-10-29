@@ -314,7 +314,7 @@ final class betty_best_partially_rule_update_test extends advanced_testcase {
             ],
         ]);
         $event->trigger();
-        $this->runAdhocTasks();
+        $plugingeneratortf->runtaskswithintime($cronlock, $lock, time());
         // Check taskflow_history dont trigger status update.
         $countafter = count($assignmenthistory = $DB->get_records('local_taskflow_history', ['userid' => $user2->id]));
         $this->assertSame($countbefore, $countafter);

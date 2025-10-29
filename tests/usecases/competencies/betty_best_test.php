@@ -18,6 +18,7 @@ namespace taskflowadapter_ksw\usecases\competencies;
 
 use advanced_testcase;
 use core_user;
+use local_taskflow\local\external_adapter\external_api_base;
 use local_taskflow\local\rules\rules;
 use tool_mocktesttime\time_mock;
 use context_system;
@@ -83,6 +84,8 @@ final class betty_best_test extends advanced_testcase {
         parent::tearDown();
         // Mandatory clean-up.
         singleton_service::destroy_instance();
+        external_api_base::teardown();
+        \local_taskflow\local\units\unit_relations::reset_instances();
     }
 
     /**

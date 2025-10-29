@@ -21,6 +21,7 @@ use local_taskflow\event\rule_created_updated;
 use local_taskflow\local\assignment_status\assignment_status_facade;
 use local_taskflow\local\external_adapter\external_api_base;
 use local_taskflow\local\external_adapter\external_api_repository;
+use local_taskflow\local\rules\rules;
 use tool_mocktesttime\time_mock;
 
 /**
@@ -44,7 +45,9 @@ final class chris_change_test extends advanced_testcase {
         time_mock::init();
         time_mock::set_mock_time(strtotime('now'));
         $this->resetAfterTest(true);
+        rules::reset_instances();
         \local_taskflow\local\units\unit_relations::reset_instances();
+        external_api_base::teardown();
         $this->externaldata = file_get_contents(__DIR__ . '/external_json/chris_change_ksw.json');
         $this->create_custom_profile_field();
         $plugingenerator = self::getDataGenerator()->get_plugin_generator('local_taskflow');
@@ -304,7 +307,6 @@ final class chris_change_test extends advanced_testcase {
             ],
         ]);
         $event->trigger();
-        time_mock::set_mock_time(strtotime('+ 5 seconds', time()));
         $plugingenerator->runtaskswithintime($cronlock, $lock, time());
         $userchrisid = $DB->get_record('user', ['firstname' => 'Chris'])->id;
         $userbertaid = $DB->get_record('user', ['firstname' => 'Berta'])->id;
