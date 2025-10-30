@@ -48,14 +48,23 @@ final class Change_rule_test extends advanced_testcase {
         time_mock::set_mock_time(strtotime('now'));
         $this->resetAfterTest(true);
         \local_taskflow\local\units\unit_relations::reset_instances();
-        $this->externaldata = file_get_contents(__DIR__ . '/external_json/chris_change.json');
+        $this->externaldata = file_get_contents(__DIR__ . '/external_json/chris_change_ksw.json');
         $this->create_custom_profile_field();
         $plugingenerator = self::getDataGenerator()->get_plugin_generator('local_taskflow');
 
-        $plugingenerator->create_custom_profile_fields([
+            $plugingenerator->create_custom_profile_fields([
             'supervisor',
-            'units',
+            'orgunit',
             'externalid',
+            'contractend',
+            'exitdate',
+            'Org1',
+            'Org2',
+            'Org3',
+            'Org4',
+            'Org5',
+            'Org6',
+            'Org7',
         ]);
         $plugingenerator->set_config_values('ksw');
         $this->preventResetByRollback();

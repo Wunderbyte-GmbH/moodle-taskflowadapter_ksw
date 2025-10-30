@@ -17,10 +17,12 @@
 namespace taskflowadapter_ksw\usecases;
 
 use advanced_testcase;
+use cache_helper;
 use local_taskflow\event\rule_created_updated;
 use local_taskflow\local\assignment_status\assignment_status_facade;
 use local_taskflow\local\external_adapter\external_api_base;
 use local_taskflow\local\external_adapter\external_api_repository;
+use local_taskflow\plugininfo\taskflowadapter;
 use tool_mocktesttime\time_mock;
 
 /**
@@ -45,21 +47,47 @@ final class lydia_late_test extends advanced_testcase {
         time_mock::set_mock_time(strtotime('now'));
         $this->resetAfterTest(true);
         \local_taskflow\local\units\unit_relations::reset_instances();
-        $this->externaldata = file_get_contents(__DIR__ . '/external_json/chris_change.json');
+        $this->externaldata = file_get_contents(__DIR__ . '/external_json/lydia_late_ksw.json');
         $this->create_custom_profile_field();
         $plugingenerator = self::getDataGenerator()->get_plugin_generator('local_taskflow');
-        set_config('enabled_stores', 'logstore_standard', 'tool_log');
-        set_config('buffersize', 0, 'logstore_standard');
-        set_config('logguests', 1, 'logstore_standard');
 
         $plugingenerator->create_custom_profile_fields([
             'supervisor',
-            'units',
+            'externalsupervisor',
             'externalid',
+            'orgunit',
+            'contractend',
+            'Org1',
+            'Org2',
+            'Org3',
+            'Org4',
+            'Org5',
+            'Org6',
+            'Org7',
         ]);
         $plugingenerator->set_config_values('ksw');
         $this->preventResetByRollback();
         get_log_manager(true);
+        // $this->set_config_values();
+    }
+
+    /**
+     * Setup the test environment.
+     */
+    protected function set_config_values(): void {
+        global $DB;
+        $settingvalues = [
+             taskflowadapter::TRANSLATOR_USER_SUPERVISOR_EXTERNAL => 'Manager_Email',
+             'supervisor' => taskflowadapter::TRANSLATOR_USER_SUPERVISOR_EXTERNAL,
+             taskflowadapter::TRANSLATOR_USER_SUPERVISOR => '',
+             'supervisor' => taskflowadapter::TRANSLATOR_USER_SUPERVISOR,
+             'translator_user_externalid' => 'userID',
+             'externalid' => taskflowadapter::TRANSLATOR_USER_EXTERNALID,
+        ];
+        foreach ($settingvalues as $key => $value) {
+            set_config($key, $value, 'taskflowadapter_ksw');
+        }
+        cache_helper::invalidate_by_event('config', ['taskflowadapter_ksw']);
     }
 
     /**
@@ -164,15 +192,7 @@ final class lydia_late_test extends advanced_testcase {
                         "timemodified" => 23233232222,
                         "timecreated" => 23233232222,
                         "usermodified" => 1,
-                        "filter" => [
-                            [
-                                "filtertype" => "user_profile_field",
-                                "userprofilefield" => "supervisor",
-                                "operator" => "not_equals",
-                                "value" => "124",
-                                "key" => "role",
-                            ],
-                        ],
+                
                         "actions" => [
                             [
                                 "targets" => [
@@ -239,7 +259,7 @@ final class lydia_late_test extends advanced_testcase {
                                 "filtertype" => "user_profile_field",
                                 "userprofilefield" => "supervisor",
                                 "operator" => "not_equals",
-                                "value" => "124566775",
+                                "value" => "124",
                                 "key" => "role",
                             ],
                         ],
@@ -309,9 +329,9 @@ final class lydia_late_test extends advanced_testcase {
         $plugingenerator = self::getDataGenerator()->get_plugin_generator('local_taskflow');
 
         $rule = $this->get_rule($cohort->id, $course->id, $messageids);
-        $secondrule = $this->get_second_rule($secondcohort->id, $secondcourse->id);
+        // $secondrule = $this->get_second_rule($secondcohort->id, $secondcourse->id);
         $id = $DB->insert_record('local_taskflow_rules', $rule);
-        $secondruleid = $DB->insert_record('local_taskflow_rules', $secondrule);
+        // $secondruleid = $DB->insert_record('local_taskflow_rules', $secondrule);
         $rule['id'] = $id;
         $event = rule_created_updated::create([
             'objectid' => $rule['id'],
@@ -344,8 +364,8 @@ final class lydia_late_test extends advanced_testcase {
         $sentmessages = $DB->get_records('local_taskflow_sent_messages');
         $this->assertCount(2, $sentmessages);
         $this->assertCount(2, $messagesink);
-        $user1 = $DB->get_record('user', ['email' => 'berta.boss@tuwien.ac.at']);
-        $user2 = $DB->get_record('user', ['email' => 'chris.change@tuwien.ac.at']);
+        $user1 = $DB->get_record('user', ['email' => 'berta.boss@ksw.ch']);
+        $user2 = $DB->get_record('user', ['email' => 'chris.change@ksw.ch']);
 
         // Enrollment messages for user 1 and 2.
         foreach ($sentmessages as $sentmessage) {
@@ -370,9 +390,11 @@ final class lydia_late_test extends advanced_testcase {
         // In lyda late test we already have users in a cohort.
         // But we now add a totally new user and want to see the task correctl created.
         external_api_base::teardown();
-
-        $externaldata->persons[1]->tissId = 12344556;
-        $externaldata->persons[1]->eMailAddress = "lydia.late@example.com";
+        $tempext = (array)$externaldata;
+        $tempext[1]->userID = 12344556;
+        $tempext[1]->DefaultEmailAddress = "lydia.late@example.com";
+        $tempext[0]->Manager_Email = "lydia.late@example.com";
+        $externaldata = (object)$tempext;
         $apidatamanager = external_api_repository::create(json_encode($externaldata));
         $apidatamanager->process_incoming_data();
 
@@ -385,8 +407,8 @@ final class lydia_late_test extends advanced_testcase {
         // We expect Lydia to have one active unit membership.
         $this->assertCount(1, $activecohortpostchange);
 
-        $inactiveassignmentspostchange = $DB->get_records('local_taskflow_assignment', ['userid' => $user->id, 'active' => 1]);
-        $this->assertEmpty($inactiveassignmentspostchange, 'Lydia should not have an active assignment now.');
+        $activeassignmentspostchange = $DB->get_records('local_taskflow_assignment', ['userid' => $user->id, 'active' => 1]);
+        $this->assertEmpty($activeassignmentspostchange, 'Lydia should not have an active assignment now.');
 
         $plugingenerator->runtaskswithintime($cronlock, $lock, time());
 

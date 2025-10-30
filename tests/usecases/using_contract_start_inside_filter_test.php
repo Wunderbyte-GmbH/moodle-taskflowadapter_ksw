@@ -46,18 +46,24 @@ final class using_contract_start_inside_filter_test extends advanced_testcase {
         time_mock::set_mock_time(strtotime('now'));
         $this->resetAfterTest(true);
         \local_taskflow\local\units\unit_relations::reset_instances();
-        $this->externaldata = file_get_contents(__DIR__ . '/../mock/anonymized_data/user_data_ines_contract_start.json');
+        $this->externaldata = file_get_contents(__DIR__ . '/../mock/anonymized_data/user_data_ksw_contract_start.json');
 
         $plugingenerator = self::getDataGenerator()->get_plugin_generator('local_taskflow');
-        $profilefields = $plugingenerator->create_custom_profile_fields([
-            'supervisor',
+        $profilefields =
+         $plugingenerator->create_custom_profile_fields([
+           'supervisor',
+            'externalsupervisor',
             'externalid',
-            'units',
-            'organisation',
-            'targetgroup',
-            'longleave',
+            'orgunit',
             'contractend',
             'contractstart',
+            'Org1',
+            'Org2',
+            'Org3',
+            'Org4',
+            'Org5',
+            'Org6',
+            'Org7',
         ]);
 
         $plugingenerator->set_config_values('ksw');
@@ -139,7 +145,7 @@ final class using_contract_start_inside_filter_test extends advanced_testcase {
         $this->assertNotEmpty($externaldata, 'External user data should not be empty.');
         $apidatamanager->process_incoming_data();
         $cohorts = $DB->get_records('cohort');
-        $this->assertEquals(1, count($cohorts));
+        $this->assertCount(1, $cohorts);
         $cohort = array_shift($cohorts);
         $course = $this->set_db_course();
         $rule = $this->get_rule($cohort->id, [$course->id]);

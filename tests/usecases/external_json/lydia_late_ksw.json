@@ -27,6 +27,7 @@
       "KisimRolle5": "",
       "KisimRolle6": "",
       "Org1": "KSW",
+      "Org2": "Leitung",
       "InsulintherapiekursPflicht": 0,
       "ReanimationskursPflicht": 0,
       "SpitalhygienekursPflicht": 0,
@@ -34,11 +35,11 @@
       "IsExternal": 0
     },
     {
-      "DefaultEmailAddress": "lucy_lazye@ksw.ch",
+      "DefaultEmailAddress": "chris.change@ksw.ch",
       "userID": 200002,
       "PersonnelNumber": 200002,
-      "Firstname": "Lucy",
-      "LastName": "Lazy",
+      "Firstname": "Chris",
+      "LastName": "Change",
       "Phone": "+41 52 266 11 02",
       "PersonalTitle": "Prof. Dr.",
       "Department": "Klinikleitung",

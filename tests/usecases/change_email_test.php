@@ -44,14 +44,23 @@ final class change_email_test extends advanced_testcase {
         parent::setUp();
         $this->resetAfterTest(true);
         \local_taskflow\local\units\unit_relations::reset_instances();
-        $this->externaldata = file_get_contents(__DIR__ . '/external_json/garry_gone.json');
+        $this->externaldata = file_get_contents(__DIR__ . '/external_json/garry_gone_ksw.json');
         $this->create_custom_profile_field();
         $plugingenerator = self::getDataGenerator()->get_plugin_generator('local_taskflow');
 
         $plugingenerator->create_custom_profile_fields([
             'supervisor',
-            'units',
+            'orgunit',
             'externalid',
+            'contractend',
+            'exitdate',
+            'Org1',
+            'Org2',
+            'Org3',
+            'Org4',
+            'Org5',
+            'Org6',
+            'Org7',
         ]);
         $plugingenerator->set_config_values('ksw');
         $this->preventResetByRollback();
@@ -222,13 +231,9 @@ final class change_email_test extends advanced_testcase {
      */
     public function test_change_email(): void {
         global $DB;
-        $date = new DateTime();
-        $date->modify('+1 year');
-        $formatted = $date->format('Y-m-d');
 
         $apidatamanager = external_api_repository::create($this->externaldata);
         $externaldata = $apidatamanager->get_external_data();
-        $externaldata->persons[1]->contractEnd = $formatted;
         $this->assertNotEmpty($externaldata, 'External user data should not be empty.');
         $apidatamanager->process_incoming_data();
 
@@ -251,7 +256,9 @@ final class change_email_test extends advanced_testcase {
         $event->trigger();
         $this->runAdhocTasks();
         $email = external_api_base::return_jsonkey_for_functionname(taskflowadapter::TRANSLATOR_USER_EMAIL);
-        $externaldata->persons[1]->$email = 'newemail@example.com';
+        $extarray = (array)$externaldata;
+        $extarray[0]->$email = 'newemail@example.com';
+        $externaldata = (object)$extarray;
         $this->assertNotEmpty($externaldata, 'External user data should not be empty.');
         $apidatamanager->process_incoming_data();
         $user = $DB->get_record('user', ['email' => 'newemail@example.com']);
