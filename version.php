@@ -24,7 +24,7 @@
  */
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2025103000;
+$plugin->version   = 2025103100;
 $plugin->requires  = 2024042200; // Requires this Moodle version. Current: Moodle 4.4.
 $plugin->component = 'taskflowadapter_ksw';
 $plugin->supported = [401, 405];
