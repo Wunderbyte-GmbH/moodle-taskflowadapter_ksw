@@ -22,7 +22,9 @@ use local_taskflow\event\rule_created_updated;
 use local_taskflow\local\assignment_status\assignment_status_facade;
 use local_taskflow\local\external_adapter\external_api_base;
 use local_taskflow\local\external_adapter\external_api_repository;
+use local_taskflow\local\rules\rules;
 use local_taskflow\plugininfo\taskflowadapter;
+use mod_booking\singleton_service;
 use tool_mocktesttime\time_mock;
 
 /**
@@ -46,6 +48,8 @@ final class lydia_late_test extends advanced_testcase {
         time_mock::init();
         time_mock::set_mock_time(strtotime('now'));
         $this->resetAfterTest(true);
+        singleton_service::destroy_instance();
+        rules::reset_instances();
         $this->preventResetByRollback();
         \local_taskflow\local\units\unit_relations::reset_instances();
         $this->externaldata = file_get_contents(__DIR__ . '/external_json/lydia_late_ksw.json');
@@ -173,7 +177,15 @@ final class lydia_late_test extends advanced_testcase {
                         "timemodified" => 23233232222,
                         "timecreated" => 23233232222,
                         "usermodified" => 1,
-
+                        "filter" => [
+                            [
+                                "filtertype" => "user_profile_field",
+                                "userprofilefield" => "supervisor",
+                                "operator" => "not_equals",
+                                "value" => "124",
+                                "key" => "role",
+                            ],
+                        ],
                         "actions" => [
                             [
                                 "targets" => [
@@ -325,6 +337,10 @@ final class lydia_late_test extends advanced_testcase {
         $event->trigger();
         $plugingenerator->runtaskswithintime($cronlock, $lock, time());
         $userchrisid = $DB->get_record('user', ['firstname' => 'Chris'])->id;
+        $userchrisid = $DB->get_record('user', ['firstname' => 'Berta'])->id;
+        $activecohortprechange = $DB->get_records('local_taskflow_unit_members', ['active' => 1, 'userid' => $userchrisid]);
+        $activeassignmentsprechange = $DB->get_records('local_taskflow_assignment', ['userid' => $userchrisid, 'active' => 1]);
+
         $activecohortprechange = $DB->get_records('local_taskflow_unit_members', ['active' => 1, 'userid' => $userchrisid]);
         $activeassignmentsprechange = $DB->get_records('local_taskflow_assignment', ['userid' => $userchrisid, 'active' => 1]);
         // Chris one assignment of rule one.
@@ -379,53 +395,46 @@ final class lydia_late_test extends advanced_testcase {
         $externaldata = (object)$tempext;
         $apidatamanager = external_api_repository::create(json_encode($externaldata));
         $apidatamanager->process_incoming_data();
-
+        $user1 = $DB->get_record('user', ['email' => 'berta.boss@ksw.ch']);
+        $user2 = $DB->get_record('user', ['email' => 'chris.change@ksw.ch']);
         $user3 = $DB->get_record('user', ['email' => 'lydia.late@example.com']);
+        $this->assertNotEmpty($user3, 'User Lydia Late should be created.');
 
-        $user = $DB->get_record('user', ['email' => 'lydia.late@example.com']);
-        $this->assertNotEmpty($user, 'User Lydia Late should be created.');
-
-        $activecohortpostchange = $DB->get_records('local_taskflow_unit_members', ['active' => 1, 'userid' => $user->id]);
+        $activecohortpostchange = $DB->get_records('local_taskflow_unit_members', ['active' => 1, 'userid' => $user3->id]);
         // We expect Lydia to have one active unit membership.
         $this->assertCount(1, $activecohortpostchange);
 
-        $activeassignmentspostchange = $DB->get_records('local_taskflow_assignment', ['userid' => $user->id, 'active' => 1]);
-        $this->assertEmpty($activeassignmentspostchange, 'Lydia should not have an active assignment now.');
-
-        $plugingenerator->runtaskswithintime($cronlock, $lock, time());
-
-        $inactiveassignmentspostchange = $DB->get_records('local_taskflow_assignment', ['userid' => $user->id, 'active' => 1]);
+        $inactiveassignmentspostchange = $DB->get_records('local_taskflow_assignment', ['userid' => $user3->id, 'active' => 1]);
         $this->assertNotEmpty($inactiveassignmentspostchange, 'Lydia should have an active assignment now.');
 
-        $inactiveassignmentspostchange = $DB->get_records('local_taskflow_assignment', ['userid' => $user->id, 'active' => 0]);
+        $inactiveassignmentspostchange = $DB->get_records('local_taskflow_assignment', ['userid' => $user3->id, 'active' => 0]);
         $this->assertEmpty($inactiveassignmentspostchange, 'Lydia should not have an inactive assignment now.');
 
-        $inactiveassignmentspostchange = $DB->get_records('local_taskflow_assignment', ['userid' => $userchrisid, 'active' => 0]);
-        // Rule 2 assigment active for Chris.
+        $inactiveassignmentspostchange = $DB->get_records('local_taskflow_assignment', ['userid' => $user2->id, 'active' => 1]);
+        // In ksw. user2 keeps existing in system thus his assignment persists.
         $this->assertCount(1, $inactiveassignmentspostchange);
         if (count($inactiveassignmentspostchange) >= 1) {
             $assignpost = array_pop($inactiveassignmentspostchange);
-            $this->assertSame($assignpost->status, '16');
+            $this->assertSame($assignpost->status, '0');
         }
 
-
-        // U1 warning 1.
+        // U1 + original u2  warning 1.
         $plugingenerator->runtaskswithintime($cronlock, $lock, time());
         $sentmessages = $DB->get_records('local_taskflow_sent_messages');
         $messagesink = $sink->get_messages();
-        $this->assertCount(2, $sentmessages);
-        $this->assertCount(3, $messagesink);
-        $sentmessages = array_slice($sentmessages, -1);
-        $messagesink = array_slice($messagesink, -1);
+        $this->assertCount(4, $sentmessages);
+        $this->assertCount(4, $messagesink);
+        $sentmessages = array_slice($sentmessages, -2);
+        $messagesink = array_slice($messagesink, -2);
         foreach ($sentmessages as $sentmessage) {
             $this->assertSame((int)$sentmessage->messageid, $messageids[0]->messageid);
             $this->assertTrue(
-                $sentmessage->userid === $user1->id
+                $sentmessage->userid === $user1->id || $sentmessage->userid === $user2->id
             );
         }
         foreach ($messagesink as $msg) {
             $this->assertTrue(
-                $msg->to === $user1->email
+                $msg->to === $user1->email || $msg->to === $user2->email
             );
             $this->assertSame(
                 $dbmsg[0]->subject,
@@ -438,8 +447,8 @@ final class lydia_late_test extends advanced_testcase {
         $plugingenerator->runtaskswithintime($cronlock, $lock, time());
         $sentmessages = $DB->get_records('local_taskflow_sent_messages');
         $messagesink = $sink->get_messages();
-        $this->assertCount(3, $sentmessages);
-        $this->assertCount(4, $messagesink);
+        $this->assertCount(5, $sentmessages);
+        $this->assertCount(5, $messagesink);
         $sentmessages = array_slice($sentmessages, -1);
         $messagesink = array_slice($messagesink, -1);
         foreach ($sentmessages as $sentmessage) {
@@ -458,24 +467,24 @@ final class lydia_late_test extends advanced_testcase {
             );
         }
 
-        // U1 warning 2.
+        // U1 + original u2 warning 2.
         time_mock::set_mock_time(strtotime('+ 5 days', time()));
         $plugingenerator->runtaskswithintime($cronlock, $lock, time());
         $sentmessages = $DB->get_records('local_taskflow_sent_messages');
         $messagesink = $sink->get_messages();
-        $this->assertCount(4, $sentmessages);
-        $this->assertCount(5, $messagesink);
+        $this->assertCount(7, $sentmessages);
+        $this->assertCount(7, $messagesink);
         $sentmessages = array_slice($sentmessages, -1);
         $messagesink = array_slice($messagesink, -1);
         foreach ($sentmessages as $sentmessage) {
             $this->assertSame((int)$sentmessage->messageid, $messageids[1]->messageid);
             $this->assertTrue(
-                $sentmessage->userid === $user1->id
+                $sentmessage->userid === $user1->id || $sentmessage->userid === $user2->id
             );
         }
         foreach ($messagesink as $msg) {
             $this->assertTrue(
-                $msg->to === $user1->email
+                $msg->to === $user1->email || $msg->to === $user2->email
             );
             $this->assertSame(
                 $dbmsg[1]->subject,
@@ -484,24 +493,24 @@ final class lydia_late_test extends advanced_testcase {
         }
 
 
-        // U1 overdue.
+        // U1 + original u2 overdue.
         time_mock::set_mock_time(strtotime('+ 5 days', time()));
         $plugingenerator->runtaskswithintime($cronlock, $lock, time());
         $sentmessages = $DB->get_records('local_taskflow_sent_messages');
         $messagesink = $sink->get_messages();
-        $this->assertCount(5, $sentmessages);
-        $this->assertCount(6, $messagesink);
+        $this->assertCount(9, $sentmessages);
+        $this->assertCount(9, $messagesink);
         $sentmessages = array_slice($sentmessages, -1);
         $messagesink = array_slice($messagesink, -1);
         foreach ($sentmessages as $sentmessage) {
             $this->assertSame((int)$sentmessage->messageid, $messageids[2]->messageid);
             $this->assertTrue(
-                $sentmessage->userid === $user1->id
+                $sentmessage->userid === $user1->id || $sentmessage->userid === $user2->id
             );
         }
         foreach ($messagesink as $msg) {
             $this->assertTrue(
-                $msg->to === $user1->email
+                $msg->to === $user1->email || $msg->to === $user2->email
             );
             $this->assertSame(
                 $dbmsg[2]->subject,
@@ -514,8 +523,8 @@ final class lydia_late_test extends advanced_testcase {
         $plugingenerator->runtaskswithintime($cronlock, $lock, time());
         $sentmessages = $DB->get_records('local_taskflow_sent_messages');
         $messagesink = $sink->get_messages();
-        $this->assertCount(6, $sentmessages);
-        $this->assertCount(7, $messagesink);
+        $this->assertCount(10, $sentmessages);
+        $this->assertCount(10, $messagesink);
         $sentmessages = array_slice($sentmessages, -1);
         $messagesink = array_slice($messagesink, -1);
         foreach ($sentmessages as $sentmessage) {
@@ -540,8 +549,8 @@ final class lydia_late_test extends advanced_testcase {
         $plugingenerator->runtaskswithintime($cronlock, $lock, time());
         $sentmessages = $DB->get_records('local_taskflow_sent_messages');
         $messagesink = $sink->get_messages();
-        $this->assertCount(7, $sentmessages);
-        $this->assertCount(8, $messagesink);
+        $this->assertCount(11, $sentmessages);
+        $this->assertCount(11, $messagesink);
         $sentmessages = array_slice($sentmessages, -1);
         $messagesink = array_slice($messagesink, -1);
         foreach ($sentmessages as $sentmessage) {
@@ -565,8 +574,8 @@ final class lydia_late_test extends advanced_testcase {
         $plugingenerator->runtaskswithintime($cronlock, $lock, time());
         $sentmessages = $DB->get_records('local_taskflow_sent_messages');
         $messagesink = $sink->get_messages();
-        $this->assertCount(8, $sentmessages);
-        $this->assertCount(9, $messagesink);
+        $this->assertCount(12, $sentmessages);
+        $this->assertCount(12, $messagesink);
         $sentmessages = array_slice($sentmessages, -1);
         $messagesink = array_slice($messagesink, -1);
         foreach ($sentmessages as $sentmessage) {

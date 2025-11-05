@@ -42,15 +42,17 @@ final class supervisor_role_test extends advanced_testcase {
         $this->resetAfterTest(true);
         \local_taskflow\local\units\unit_relations::reset_instances();
         $this->externaldata = file_get_contents(__DIR__ . '/external_json/garry_gone_ksw.json');
+        $this->preventResetByRollback();
         $this->create_custom_profile_field();
         $plugingenerator = self::getDataGenerator()->get_plugin_generator('local_taskflow');
 
         $plugingenerator->create_custom_profile_fields([
             'supervisor',
-            'orgunit',
+            'supervisor_external',
             'externalid',
+            'orgunit',
             'contractend',
-            'exitdate',
+            'contractstart',
             'Org1',
             'Org2',
             'Org3',

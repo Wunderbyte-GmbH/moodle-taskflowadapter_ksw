@@ -17,6 +17,8 @@
 namespace taskflowadapter_ksw\usecases;
 
 use advanced_testcase;
+use local_taskflow\local\rules\rules;
+use mod_booking\singleton_service;
 use tool_mocktesttime\time_mock;
 use completion_completion;
 use local_taskflow\event\rule_created_updated;
@@ -48,6 +50,8 @@ final class paul_planned_mock_completed_test extends advanced_testcase {
         time_mock::init();
         time_mock::set_mock_time(strtotime('now'));
         $this->resetAfterTest(true);
+        singleton_service::destroy_instance();
+        rules::reset_instances();
         \local_taskflow\local\units\unit_relations::reset_instances();
         $this->externaldata = file_get_contents(__DIR__ . '/external_json/chris_change_ksw.json');
         $this->create_custom_profile_field();

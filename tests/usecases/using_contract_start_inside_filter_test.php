@@ -50,7 +50,7 @@ final class using_contract_start_inside_filter_test extends advanced_testcase {
 
         $plugingenerator = self::getDataGenerator()->get_plugin_generator('local_taskflow');
         $profilefields =
-         $plugingenerator->create_custom_profile_fields([
+        $plugingenerator->create_custom_profile_fields([
            'supervisor',
             'externalsupervisor',
             'externalid',
@@ -143,6 +143,7 @@ final class using_contract_start_inside_filter_test extends advanced_testcase {
         $apidatamanager = external_api_repository::create($this->externaldata);
         $externaldata = $apidatamanager->get_external_data();
         $this->assertNotEmpty($externaldata, 'External user data should not be empty.');
+        $apidatamanager->process_incoming_data();
         $apidatamanager->process_incoming_data();
         $cohorts = $DB->get_records('cohort');
         $this->assertCount(1, $cohorts);

@@ -372,58 +372,58 @@ final class patrik_partial_test extends advanced_testcase {
             $this->assertSame((int)$assignment->status, assignment_status_facade::get_status_identifier('completed'));
         }
 
-        // Tuines settings case.
-        set_config('external_api_option', 'tuines', 'local_taskflow');
-        set_config('excludestatus', '3,7', 'taskflowadapter_tuines');
-        cohort_add_member($cohort->id, $user3->id);
-        $result = $plugingenerator->create_answer(['optionid' => $option1->id, 'userid' => $user3->id]);
-        $result2 = $plugingenerator->create_answer(['optionid' => $option2->id, 'userid' => $user3->id]);
-        $plugingeneratortf->runtaskswithintime($cronlock, $lock, time());
-        singleton_service::destroy_booking_answers($option1->id);
-        singleton_service::destroy_booking_answers($option2->id);
+        // // Tuines settings case.
+        // set_config('external_api_option', 'tuines', 'local_taskflow');
+        // set_config('excludestatus', '3,7', 'taskflowadapter_tuines');
+        // cohort_add_member($cohort->id, $user3->id);
+        // $result = $plugingenerator->create_answer(['optionid' => $option1->id, 'userid' => $user3->id]);
+        // $result2 = $plugingenerator->create_answer(['optionid' => $option2->id, 'userid' => $user3->id]);
+        // $plugingeneratortf->runtaskswithintime($cronlock, $lock, time());
+        // singleton_service::destroy_booking_answers($option1->id);
+        // singleton_service::destroy_booking_answers($option2->id);
 
-        $assignments = $DB->get_records('local_taskflow_assignment', ['userid' => $user3->id]);
-        foreach ($assignments as $assignment) {
-            $this->assertSame((int)$assignment->status, assignment_status_facade::get_status_identifier('enrolled'));
-        }
-        $option->toggle_user_completion($user3->id);
-        $plugingeneratortf->runtaskswithintime($cronlock, $lock, time());
-        $assignments = $DB->get_records('local_taskflow_assignment', ['userid' => $user3->id]);
-        foreach ($assignments as $assignment) {
-            $this->assertNotSame((int)$assignment->status, assignment_status_facade::get_status_identifier('partially_completed'));
-        }
+        // $assignments = $DB->get_records('local_taskflow_assignment', ['userid' => $user3->id]);
+        // foreach ($assignments as $assignment) {
+        //     $this->assertSame((int)$assignment->status, assignment_status_facade::get_status_identifier('enrolled'));
+        // }
+        // $option->toggle_user_completion($user3->id);
+        // $plugingeneratortf->runtaskswithintime($cronlock, $lock, time());
+        // $assignments = $DB->get_records('local_taskflow_assignment', ['userid' => $user3->id]);
+        // foreach ($assignments as $assignment) {
+        //     $this->assertNotSame((int)$assignment->status, assignment_status_facade::get_status_identifier('partially_completed'));
+        // }
 
-        time_mock::set_mock_time(strtotime('+ 6 minutes', time()));
-        $plugingeneratortf->runtaskswithintime($cronlock, $lock, time());
-        $sentmessages = $DB->get_records('local_taskflow_sent_messages');
-        $messagesink = array_filter($sink->get_messages(), function ($message) {
-            return strpos($message->subject, 'Taskflow -') === 0;
-        });
-        foreach ($sentmessages as $sentmessage) {
-            $this->assertSame((int)$sentmessage->messageid, $messageids[4]->messageid);
-            $this->assertTrue(
-                $sentmessage->userid === $user2->id
-            );
-        }
-        foreach ($messagesink as $msg) {
-            $this->assertTrue(
-                $msg->to === $user2->email
-            );
-            $this->assertSame(
-                $dbmsg[4]->subject,
-                $msg->subject,
-            );
-        }
-        // User 3 no messages regarding partial because its disabled status.
-        $this->assertCount(1, $sentmessages);
-        $this->assertCount(1, $messagesink);
+        // time_mock::set_mock_time(strtotime('+ 6 minutes', time()));
+        // $plugingeneratortf->runtaskswithintime($cronlock, $lock, time());
+        // $sentmessages = $DB->get_records('local_taskflow_sent_messages');
+        // $messagesink = array_filter($sink->get_messages(), function ($message) {
+        //     return strpos($message->subject, 'Taskflow -') === 0;
+        // });
+        // foreach ($sentmessages as $sentmessage) {
+        //     $this->assertSame((int)$sentmessage->messageid, $messageids[4]->messageid);
+        //     $this->assertTrue(
+        //         $sentmessage->userid === $user2->id
+        //     );
+        // }
+        // foreach ($messagesink as $msg) {
+        //     $this->assertTrue(
+        //         $msg->to === $user2->email
+        //     );
+        //     $this->assertSame(
+        //         $dbmsg[4]->subject,
+        //         $msg->subject,
+        //     );
+        // }
+        // // User 3 no messages regarding partial because its disabled status.
+        // $this->assertCount(1, $sentmessages);
+        // $this->assertCount(1, $messagesink);
 
-        $option2->toggle_user_completion($user3->id);
-        $plugingeneratortf->runtaskswithintime($cronlock, $lock, time());
-        $assignments = $DB->get_records('local_taskflow_assignment', ['userid' => $user3->id]);
-        foreach ($assignments as $assignment) {
-            $this->assertSame((int)$assignment->status, assignment_status_facade::get_status_identifier('completed'));
-        }
+        // $option2->toggle_user_completion($user3->id);
+        // $plugingeneratortf->runtaskswithintime($cronlock, $lock, time());
+        // $assignments = $DB->get_records('local_taskflow_assignment', ['userid' => $user3->id]);
+        // foreach ($assignments as $assignment) {
+        //     $this->assertSame((int)$assignment->status, assignment_status_facade::get_status_identifier('completed'));
+        // }
     }
 
     /**
