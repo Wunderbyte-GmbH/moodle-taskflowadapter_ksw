@@ -46,17 +46,18 @@ final class lydia_late_test extends advanced_testcase {
         time_mock::init();
         time_mock::set_mock_time(strtotime('now'));
         $this->resetAfterTest(true);
+        $this->preventResetByRollback();
         \local_taskflow\local\units\unit_relations::reset_instances();
         $this->externaldata = file_get_contents(__DIR__ . '/external_json/lydia_late_ksw.json');
-        $this->create_custom_profile_field();
         $plugingenerator = self::getDataGenerator()->get_plugin_generator('local_taskflow');
 
         $plugingenerator->create_custom_profile_fields([
             'supervisor',
-            'externalsupervisor',
+            'supervisor_external',
             'externalid',
             'orgunit',
             'contractend',
+            'contractstart',
             'Org1',
             'Org2',
             'Org3',
@@ -66,28 +67,8 @@ final class lydia_late_test extends advanced_testcase {
             'Org7',
         ]);
         $plugingenerator->set_config_values('ksw');
-        $this->preventResetByRollback();
         get_log_manager(true);
         // $this->set_config_values();
-    }
-
-    /**
-     * Setup the test environment.
-     */
-    protected function set_config_values(): void {
-        global $DB;
-        $settingvalues = [
-             taskflowadapter::TRANSLATOR_USER_SUPERVISOR_EXTERNAL => 'Manager_Email',
-             'supervisor' => taskflowadapter::TRANSLATOR_USER_SUPERVISOR_EXTERNAL,
-             taskflowadapter::TRANSLATOR_USER_SUPERVISOR => '',
-             'supervisor' => taskflowadapter::TRANSLATOR_USER_SUPERVISOR,
-             'translator_user_externalid' => 'userID',
-             'externalid' => taskflowadapter::TRANSLATOR_USER_EXTERNALID,
-        ];
-        foreach ($settingvalues as $key => $value) {
-            set_config($key, $value, 'taskflowadapter_ksw');
-        }
-        cache_helper::invalidate_by_event('config', ['taskflowadapter_ksw']);
     }
 
     /**
@@ -192,7 +173,7 @@ final class lydia_late_test extends advanced_testcase {
                         "timemodified" => 23233232222,
                         "timecreated" => 23233232222,
                         "usermodified" => 1,
-                
+
                         "actions" => [
                             [
                                 "targets" => [

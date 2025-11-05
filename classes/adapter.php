@@ -246,7 +246,7 @@ class adapter extends external_api_base implements external_api_interface {
     }
 
     /**
-     * Creates or updates the units and enrolls them into cohorts.
+     * Translate the supervisor external id to internal id.
      * @param array $user
      * @return void
      */
