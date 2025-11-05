@@ -294,6 +294,7 @@ final class lydia_late_test extends advanced_testcase {
         $externaldata = $apidatamanager->get_external_data();
         $this->assertNotEmpty($externaldata, 'External user data should not be empty.');
         $apidatamanager->process_incoming_data();
+        $apidatamanager->process_incoming_data();
 
         $cohorts = $DB->get_records('cohort');
         $cohort = array_shift($cohorts);
