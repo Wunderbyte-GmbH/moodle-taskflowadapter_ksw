@@ -17,6 +17,12 @@
 namespace taskflowadapter_ksw\usecases;
 
 use advanced_testcase;
+use local_taskflow\local\rules\rules;
+use mod_booking\singleton_service;
+use tool_mocktesttime\time_mock;
+use DateTime;
+use local_taskflow\event\rule_created_updated;
+use local_taskflow\local\assignment_status\assignment_status_facade;
 use local_taskflow\local\external_adapter\external_api_base;
 use local_taskflow\local\external_adapter\external_api_repository;
 use local_taskflow\plugininfo\taskflowadapter;
@@ -30,7 +36,7 @@ use local_taskflow\plugininfo\taskflowadapter;
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  *
  */
-final class supervisor_role_test extends advanced_testcase {
+final class overdue_new_import_test extends advanced_testcase {
     /** @var string|null Stores the external user data. */
     protected ?string $externaldata = null;
 
@@ -39,13 +45,15 @@ final class supervisor_role_test extends advanced_testcase {
      */
     protected function setUp(): void {
         parent::setUp();
+        singleton_service::destroy_instance();
+        rules::reset_instances();
+        time_mock::init();
+        time_mock::set_mock_time(strtotime('now'));
         $this->resetAfterTest(true);
         \local_taskflow\local\units\unit_relations::reset_instances();
-        $this->externaldata = file_get_contents(__DIR__ . '/external_json/lydia_late_ksw.json');
         $this->preventResetByRollback();
-        $this->create_custom_profile_field();
+        $this->externaldata = file_get_contents(__DIR__ . '/external_json/overdue_import_ksw.json');
         $plugingenerator = self::getDataGenerator()->get_plugin_generator('local_taskflow');
-
         $plugingenerator->create_custom_profile_fields([
             'supervisor',
             'supervisor_external',
@@ -62,7 +70,6 @@ final class supervisor_role_test extends advanced_testcase {
             'Org7',
         ]);
         $plugingenerator->set_config_values('ksw');
-        $plugingenerator->create_supervisorrole();
     }
 
     /**
@@ -80,13 +87,11 @@ final class supervisor_role_test extends advanced_testcase {
     /**
      * Setup the test environment.
      */
-    /**
-     * Setup the test environment.
-     */
-    private function create_custom_profile_field(): int {
+    private function create_custom_profile_field($shortname): int {
         global $DB;
-        $shortname = 'supervisor';
+
         $name = ucfirst($shortname);
+
         if ($DB->record_exists('user_info_field', ['shortname' => $shortname])) {
             return 0;
         }
@@ -115,7 +120,6 @@ final class supervisor_role_test extends advanced_testcase {
 
         return $DB->insert_record('user_info_field', $field);
     }
-
 
     /**
      * Setup the test environment.
@@ -163,19 +167,20 @@ final class supervisor_role_test extends advanced_testcase {
                         "description" => "test_rule_description",
                         "type" => "taskflow",
                         "enabled" => true,
+                        "recursive" => "1",
                         "duedatetype" => "duration",
                         "fixeddate" => 23233232222,
-                        "duration" => 23233232222,
+                        "duration" => 5184000,
                         "timemodified" => 23233232222,
                         "timecreated" => 23233232222,
                         "usermodified" => 1,
                         "filter" => [
                             [
-                                "filtertype" => "user_profile_field",
-                                "userprofilefield" => "supervisor",
-                                "operator" => "not_equals",
-                                "value" => "124",
-                                "key" => "role",
+                            "filtertype" => "user_profile_field",
+                            "userprofilefield" => "contractstart",
+                            "operator" => "since",
+                            "date" => 1759273200,
+                            "key" => "role",
                             ],
                         ],
                         "actions" => [
@@ -208,7 +213,7 @@ final class supervisor_role_test extends advanced_testcase {
     protected function set_messages_db(): array {
         global $DB;
         $messageids = [];
-        $messages = json_decode(file_get_contents(__DIR__ . '/../mock/messages/messages.json'));
+        $messages = json_decode(file_get_contents(__DIR__ . '/../mock/messages/assignedandwarningsandfailed_messages .json'));
         foreach ($messages as $message) {
             $messageids[] = (object)['messageid' => $DB->insert_record('local_taskflow_messages', $message)];
         }
@@ -230,20 +235,65 @@ final class supervisor_role_test extends advanced_testcase {
      * @covers \local_taskflow\local\assignments\assignments_facade
      * @covers \local_taskflow\local\assignments\types\standard_assignment
      */
-    public function test_supervisor_role(): void {
+    public function test_overdue_new_import(): void {
         global $DB;
-        $plugingenerator = self::getDataGenerator()->get_plugin_generator('local_taskflow');
-        $roleid = $plugingenerator->create_supervisorrole();
-        // We fetch the supervisorroleid for DB calls.
+
         $apidatamanager = external_api_repository::create($this->externaldata);
         $externaldata = $apidatamanager->get_external_data();
         $this->assertNotEmpty($externaldata, 'External user data should not be empty.');
         $apidatamanager->process_incoming_data();
+        $sink = $this->redirectEmails();
+
+        $cohorts = $DB->get_records('cohort');
+        $cohort = array_shift($cohorts);
+
+        $course = $this->set_db_course();
+        $messageids = $this->set_messages_db();
+
+        $lock = $this->createMock(\core\lock\lock::class);
+        $cronlock = $this->createMock(\core\lock\lock::class);
+        $plugingenerator = self::getDataGenerator()->get_plugin_generator('local_taskflow');
+
+        $rule = $this->get_rule($cohort->id, $course->id, $messageids);
+        $id = $DB->insert_record('local_taskflow_rules', $rule);
+        $rule['id'] = $id;
+        $event = rule_created_updated::create([
+            'objectid' => $rule['id'],
+            'context'  => \context_system::instance(),
+            'other'    => [
+                'ruledata' => $rule,
+            ],
+        ]);
+        $event->trigger();
+        time_mock::set_mock_time(strtotime('+ 6 seconds', time()));
+        $plugingenerator->runtaskswithintime($cronlock, $lock, time());
+        $assignments = $DB->get_records('local_taskflow_assignment');
+        // There should be 2 assignments.
+        $this->assertCount(2, $assignments);
+        foreach ($assignments as $assignment) {
+            $this->assertEquals(assignment_status_facade::get_status_identifier('assigned'), $assignment->status);
+        }
+        time_mock::set_mock_time(strtotime('+ 65 days', time()));
+        $plugingenerator->runtaskswithintime($cronlock, $lock, time());
+        $assignments = $DB->get_records('local_taskflow_assignment');
+        foreach ($assignments as $assignment) {
+            $this->assertEquals(assignment_status_facade::get_status_identifier('overdue'), $assignment->status);
+        }
+        $this->assertNotEmpty($externaldata, 'External user data should not be empty.');
+
+        // Fake reimport of json.
         $apidatamanager->process_incoming_data();
-        $this->runAdhocTasks();
-        // Now we have 2 supervisor.
-        $records = $DB->get_records('role_assignments', ['roleid' => $roleid]);
-        $count = count($records);
-        $this->assertSame(1, $count);
+
+        // Assignments should not have changed.
+        $assignments = $DB->get_records('local_taskflow_assignment');
+        foreach ($assignments as $assignment) {
+            $this->assertEquals(assignment_status_facade::get_status_identifier('overdue'), $assignment->status);
+        }
+        // Assignments should stay on overdo.
+        $plugingenerator->runtaskswithintime($cronlock, $lock, time());
+        $assignments = $DB->get_records('local_taskflow_assignment');
+        foreach ($assignments as $assignment) {
+            $this->assertEquals(assignment_status_facade::get_status_identifier('overdue'), $assignment->status);
+        }
     }
 }
