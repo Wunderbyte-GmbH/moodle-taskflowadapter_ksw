@@ -33,7 +33,7 @@ use mod_booking_generator;
 /**
  * Tests for booking rules.
  *
- * @package local_taskflow
+ * @package taskflowadapter_ksw
  * @category test
  * @copyright 2025 Wunderbyte GmbH <info@wunderbyte.at>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later

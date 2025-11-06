@@ -26,7 +26,7 @@ use local_taskflow\local\external_adapter\external_api_repository;
 /**
  * Test unit class of local_taskflow.
  *
- * @package local_taskflow
+ * @package taskflowadapter_ksw
  * @category test
  * @copyright 2025 Wunderbyte GmbH <info@wunderbyte.at>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
