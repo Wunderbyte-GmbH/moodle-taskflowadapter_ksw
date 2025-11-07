@@ -27,6 +27,8 @@ defined('MOODLE_INTERNAL') || die();
 $string['apisettings'] = "KSW API Settings";
 $string['apisettings_desc'] = "Configure taskflow key-value pairs.";
 $string['archive'] = 'Archive';
+$string['blscertificatekey'] = "Certificate ID for BLS qualification";
+$string['blscertificatekey_desc'] = "Here, the ID of the certificate for the BLS is stored.";
 $string['bookingoptiondescription'] = "Pretty Description for certificate renering.";
 $string['choose'] = "Choose...";
 $string['contentdatabase'] = 'Content Database';

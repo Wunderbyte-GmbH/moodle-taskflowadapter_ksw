@@ -34,29 +34,30 @@ use tool_certificate\template;
  */
 class observer {
     /**
-     * [Description for assignment_completed]
+     * Creates a certificate when assingment is complted.
      *
-     * @param mixed $event
+     * @param assignment_completed $event
+     *
+     * @return void
+     *
      */
-    public static function assignment_completed($event) {
+    public static function assignment_completed(assignment_completed $event) {
         global $DB;
-        $data = $event->get_data($event);
+        $data = $event->get_data();
         $search = '%BLS%';
         $sql = "SELECT *
                 FROM {local_taskflow_rules}
-                WHERE rulename LIKE :rulename";
+                WHERE " . $DB->sql_like('rulename', ':rulename');
 
         $params = ['rulename' => $search];
         $blsrules = $DB->get_records_sql($sql, $params);
         $assignment = new assignment($data['other']['assignmentid']);
         foreach ($blsrules as $rule) {
             if ($assignment->ruleid === $rule->id) {
-                $certificateid = 5;
+                $certificateid = (int) get_config('taskflowadapter_ksw', 'blscertificatekey');
                 $template = template::instance($certificateid);
-                $template->issue_certificate();
                 $id = $template->issue_certificate(
-                    $assignment->userid,
-                    0,
+                    $assignment->userid
                 );
                 // Get the issue and create the PDF.
                 $issue = $DB->get_record('tool_certificate_issues', ['id' => $id]);

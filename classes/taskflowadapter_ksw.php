@@ -117,5 +117,14 @@ class taskflowadapter_ksw extends taskflowadapter {
                 $usercustomfields
             ));
         }
+        $settings->add(
+            new admin_setting_configtext(
+                self::COMPONENTNAME . "/blscertificatekey",
+                get_string('blscertificatekey', self::COMPONENTNAME) . $label,
+                get_string('blscertificatekey_desc', self::COMPONENTNAME),
+                '',
+                PARAM_TEXT
+            )
+        );
     }
 }
