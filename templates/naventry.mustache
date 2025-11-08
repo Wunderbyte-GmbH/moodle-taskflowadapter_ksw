@@ -1,12 +1,10 @@
-
 {{!
-  Mustache template: dropdown_button.mustache
+  Mustache template: naventry.mustache
   Expects context:
   {
     "dropdown": {
-      "id": "dropdown1",
-      "label": "Schnellzugriff",
-      "class": "btn-primary",
+      "id": "main-dropdown",
+      "class": "btn-outline-info font-weight-normal border-2",
       "items": [
         {"label": "Option 1", "link": "#"},
         {"label": "Option 2", "link": "#"}
@@ -15,15 +13,13 @@
   }
 }}
 
-<div class="dropdown mt-2">
-  <button id="dropdown-{{dropdown.id}}" type="button" class="btn {{dropdown.class}} dropdown-toggle" data-bs-toggle="dropdown" data-toggle="dropdown" aria-expanded="false">
-      {{#str}} quickaccess, taskflowadapter_ksw {{/str}}
-  </button>
-  <ul class="dropdown-menu" aria-labelledby="dropdown-{{dropdown.id}}">
-    {{#dropdown.items}}
-      <li><a class="dropdown-item" href="{{link}}">{{label}}</a></li>
-    {{/dropdown.items}}
-  </ul>
+<div class="dropdown popover-region nav-link icon-no-margin" id="dropdown-{{dropdown.id}}">
+    <button id="dropdown-{{dropdown.id}}" type="button" class="btn {{dropdown.class}} dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        {{#str}} quickaccess, taskflowadapter_ksw {{/str}}
+    </button>
+    <div class="dropdown-menu" aria-labelledby="dropdown-{{dropdown.id}}">
+        {{#dropdown.items}}
+            <a class="dropdown-item" href="{{link}}">{{label}}</a>
+        {{/dropdown.items}}
+    </div>
 </div>
-
-
