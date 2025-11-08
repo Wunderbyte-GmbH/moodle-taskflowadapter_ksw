@@ -51,6 +51,9 @@ class observer {
 
         $params = ['rulename' => $search];
         $blsrules = $DB->get_records_sql($sql, $params);
+        if (empty($blsrules)) {
+            return;
+        }
         $assignment = new assignment($data['other']['assignmentid']);
         foreach ($blsrules as $rule) {
             if ($assignment->ruleid === $rule->id) {
