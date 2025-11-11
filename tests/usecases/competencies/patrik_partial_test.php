@@ -458,7 +458,7 @@ final class patrik_partial_test extends advanced_testcase {
     /**
      * Setup the test environment.
      * @param int $unitid
-     * @param int $targetid
+     * @param int $compids
      * @param array $messageids
      * @return array
      */

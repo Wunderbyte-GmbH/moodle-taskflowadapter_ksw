@@ -303,7 +303,6 @@ final class Change_rule_test extends advanced_testcase {
         $event->trigger();
         $this->runAdhocTasks();
 
-
         $assignmentspostchange = $DB->get_records('local_taskflow_assignment', ['userid' => $userchrisid]);
         foreach ($assignmentspostchange as $assignment) {
             // Assignment should be the same even if rule is changed...
