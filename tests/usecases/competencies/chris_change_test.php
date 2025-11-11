@@ -344,10 +344,17 @@ final class chris_change_test extends advanced_testcase {
         });
 
         time_mock::set_mock_time(strtotime('+ 30 days', time()));
-        $temp = (array)$externaldata;
-        $temp[1]->Organisation = $temp[1]->Organisation . '\\' . $secondcohort->name;
-        $externaldata = (object)$temp;
-        $apidatamanager->process_incoming_data();
+        // $temp = (array)$externaldata;
+        // $temp[1]->Organisation = $temp[1]->Organisation . '\\' . $secondcohort->name;
+        // $externaldata = (object)$temp;
+        // $apidatamanager->process_incoming_data();
+        $user = $DB->get_record('user', ['firstname' => 'Chris']);
+        profile_load_custom_fields($user);
+        $user->profile['orgunit'] .= '\\' . $secondcohort->name;
+        profile_save_data($user);
+        // user_update_user($user);
+        \core\event\user_updated::create_from_userid($user->id)->trigger();
+
         $activecohortpostchange = $DB->get_records('local_taskflow_unit_members', ['active' => 1, 'userid' => $userchrisid]);
         $inactiveassignmentspostchange = $DB->get_records('local_taskflow_assignment', ['userid' => $userchrisid, 'active' => 0]);
         $this->assertNotSame($activecohortprechange, $activecohortpostchange);
