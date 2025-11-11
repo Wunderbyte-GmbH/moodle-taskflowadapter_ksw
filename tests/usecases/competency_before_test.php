@@ -343,7 +343,7 @@ final class competency_before_test extends advanced_testcase {
                                         "sortorder" => 2,
                                         "actiontype" => "enroll",
                                         "completebeforenext" => false,
-                                    ]
+                                    ],
                                 ],
                                 "messages" => [],
                             ],

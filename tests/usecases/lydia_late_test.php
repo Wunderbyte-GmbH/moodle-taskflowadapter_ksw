@@ -72,7 +72,8 @@ final class lydia_late_test extends advanced_testcase {
         ]);
         $plugingenerator->set_config_values('ksw');
         get_log_manager(true);
-        // $this->set_config_values();
+        // phpcs:ignore Squiz.PHP.CommentedOutCode.Found
+        /* $this->set_config_values(); */
     }
 
     /**
@@ -323,9 +324,11 @@ final class lydia_late_test extends advanced_testcase {
         $plugingenerator = self::getDataGenerator()->get_plugin_generator('local_taskflow');
 
         $rule = $this->get_rule($cohort->id, $course->id, $messageids);
-        // $secondrule = $this->get_second_rule($secondcohort->id, $secondcourse->id);
+        // phpcs:ignore Squiz.PHP.CommentedOutCode.Found
+        /* $secondrule = $this->get_second_rule($secondcohort->id, $secondcourse->id); */
         $id = $DB->insert_record('local_taskflow_rules', $rule);
-        // $secondruleid = $DB->insert_record('local_taskflow_rules', $secondrule);
+        // phpcs:ignore Squiz.PHP.CommentedOutCode.Found
+        /* $secondruleid = $DB->insert_record('local_taskflow_rules', $secondrule); */
         $rule['id'] = $id;
         $event = rule_created_updated::create([
             'objectid' => $rule['id'],
@@ -381,7 +384,6 @@ final class lydia_late_test extends advanced_testcase {
                 $msg->subject,
             );
         }
-
 
         time_mock::set_mock_time(strtotime('+ 21 days', time()));
 
@@ -492,7 +494,6 @@ final class lydia_late_test extends advanced_testcase {
             );
         }
 
-
         // U1 + original u2 overdue.
         time_mock::set_mock_time(strtotime('+ 5 days', time()));
         $plugingenerator->runtaskswithintime($cronlock, $lock, time());
@@ -542,7 +543,6 @@ final class lydia_late_test extends advanced_testcase {
                 $msg->subject,
             );
         }
-
 
         // Lydia w2.
         time_mock::set_mock_time(strtotime('+ 5 days', time()));

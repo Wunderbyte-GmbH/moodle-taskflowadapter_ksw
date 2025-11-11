@@ -86,6 +86,11 @@ final class overdue_new_import_test extends advanced_testcase {
 
     /**
      * Setup the test environment.
+     *
+     * @param string $shortname
+     *
+     * @return int
+     *
      */
     private function create_custom_profile_field($shortname): int {
         global $DB;

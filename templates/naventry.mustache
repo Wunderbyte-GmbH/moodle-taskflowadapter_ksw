@@ -1,19 +1,22 @@
 {{!
-  Mustache template: naventry.mustache
-  Expects context:
-  {
-    "dropdown": {
-      "id": "main-dropdown",
-      "class": "btn-outline-info font-weight-normal border-2",
-      "items": [
-        {"label": "Option 1", "link": "#"},
-        {"label": "Option 2", "link": "#"}
-      ]
+    @template core/naventry
+
+    Navigation entry with dropdown menu.
+
+    Context:
+    {
+        "dropdown": {
+            "id": "main-dropdown",
+            "class": "btn-outline-info font-weight-normal border-2",
+            "items": [
+                {"label": "Option 1", "link": "#"},
+                {"label": "Option 2", "link": "#"}
+            ]
+        }
     }
-  }
 }}
 
-<div class="dropdown popover-region nav-link icon-no-margin" id="dropdown-{{dropdown.id}}">
+<div class="dropdown popover-region nav-link icon-no-margin" id="dropdown-{{dropdown.id}}-popoverregion">
     <button id="dropdown-{{dropdown.id}}" type="button" class="btn {{dropdown.class}} dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
         {{#str}} quickaccess, taskflowadapter_ksw {{/str}}
     </button>

@@ -52,20 +52,22 @@ final class Change_rule_test extends advanced_testcase {
         $this->create_custom_profile_field();
         $plugingenerator = self::getDataGenerator()->get_plugin_generator('local_taskflow');
 
-            $plugingenerator->create_custom_profile_fields([
-            'supervisor',
-            'orgunit',
-            'externalid',
-            'contractend',
-            'exitdate',
-            'Org1',
-            'Org2',
-            'Org3',
-            'Org4',
-            'Org5',
-            'Org6',
-            'Org7',
-        ]);
+        $plugingenerator->create_custom_profile_fields(
+            [
+                'supervisor',
+                'orgunit',
+                'externalid',
+                'contractend',
+                'exitdate',
+                'Org1',
+                'Org2',
+                'Org3',
+                'Org4',
+                'Org5',
+                'Org6',
+                'Org7',
+            ]
+        );
         $plugingenerator->set_config_values('ksw');
         $this->preventResetByRollback();
     }
@@ -153,6 +155,7 @@ final class Change_rule_test extends advanced_testcase {
      * @param int $unitid
      * @param int $courseid
      * @param array $messageids
+     * @param bool $recursive
      * @return array
      */
     public function get_rule($unitid, $courseid, $messageids, $recursive): array {
@@ -303,10 +306,10 @@ final class Change_rule_test extends advanced_testcase {
 
         $assignmentspostchange = $DB->get_records('local_taskflow_assignment', ['userid' => $userchrisid]);
         foreach ($assignmentspostchange as $assignment) {
-            // Assignment should be the same even if rule is changed and the event has been triggered because it not recursively set.
+            // Assignment should be the same even if rule is changed...
+            // ... and the event has been triggered because it not recursively set.
             $this->assertSame((int)$assignment->duedate, (int)$assignment->assigneddate + 5184000);
         }
-
 
         $dbrule = $DB->get_record('local_taskflow_rules', ['id' => $id]);
         $ruleobj = json_decode($dbrule->rulejson);

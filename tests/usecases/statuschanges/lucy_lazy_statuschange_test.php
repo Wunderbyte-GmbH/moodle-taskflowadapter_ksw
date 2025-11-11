@@ -182,7 +182,6 @@ final class lucy_lazy_statuschange_test extends advanced_testcase {
         // In this scenario, the assigment will be prolonged automatically.
         set_config('usingprolongedstate', 1, 'taskflowadapter_tuines');
 
-
         $time = time();
         $this->runAdhocTasks();
         $assignments = $DB->get_records('local_taskflow_assignment');
@@ -227,7 +226,8 @@ final class lucy_lazy_statuschange_test extends advanced_testcase {
         // Simulate data submission (bypassing is_submitted()).
         $editassignmentform->set_data_for_dynamic_submission();
         $editassignmentform->validation($submitdata, []);
-        // $this->assertTrue($editassignmentform->is_validated());
+        // phpcs:ignore Squiz.PHP.CommentedOutCode.Found
+        /* $this->assertTrue($editassignmentform->is_validated()); */
         // Process the "AJAX" submission.
         $editassignmentform->process_dynamic_submission();
 
@@ -275,7 +275,6 @@ final class lucy_lazy_statuschange_test extends advanced_testcase {
         // In this scenario, the assigment will be prolonged automatically.
         set_config('usingprolongedstate', 1, 'taskflowadapter_tuines');
 
-
         $time = time();
         $this->runAdhocTasks();
         $assignments = $DB->get_records('local_taskflow_assignment');
@@ -319,7 +318,8 @@ final class lucy_lazy_statuschange_test extends advanced_testcase {
         // Simulate data submission (bypassing is_submitted()).
         $editassignmentform->set_data_for_dynamic_submission();
         $editassignmentform->validation($submitdata, []);
-        // $this->assertTrue($editassignmentform->is_validated());
+        // phpcs:ignore Squiz.PHP.CommentedOutCode.Found
+        /* $this->assertTrue($editassignmentform->is_validated()); */
         // Process the "AJAX" submission.
         $editassignmentform->process_dynamic_submission();
 
@@ -430,7 +430,8 @@ final class lucy_lazy_statuschange_test extends advanced_testcase {
         // Simulate data submission (bypassing is_submitted()).
         $editassignmentform->set_data_for_dynamic_submission();
         $editassignmentform->validation($submitdata, []);
-        // $this->assertTrue($editassignmentform->is_validated());
+        // phpcs:ignore Squiz.PHP.CommentedOutCode.Found
+        /* $this->assertTrue($editassignmentform->is_validated()); */
         // Process the "AJAX" submission.
         $editassignmentform->process_dynamic_submission();
 
@@ -475,7 +476,6 @@ final class lucy_lazy_statuschange_test extends advanced_testcase {
         // In this scenario, the assigment will be prolonged automatically.
         set_config('usingprolongedstate', 1, 'taskflowadapter_tuines');
 
-
         $time = time();
         $this->runAdhocTasks();
         $assignments = $DB->get_records('local_taskflow_assignment');
@@ -503,7 +503,6 @@ final class lucy_lazy_statuschange_test extends advanced_testcase {
         // We move on in time.
         $time = time();
         time_mock::set_mock_time(strtotime('+ 25 hours', time()));
-
 
         $initialduedate = $duedate;
         $duedate = time() + 86400; // Example: two days later.
@@ -539,7 +538,8 @@ final class lucy_lazy_statuschange_test extends advanced_testcase {
         // Simulate data submission (bypassing is_submitted()).
         $editassignmentform->set_data_for_dynamic_submission();
         $editassignmentform->validation($submitdata, []);
-        // $this->assertTrue($editassignmentform->is_validated());
+        // phpcs:ignore Squiz.PHP.CommentedOutCode.Found
+        /* $this->assertTrue($editassignmentform->is_validated()); */
         // Process the "AJAX" submission.
         $editassignmentform->process_dynamic_submission();
 

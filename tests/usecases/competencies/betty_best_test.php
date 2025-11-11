@@ -57,20 +57,22 @@ final class betty_best_test extends advanced_testcase {
             'units',
         ]);
         $this->create_custom_profile_field();
-                $plugingenerator->create_custom_profile_fields([
-            'supervisor',
-            'orgunit',
-            'externalid',
-            'contractend',
-            'exitdate',
-            'Org1',
-            'Org2',
-            'Org3',
-            'Org4',
-            'Org5',
-            'Org6',
-            'Org7',
-        ]);
+        $plugingenerator->create_custom_profile_fields(
+            [
+                'supervisor',
+                'orgunit',
+                'externalid',
+                'contractend',
+                'exitdate',
+                'Org1',
+                'Org2',
+                'Org3',
+                'Org4',
+                'Org5',
+                'Org6',
+                'Org7',
+            ]
+        );
         $plugingenerator->set_config_values('ksw');
         $this->preventResetByRollback();
     }
@@ -319,19 +321,21 @@ final class betty_best_test extends advanced_testcase {
         foreach ($assignments as $assignment) {
             $this->assertSame((int)$assignment->status, assignment_status_facade::get_status_identifier('partially_completed'));
         }
-
-        // In ksw events trigger user update observer.
-        // $countbefore = count($assignmenthistory = $DB->get_records('local_taskflow_history', ['userid' => $user2->id]));
-        // // After the partial completion, we update the user profile.
-        // require_once($CFG->dirroot . '/user/lib.php');
-        // user_update_user((object)[
-        //     'id' => $user2->id,
-        //     'firstname' => 'UpdatedFirstName',
-        //     'lastname' => 'UpdatedLastName',
-        // ]);
-        // // Check taskflow_history dont trigger status update.
-        // $countafter = count($assignmenthistory = $DB->get_records('local_taskflow_history', ['userid' => $user2->id]));
-        // $this->assertSame($countbefore, $countafter);
+        // phpcs:ignore Squiz.PHP.CommentedOutCode.Found
+        /*
+            // In ksw events trigger user update observer.
+            $countbefore = count($assignmenthistory = $DB->get_records('local_taskflow_history', ['userid' => $user2->id]));
+            // After the partial completion, we update the user profile.
+            require_once($CFG->dirroot . '/user/lib.php');
+            user_update_user((object)[
+                'id' => $user2->id,
+                'firstname' => 'UpdatedFirstName',
+                'lastname' => 'UpdatedLastName',
+            ]);
+            // Check taskflow_history dont trigger status update.
+            $countafter = count($assignmenthistory = $DB->get_records('local_taskflow_history', ['userid' => $user2->id]));
+            $this->assertSame($countbefore, $countafter);
+        */
         // Run all adhoc tasks now.
         $plugingeneratortf->runtaskswithintime($cronlock, $lock, time());
 
@@ -517,6 +521,7 @@ final class betty_best_test extends advanced_testcase {
      * @param int $unitid
      * @param int $target1id
      * @param int $target2id
+     * @param array $messageids
      * @return array
      */
     public function get_rule($unitid, $target1id, $target2id, $messageids): array {

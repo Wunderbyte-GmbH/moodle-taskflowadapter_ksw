@@ -214,6 +214,7 @@ final class chris_change_test extends advanced_testcase {
      * Setup the test environment.
      * @param int $unitid
      * @param int $courseid
+     * @param array $messageids
      * @return array
      */
     public function get_second_rule($unitid, $courseid, $messageids): array {
