@@ -334,9 +334,14 @@ final class chris_change_test extends advanced_testcase {
         $messageids = $this->set_messages_db();
         $cohorts = $DB->get_records('cohort');
         $cohort = array_shift($cohorts);
+        $secondcohort = array_shift($cohorts);
+
         $rule = $this->get_rule($cohort->id, $competency->get('id'), $messageids);
+        $secondrule = $this->get_rule($secondcohort->id, $competency2->get('id'), $messageids);
         $id = $DB->insert_record('local_taskflow_rules', $rule);
         $rule['id'] = $id;
+        $id = $DB->insert_record('local_taskflow_rules', $secondrule);
+        $secondrule['id'] = $id;
 
         $event = rule_created_updated::create([
             'objectid' => $rule['id'],
@@ -366,7 +371,7 @@ final class chris_change_test extends advanced_testcase {
         $existing = user_competency::get_records(['userid' => $user2->id]);
         $this->assertEmpty($existing, 'User already has a competency assigned');
 
-        return [$user1, $user2, $user3, $rule, $booking, $course, $competency, $competency2];
+        return [$user1, $user2, $user3, $rule, $secondrule, $booking, $course, $competency, $competency2];
     }
 
     /**
@@ -422,7 +427,7 @@ final class chris_change_test extends advanced_testcase {
         $sink = $this->redirectEmails();
         $lock = $this->createMock(\core\lock\lock::class);
         $cronlock = $this->createMock(\core\lock\lock::class);
-        [$user1, $user2, $user3, $rule, $booking, $course, $competency, $competency2] = $this->betty_best_base($bdata);
+        [$user1, $user2, $user3, $rule, $secondrule, $booking, $course, $competency, $competency2] = $this->betty_best_base($bdata);
 
         $sink = $this->redirectEmails();
         $lock = $this->createMock(\core\lock\lock::class);
@@ -527,12 +532,12 @@ final class chris_change_test extends advanced_testcase {
         $messagesink = array_filter($sink->get_messages(), function ($message) {
             return strpos($message->subject, 'Taskflow -') === 0;
         });
-        $this->assertCount(1, $sentmessages);
+        $this->assertCount(2, $sentmessages);
         $user1msg = array_filter($sentmessages, function ($sentmessage) use ($userchrisid) {
             return $sentmessage->userid === $userchrisid;
         });
         $this->assertCount(1, $user1msg);
-        $this->assertCount(2, $messagesink);
+        $this->assertCount(3, $messagesink);
         $chrismsgsink = array_filter($messagesink, function ($msg) use ($userchrisemail) {
             return $msg->to === $userchrisemail;
         });
@@ -550,7 +555,7 @@ final class chris_change_test extends advanced_testcase {
         if (count($activeassignmentspostchange) >= 1) {
             $assignpost = array_pop($activeassignmentspostchange);
             $this->assertSame($assignpost->status, '0');
-            $this->assertSame((int)$assignpost->ruleid, ($secondruleid));
+            $this->assertSame((int)$assignpost->ruleid, ($secondrule->id));
         }
     }
 }
