@@ -392,6 +392,17 @@ final class systematic_status_change_test extends advanced_testcase {
                     ],
                 ],
             ],
+            'overdue' => [
+                [
+                    'input' => [
+                        'status' => assignment_status_facade::get_status_identifier('overdue'),
+                    ],
+                    'expected' => [
+                        'status' => assignment_status_facade::get_status_identifier('overdue'),
+                        'errormessage' => 'Assigned status did not persist correctly.',
+                    ],
+                ],
+            ],
             'prolonged' => [
                 [
                     'input' => [
@@ -527,6 +538,18 @@ final class systematic_status_change_test extends advanced_testcase {
                     ],
                     'expected' => [
                         'status' => assignment_status_facade::get_status_identifier('assigned'),
+                        'errormessage' => 'Assigned status did not persist correctly after task execution.',
+                    ],
+                ],
+            ],
+            'overdue, after task execution' => [
+                [
+                    'input' => [
+                        'status' => assignment_status_facade::get_status_identifier('overdue'),
+                        'executetask' => '+ 1 year',
+                    ],
+                    'expected' => [
+                        'status' => assignment_status_facade::get_status_identifier('overdue'),
                         'errormessage' => 'Assigned status did not persist correctly after task execution.',
                     ],
                 ],
