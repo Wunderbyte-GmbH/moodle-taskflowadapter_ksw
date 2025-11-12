@@ -74,7 +74,6 @@ final class systematic_status_change_test extends advanced_testcase {
      *
      */
     public function tearDown(): void {
-        global $DB;
         parent::tearDown();
         $plugingenerator = self::getDataGenerator()->get_plugin_generator('local_taskflow');
         $plugingenerator->teardown();

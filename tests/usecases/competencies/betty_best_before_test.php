@@ -80,7 +80,6 @@ final class betty_best_before_test extends advanced_testcase {
      */
     protected function tearDown(): void {
         parent::tearDown();
-        external_api_base::teardown();
         $plugingenerator = self::getDataGenerator()->get_plugin_generator('local_taskflow');
         $plugingenerator->teardown();
     }
