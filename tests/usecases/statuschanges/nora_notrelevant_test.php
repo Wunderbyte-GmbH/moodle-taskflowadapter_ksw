@@ -265,19 +265,6 @@ final class nora_notrelevant_test extends advanced_testcase {
 
     /**
      * Setup the test environment.
-     * @param int $courseid
-     * @param int $userid
-     */
-    protected function course_completed($courseid, $userid): void {
-        $completion = new \completion_completion([
-            'course' => $courseid,
-            'userid' => $userid,
-        ]);
-        $completion->mark_complete();
-    }
-
-    /**
-     * Setup the test environment.
      * @param int $unitid
      * @param int $courseid
      * @param array $messageids
