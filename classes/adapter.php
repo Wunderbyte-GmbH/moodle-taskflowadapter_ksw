@@ -131,10 +131,10 @@ class adapter extends external_api_base implements external_api_interface {
         }
         $this->dates_validation($enddate, $storedenddate);
 
-        $now = new DateTime();
+        $now = time();
         if (
-            $enddate &&
-            $enddate < $now
+            $storedenddate &&
+            $storedenddate < $now
         ) {
             return true;
         }
