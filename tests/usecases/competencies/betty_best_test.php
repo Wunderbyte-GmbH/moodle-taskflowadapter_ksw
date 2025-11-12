@@ -18,6 +18,7 @@ namespace taskflowadapter_ksw\usecases\competencies;
 
 use advanced_testcase;
 use core_user;
+use local_taskflow\local\external_adapter\external_api_base;
 use local_taskflow\local\external_adapter\external_api_repository;
 use local_taskflow\local\rules\rules;
 use tool_mocktesttime\time_mock;
@@ -74,14 +75,16 @@ final class betty_best_test extends advanced_testcase {
     }
 
     /**
-     * Mandatory clean-up after each test.
+     * Tear down the test environment.
+     *
+     * @return void
+     *
      */
-    public function tearDown(): void {
-        global $DB;
-
+    protected function tearDown(): void {
         parent::tearDown();
-        // Mandatory clean-up.
-        singleton_service::destroy_instance();
+        external_api_base::teardown();
+        $plugingenerator = self::getDataGenerator()->get_plugin_generator('local_taskflow');
+        $plugingenerator->teardown();
     }
 
 

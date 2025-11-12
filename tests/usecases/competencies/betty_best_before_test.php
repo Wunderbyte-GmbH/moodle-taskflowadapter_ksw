@@ -73,11 +73,14 @@ final class betty_best_before_test extends advanced_testcase {
     }
 
     /**
-     * Mandatory clean-up after each test.
+     * Tear down the test environment.
+     *
+     * @return void
+     *
      */
-    public function tearDown(): void {
-        global $DB;
+    protected function tearDown(): void {
         parent::tearDown();
+        external_api_base::teardown();
         $plugingenerator = self::getDataGenerator()->get_plugin_generator('local_taskflow');
         $plugingenerator->teardown();
     }

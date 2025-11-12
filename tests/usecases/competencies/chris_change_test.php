@@ -82,7 +82,8 @@ final class chris_change_test extends advanced_testcase {
     protected function tearDown(): void {
         parent::tearDown();
         external_api_base::teardown();
-        \local_taskflow\local\units\unit_relations::reset_instances();
+        $plugingenerator = self::getDataGenerator()->get_plugin_generator('local_taskflow');
+        $plugingenerator->teardown();
     }
 
     /**
