@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace taskflowadapter_tuines\usecases\competencies;
+namespace taskflowadapter_ksw\usecases\competencies;
 
 use advanced_testcase;
 use core_user;
@@ -35,7 +35,7 @@ use function PHPUnit\Framework\assertSame;
 /**
  * Tests for booking rules.
  *
- * @package taskflowadapter_tuines
+ * @package taskflowadapter_ksw
  * @category test
  * @copyright 2025 Wunderbyte GmbH <info@wunderbyte.at>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
