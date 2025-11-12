@@ -555,7 +555,7 @@ final class chris_change_test extends advanced_testcase {
         if (count($activeassignmentspostchange) >= 1) {
             $assignpost = array_pop($activeassignmentspostchange);
             $this->assertSame($assignpost->status, '0');
-            $this->assertSame((int)$assignpost->ruleid, ($secondrule->id));
+            $this->assertSame((int)$assignpost->ruleid, ($secondrule['id']));
         }
     }
 }
