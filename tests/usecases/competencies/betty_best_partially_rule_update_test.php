@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace taskflowadapter_tuines\usecases\competencies;
+namespace taskflowadapter_ksw\usecases\competencies;
 
 use advanced_testcase;
 use local_taskflow\local\external_adapter\external_api_base;

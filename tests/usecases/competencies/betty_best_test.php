@@ -142,7 +142,7 @@ final class betty_best_test extends advanced_testcase {
 
         // Create a booking option answer - book user2.
         $result = $plugingenerator->create_answer(['optionid' => $option1->id, 'userid' => $user2->id]);
-        
+
         $this->assertSame(MOD_BOOKING_BO_COND_ALREADYBOOKED, $result);
         singleton_service::destroy_instance();
 
@@ -181,7 +181,8 @@ final class betty_best_test extends advanced_testcase {
         // Run all adhoc tasks now.
         $plugingenerator->runtaskswithintime($cronlock, $lock, time());
 
-        // Should be assigned + assigned msg + enrolled + booking course enrol1 + booking course enrol2 + completed status + comp1 completed + comp2 completed.
+        // Should be assigned + assigned msg + enrolled + booking course enrol1
+        // + booking course enrol2 + completed status + comp1 completed + comp2 completed.
         $countafter = count($assignmenthistory = $DB->get_records('local_taskflow_history', ['assignmentid' => $assignment->id]));
         $this->assertSame($initialcount + 7, $countafter);
 
@@ -338,7 +339,7 @@ final class betty_best_test extends advanced_testcase {
         // We exclude enrolled in this project.
         $this->assertSame((int)$assignment->status, assignment_status_facade::get_status_identifier('enrolled'));
 
-        // assigned + assigned msg + enrolled + booking course enrol1.
+        // Assigned + assigned msg + enrolled + booking course enrol1.
         $countafter = count($assignmenthistory = $DB->get_records('local_taskflow_history', ['assignmentid' => $assignment->id]));
         $this->assertSame($initialcount + 2, $countafter);
         $this->assertSame(0, $option->user_completed_option());

@@ -190,9 +190,7 @@ final class betty_best_cyclic_test extends advanced_testcase {
         $assignment = $DB->get_record('local_taskflow_assignment', ['userid' => $user2->id]);
         $this->assertSame(assignment_status_facade::get_status_identifier('assigned'), (int)$assignment->status);
 
-        // Sent messages are set back.
-
-
+        // Here check on messages should be included.
         // Now the time passes until the assignment of the user is reopened.
         time_mock::set_mock_time(strtotime('+ 7 months', time()));
         $plugingenerator->runtaskswithintime($cronlock, $lock, time());
