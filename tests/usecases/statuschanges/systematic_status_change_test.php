@@ -309,7 +309,7 @@ final class systematic_status_change_test extends advanced_testcase {
     /**
      * Setup the test environment.
      * @param int $unitid
-     * @param int $targetid
+     * @param int $courseid
      * @param array $messageids
      * @return array
      */
