@@ -230,6 +230,7 @@ class adapter extends external_api_base implements external_api_interface {
                 );
             }
             $onlongleave = $this->return_value_for_functionname(taskflowadapter::TRANSLATOR_USER_LONG_LEAVE, $user) ?? 0;
+            $newcontractend = $this->return_value_for_functionname(taskflowadapter::TRANSLATOR_USER_CONTRACTEND, $user) ?? 0;
             if (
                 $this->contract_ended($user) ||
                 $onlongleave
@@ -244,6 +245,27 @@ class adapter extends external_api_base implements external_api_interface {
             }
         }
     }
+
+    /**
+     * Checks whether a contract end date has changed
+     * from a past date to a future one.
+     *
+     * @param int $oldcontractend
+     * @param int $newcontractend
+     * @return bool
+     */
+    private function on_contract_end_change(
+        $oldcontractend,
+        $newcontractend
+    ) {
+        return (
+            !empty($oldcontractend) &&
+            !empty($newcontractend) &&
+            $oldcontractend < time() &&
+            $newcontractend > time()
+        );
+    }
+
 
     /**
      * Translate the supervisor external id to internal id.
