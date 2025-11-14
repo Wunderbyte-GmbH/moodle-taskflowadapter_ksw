@@ -409,6 +409,7 @@ final class messages_sent_test extends advanced_testcase {
                         "timemodified" => 23233232222,
                         "timecreated" => 23233232222,
                         "usermodified" => 1,
+                        "recursive" => 0,
                         "filter" => [
                             [
                                 "filtertype" => "user_profile_field",

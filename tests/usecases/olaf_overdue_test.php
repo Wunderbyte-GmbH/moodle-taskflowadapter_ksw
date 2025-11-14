@@ -147,6 +147,7 @@ final class olaf_overdue_test extends advanced_testcase {
                         "timecreated" => strtotime('now', time()),
                         "extensionperiod" => 86400 * 5,
                         "usermodified" => 1,
+                        "recursive" => 0,
                         "filter" => [
                             [
                                 "filtertype" => "user_profile_field",

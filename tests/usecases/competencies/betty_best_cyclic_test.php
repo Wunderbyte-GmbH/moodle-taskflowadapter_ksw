@@ -352,6 +352,7 @@ final class betty_best_cyclic_test extends advanced_testcase {
                         "timemodified" => strtotime('now', time()),
                         "timecreated" => strtotime('now', time()),
                         "usermodified" => 1,
+                        "recursive" => 0,
                         "filter" => [
                             [
                                 "filtertype" => "user_profile_field",
