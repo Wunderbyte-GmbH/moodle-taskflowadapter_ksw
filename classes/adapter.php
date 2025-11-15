@@ -65,7 +65,7 @@ class adapter extends external_api_base implements external_api_interface {
         $this->create_or_update_users();
         $this->create_or_update_supervisor();
 
-        $this->save_all_user_infos($this->users);
+        $this->save_all_user_infos($this->return_static_users());
 
         // Left in there for units.
         self::trigger_unit_relation_updated_events($updatedentities['relationupdate']);
@@ -178,11 +178,11 @@ class adapter extends external_api_base implements external_api_interface {
      *
      */
     private function create_or_update_supervisor() {
-        foreach ($this->users as $user) {
+        foreach ($this->return_static_users() as $user) {
             $supervisorfield = $this->return_shortname_for_functionname(taskflowadapter::TRANSLATOR_USER_SUPERVISOR);
             $supervisorinstance = new supervisor($user->profile[$supervisorfield], $user->id);
             $supervisorid = $user->profile[$supervisorfield];
-            $supervisorinstance->set_supervisor_for_user($supervisorid, $supervisorfield, $user, $this->users);
+            $supervisorinstance->set_supervisor_for_user($supervisorid, $supervisorfield, $user, $this->return_static_users());
         }
     }
 
@@ -212,9 +212,9 @@ class adapter extends external_api_base implements external_api_interface {
      */
     private function create_or_update_users() {
         global $DB;
-        foreach ($this->users as $user) {
-            $newunits = $this->users[$user->email]->newunits ?? [];
-            $oldunits = $this->users[$user->email]->oldunits ?? [];
+        foreach ($this->return_static_users() as $user) {
+            $newunits = $user->newunits ?? [];
+            $oldunits = $user->oldunits ?? [];
 
             $this->set_supervisor_internal_id($user);
 
@@ -281,14 +281,16 @@ class adapter extends external_api_base implements external_api_interface {
          *
          */
     private function create_or_update_units($updatedentities) {
-        foreach ($this->users as $key => $user) {
-            $this->users[$key]->oldunits = moodle_user::get_all_units_of_user($user->id);
+        foreach ($this->return_static_users() as $key => $user) {
+            $user->oldunits = moodle_user::get_all_units_of_user($user->id);
+            self::store_user_in_static($user);
             $cohortid = $this->generate_units_data($user, $updatedentities);
             if (!empty($cohortid)) {
                 $user->cohortid = $cohortid;
                 if (get_config('local_taskflow', 'organisational_unit_option') == 'cohort') {
                     cohort_add_member($cohortid, (int) $user->id);
-                    $this->users[$key]->newunits[] = $cohortid;
+                    $user->newunits[] = $cohortid;
+                    self::store_user_in_static($user);
                 }
             }
         }
@@ -351,6 +353,7 @@ class adapter extends external_api_base implements external_api_interface {
             );
         }
     }
+
     /**
      * Setter function for users array.
      *
@@ -360,7 +363,7 @@ class adapter extends external_api_base implements external_api_interface {
      *
      */
     public function set_users(stdClass $user) {
-        $this->users[$user->email] = $user;
+        self::store_user_in_static($user);
     }
 
     /**
