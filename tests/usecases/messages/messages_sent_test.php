@@ -53,7 +53,7 @@ final class messages_sent_test extends advanced_testcase {
             'supervisor',
             'units',
         ]);
-        $plugingenerator->set_config_values();
+        $plugingenerator->set_config_values('ksw');
         $this->create_custom_profile_field();
         $this->preventResetByRollback();
     }
