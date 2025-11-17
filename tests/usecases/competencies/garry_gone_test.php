@@ -338,7 +338,7 @@ final class garry_gone_test extends advanced_testcase {
 
         $assignment = $DB->get_record('local_taskflow_assignment', ['userid' => $user1->id]);
         $this->assertSame(assignment_status_facade::get_status_identifier('paused'), (int)$assignment->status);
-        $this->assertSame($now + 86400 * 420, (int)$assignment->duedate); // Its 420 days in the future.
+        $this->assertNull($assignment->duedate); // Paused assignments don't have a future date anymore.
 
         $assignment = $DB->get_record('local_taskflow_assignment', ['userid' => $user2->id]);
         $this->assertSame(assignment_status_facade::get_status_identifier('overdue'), (int)$assignment->status);
