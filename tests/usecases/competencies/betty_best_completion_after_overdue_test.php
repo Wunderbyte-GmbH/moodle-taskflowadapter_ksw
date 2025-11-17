@@ -215,17 +215,14 @@ final class betty_best_completion_after_overdue_test extends advanced_testcase {
         $historylogs = array_filter($historylogs, function ($log) use ($assignment) {
             return $log->userid === $assignment->userid;
         });
-        // 3 logs now because we already triggered the event in betty_best_base.
+        // 4 logs now because we already triggered the event in betty_best_base.
         $this->assertCount(4, $historylogs);
         $sentmessages = $DB->get_records('local_taskflow_sent_messages', ['userid' => $user2->id]);
         $this->assertCount(4, $sentmessages);
-        $messagesink = array_filter($sink->get_messages(), function ($message) {
-            return strpos($message->subject, 'Taskflow -') === 0;
+        $messagesink = array_filter($sink->get_messages(), function ($message) use ($user2) {
+            return strpos($message->subject, 'Taskflow -') === 0 && $message->to === $user2->email;
         });
-        $completionmsgs = array_filter($sentmessages, function ($msg) use ($user2) {
-            return $msg->userid === $user2->id;
-        });
-        $this->assertCount(4, $completionmsgs);
+        $this->assertCount(4, $messagesink);
     }
 
     /**
