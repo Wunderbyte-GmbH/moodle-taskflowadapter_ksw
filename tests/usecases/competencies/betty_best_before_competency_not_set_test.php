@@ -187,6 +187,8 @@ final class betty_best_before_competency_not_set_test extends advanced_testcase 
         // Not completed because wront competency was set on option.
         $this->assertSame((int)$assignment->status, assignment_status_facade::get_status_identifier('overdue'));
 
+        set_config('allowoverduecompletion', 1, 'local_taskflow');
+
         // Now "fix" the booking option and user the right competency.
         $option1->competencies = $competency->get('id');
         $option1 = $plugingenerator->create_option($option1);
