@@ -167,12 +167,29 @@ final class betty_best_completion_after_overdue_test extends advanced_testcase {
             return $log->userid === $assignment->userid;
         });
         $this->assertCount(3, $historylogs);
-
+        set_config('allowoverduecompletion', 0, 'local_taskflow');
         // Now the booking option is being completed by user2.
         $this->assertSame(0, $option->user_completed_option());
         $option->toggle_user_completion($user2->id);
 
+
+        // Should stay overdue.
+        $plugingeneratortf->runtaskswithintime($cronlock, $lock, time());
+        $assignments = $DB->get_records('local_taskflow_assignment', ['userid' => $user2->id ]);
+        $this->assertCount(1, $assignments);
+        $assignment = array_shift($assignments);
+        $this->assertSame((int)$assignment->status, assignment_status_facade::get_status_identifier('overdue'));
+
         // User2 should now be completed.
+        set_config('allowoverduecompletion', 1, 'local_taskflow');
+        $event = rule_created_updated::create([
+            'objectid' => $rule['id'],
+            'context'  => context_system::instance(),
+            'other'    => [
+                'ruledata' => $rule,
+            ],
+        ]);
+        $event->trigger();
         $plugingeneratortf->runtaskswithintime($cronlock, $lock, time());
         $assignments = $DB->get_records('local_taskflow_assignment', ['userid' => $user2->id ]);
         $this->assertCount(1, $assignments);
