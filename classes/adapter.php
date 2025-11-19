@@ -228,6 +228,11 @@ class adapter extends external_api_base implements external_api_interface {
                     $newunits,
                     $user->id
                 );
+                $this->revalidate_units_on_change(
+                    $oldunits,
+                    $newunits,
+                    $user->id
+                );
             }
             $onlongleave = $this->return_value_for_functionname(taskflowadapter::TRANSLATOR_USER_LONG_LEAVE, $user) ?? 0;
             if (
@@ -347,9 +352,46 @@ class adapter extends external_api_base implements external_api_interface {
     ) {
         $invalidunits = array_diff($olduserunits, $newuserunits);
         if (count($invalidunits) >= 1) {
+            foreach ($invalidunits as $invalidunit) {
+                if (cohort_is_member($invalidunit, $userid)) {
+                    cohort_remove_member(
+                        $invalidunit,
+                        $userid
+                    );
+                }
+            }
             assignments_facade::set_user_units_assignments_inactive(
                 $userid,
-                $invalidunits,
+                $invalidunits
+            );
+        }
+    }
+
+    /**
+     * Private constructor to prevent direct instantiation.
+     * @param array $olduserunits
+     * @param array $newuserunits
+     * @param int $userid
+     * @return void
+     */
+    private function revalidate_units_on_change(
+        $olduserunits,
+        $newuserunits,
+        $userid
+    ) {
+        $revalidunits = array_diff($newuserunits, $olduserunits);
+        if (count($revalidunits) >= 1) {
+            foreach ($revalidunits as $revalidunit) {
+                if (!cohort_is_member($revalidunit, $userid)) {
+                    cohort_add_member(
+                        $revalidunit,
+                        $userid
+                    );
+                }
+            }
+            assignments_facade::set_user_units_assignments_active(
+                $userid,
+                $revalidunits
             );
         }
     }
