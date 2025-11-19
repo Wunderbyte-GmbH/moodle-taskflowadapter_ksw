@@ -29,6 +29,7 @@ use admin_setting_configmultiselect;
 use admin_setting_configselect;
 use admin_setting_configtext;
 use admin_setting_heading;
+use local_taskflow\local\external_adapter\external_api_base;
 use local_taskflow\plugininfo\taskflowadapter;
 
 /**
@@ -126,5 +127,32 @@ class taskflowadapter_ksw extends taskflowadapter {
                 PARAM_TEXT
             )
         );
+    }
+
+    /**
+     * Get the instance of the class for a specific ID.
+     * @param int $userid
+     * @return stdClass
+     */
+    public static function get_supervisor_for_user(int $userid) {
+        global $DB;
+
+        $fieldname = external_api_base::return_shortname_for_functionname(parent::TRANSLATOR_USER_SUPERVISOR);
+        if (empty($fieldname)) {
+            return (object)[];
+        }
+
+        $sql = "SELECT su.*
+                FROM {user} u
+                JOIN {user_info_data} uid ON uid.userid = u.id
+                JOIN {user_info_field} uif ON uif.id = uid.fieldid
+                JOIN {user} su ON su.id = " . $DB->sql_cast_char2int('uid.data') . "
+                WHERE u.id = :userid
+                AND uif.shortname = :supervisor";
+        $parms = [
+            'userid' => $userid,
+            'supervisor' => $fieldname,
+        ];
+        return $DB->get_record_sql($sql, $parms, IGNORE_MISSING);
     }
 }
