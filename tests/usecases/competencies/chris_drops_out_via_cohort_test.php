@@ -597,4 +597,195 @@ final class chris_drops_out_via_cohort_test extends advanced_testcase {
         // 1 assign mail because this table was flused on droput.
         $this->assertCount(1, $sentmessagesrule1);
     }
+
+    /**
+     * Example test: Ensure external data is loaded.
+     * @covers \local_taskflow\local\completion_process\completion_operator
+     * @covers \local_taskflow\local\completion_process\types\bookingoption
+     * @covers \local_taskflow\local\completion_process\types\competency
+     * @covers \local_taskflow\local\completion_process\types\moodlecourse
+     * @covers \local_taskflow\local\completion_process\types\types_base
+     * @covers \local_taskflow\local\history\history
+     * @covers \local_taskflow\event\assignment_completed
+     * @covers \local_taskflow\observer
+     * @covers \local_taskflow\task\send_taskflow_message
+     * @covers \local_taskflow\local\assignments\status\assignment_status
+     * @covers \local_taskflow\local\rules\unit_rules
+     * @covers \local_taskflow\local\assignments\assignments_facade
+     * @covers \local_taskflow\local\assignments\types\standard_assignment
+     * @covers \local_taskflow\local\rules\rules
+     * @covers \local_taskflow\local\assignments\assignments_facade
+     *
+     * @param array $bdata
+     * @dataProvider booking_common_settings_provider
+     */
+    public function test_chris_change_after_completion($bdata): void {
+        global $DB;
+        $sink = $this->redirectEmails();
+        $lock = $this->createMock(\core\lock\lock::class);
+        $cronlock = $this->createMock(\core\lock\lock::class);
+        [$user1, $user2, $user3, $rule, $secondrule, $booking, $course, $competency, $competency2] = $this->betty_best_base($bdata);
+
+        $sink = $this->redirectEmails();
+        $lock = $this->createMock(\core\lock\lock::class);
+        $cronlock = $this->createMock(\core\lock\lock::class);
+
+        $plugingenerator = self::getDataGenerator()->get_plugin_generator('mod_booking');
+
+        // Create booking option 1.
+        $record = new stdClass();
+        $record->bookingid = $booking->id;
+        $record->text = 'football';
+        $record->chooseorcreatecourse = 1; // Connected existing course.
+        $record->courseid = $course->id;
+        $record->description = 'Will start tomorrow';
+        $record->optiondateid_0 = "0";
+        $record->daystonotify_0 = "0";
+        $record->coursestarttime_0 = strtotime('20 June 2050 15:00');
+        $record->courseendtime_0 = strtotime('20 July 2050 14:00');
+        $record->teachersforoption = $user1->username;
+        $record->teachersforoption = 0;
+        $record->competencies = [$competency->get('id'), $competency2->get('id')];
+        $option1 = $plugingenerator->create_option($record);
+        singleton_service::destroy_booking_option_singleton($option1->id);
+
+        // Create a booking option answer - book user2.
+        $userchrisid = $DB->get_record('user', ['firstname' => 'Chris'])->id;
+        $result = $plugingenerator->create_answer(['optionid' => $option1->id, 'userid' => $userchrisid]);
+        $this->assertSame(MOD_BOOKING_BO_COND_ALREADYBOOKED, $result);
+        singleton_service::destroy_booking_answers($option1->id);
+
+        // Complete booking option for user2.
+        $settings = singleton_service::get_instance_of_booking_option_settings($option1->id);
+        $option = singleton_service::get_instance_of_booking_option($settings->cmid, $settings->id);
+        $plugingeneratortf = self::getDataGenerator()->get_plugin_generator('local_taskflow');
+        $plugingeneratortf->runtaskswithintime($cronlock, $lock, time());
+       
+        $userbertaid = $DB->get_record('user', ['firstname' => 'Berta'])->id;
+        $userchrisemail = $DB->get_record('user', ['firstname' => 'Chris'])->email;
+        $userbertaemail = $DB->get_record('user', ['firstname' => 'Berta'])->email;
+        $activecohortprechange = $DB->get_records('local_taskflow_unit_members', ['active' => 1, 'userid' => $userchrisid]);
+        $activeassignmentsprechange = $DB->get_records('local_taskflow_assignment', ['userid' => $userchrisid, 'active' => 1]);
+        // Chris one assignment of rule one.
+        $id = $rule['id'];
+        $cohorts = $DB->get_records('cohort');
+        $cohort = array_shift($cohorts);
+        $secondcohort = array_shift($cohorts);
+        $this->assertCount(1, $activeassignmentsprechange);
+        if (count($activeassignmentsprechange) >= 1) {
+            $assign = array_pop($activeassignmentsprechange);
+            $this->assertSame((int)$assign->ruleid, $id);
+        }
+
+        $dbmsg = array_values($DB->get_records('local_taskflow_messages'));
+        foreach ($dbmsg as $index => $msg) {
+            $data = json_decode($msg->message);
+            $dbmsg[$index]->subject = $data->heading;
+        }
+        // Assigned message not sent yet.
+        $sentmessages = $DB->get_records('local_taskflow_sent_messages');
+        $messagesink = array_filter($sink->get_messages(), function ($message) {
+            return strpos($message->subject, 'Taskflow -') === 0;
+        });
+        $this->assertCount(0, $sentmessages);
+        $this->assertCount(0, $messagesink);
+
+        // Assigned message sent after reaching time.
+        time_mock::set_mock_time(strtotime('+ 6 minutes', time()));
+        $plugingeneratortf->runtaskswithintime($cronlock, $lock, time());
+        $sentmessages = $DB->get_records('local_taskflow_sent_messages');
+        $messagesink = array_filter($sink->get_messages(), function ($message) {
+            return strpos($message->subject, 'Taskflow -') === 0;
+        });
+
+        time_mock::set_mock_time(strtotime('+ 30 days', time()));
+        $plugingeneratortf->runtaskswithintime($cronlock, $lock, time());
+        $assignment = $DB->get_record('local_taskflow_assignment', ['userid' => $userchrisid, 'ruleid' => $rule['id']]);
+        $this->assertSame((int)$assignment->status, assignment_status_facade::get_status_identifier('overdue'));
+        $oldassignmentid = $assignment->id;
+        $oldassignedtime = $assignment->assigneddate;
+        $sentmessagesrule1 = $DB->get_records(
+            'local_taskflow_sent_messages',
+            ['userid' => (int)$userchrisid, 'ruleid' => $rule['id']]
+        );
+        // Warn1, warn2.
+        $this->assertCount(2, $sentmessagesrule1);
+
+        // Complete the competency.
+        $option->toggle_user_completion($userchrisid);
+        $plugingeneratortf->runtaskswithintime($cronlock, $lock, time());
+        $assignment = $DB->get_record('local_taskflow_assignment', ['userid' => $userchrisid]);
+        $this->assertSame((int)$assignment->status, assignment_status_facade::get_status_identifier('completed'));
+
+
+        $user = $DB->get_record('user', ['firstname' => 'Chris']);
+        profile_load_custom_fields($user);
+        $user->profile_field_orgunit = $user->profile['orgunit']  . '\\' . $secondcohort->name;
+        $user->profile_field_Org2 = $secondcohort->name;
+        profile_save_data($user);
+        \core\event\user_updated::create_from_userid($user->id)->trigger();
+
+        $activecohortpostchange = $DB->get_records('local_taskflow_unit_members', ['active' => 1, 'userid' => $userchrisid]);
+        $inactiveassignmentspostchange = $DB->get_records('local_taskflow_assignment', ['userid' => $userchrisid, 'active' => 0]);
+        $this->assertNotSame($activecohortprechange, $activecohortpostchange);
+        // Rule 1 assignment is inactive now for Chris.
+        $this->assertCount(0, $inactiveassignmentspostchange);
+
+        // Should not have new assigned message.
+        $plugingeneratortf->runtaskswithintime($cronlock, $lock, time());
+        $sentmessages = $DB->get_records('local_taskflow_sent_messages');
+        $messagesink = array_filter($sink->get_messages(), function ($message) {
+            return strpos($message->subject, 'Taskflow -') === 0;
+        });
+
+        time_mock::set_mock_time(strtotime('+ 6 minutes', time()));
+        $plugingeneratortf->runtaskswithintime($cronlock, $lock, time());
+        $sentmessagesrule1 = $DB->get_records(
+            'local_taskflow_sent_messages',
+            ['userid' => (int)$userchrisid, 'ruleid' => $rule['id']]
+        );
+        $sentmessagesrule2 = $DB->get_records(
+            'local_taskflow_sent_messages',
+            ['userid' => (int)$userchrisid, 'ruleid' => $secondrule['id']]
+        );
+        $messagesink = array_filter($sink->get_messages(), function ($message) {
+            return strpos($message->subject, 'Taskflow -') === 0;
+        });
+        // Not dropped out, not reset.
+        $this->assertCount(2, $sentmessagesrule1);
+        // Assigned mail.
+        $this->assertCount(0, $sentmessagesrule2);
+        $chrismsgsink = array_filter($messagesink, function ($msg) use ($userchrisemail) {
+            return $msg->to === $userchrisemail;
+        });
+        // War1 war2.
+        $this->assertCount(2, $chrismsgsink);
+
+        $user = $DB->get_record('user', ['firstname' => 'Chris']);
+        profile_load_custom_fields($user);
+        $user->profile_field_orgunit = $cohort->name;
+        $user->profile_field_Org1 = $cohort->name;
+        $user->profile_field_Org2 = '';
+        profile_save_data($user);
+        \core\event\user_updated::create_from_userid($user->id)->trigger();
+        $plugingeneratortf->runtaskswithintime($cronlock, $lock, time());
+        $assignment = $DB->get_record('local_taskflow_assignment', ['id' => $oldassignmentid]);
+        $this->assertSame((int)$assignment->status, assignment_status_facade::get_status_identifier('completed'));
+        $this->assertSame((int)$assignment->prolongedcounter, 0);
+        $this->assertSame((int)$assignment->overduecounter, 1);
+        $this->assertSame($assignment->assigneddate, $oldassignedtime);
+        $this->assertSame((int)$assignment->duedate, $oldassignedtime + 86400 * 30);
+
+        time_mock::set_mock_time(strtotime('+ 6 minutes', time()));
+        $plugingeneratortf->runtaskswithintime($cronlock, $lock, time());
+        $sentmessagesrule1 = $DB->get_records(
+            'local_taskflow_sent_messages',
+            ['userid' => (int)$userchrisid, 'ruleid' => $rule['id']]
+        );
+        $historylogs = $DB->get_records('local_taskflow_history', ['assignmentid' => $assignment->id]);
+        // 8 Entries.
+        $this->assertCount(8, $historylogs);
+        // 2 mails as it was not reset on dropout.
+        $this->assertCount(2, $sentmessagesrule1);
+    }
 }
