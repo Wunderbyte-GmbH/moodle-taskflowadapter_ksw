@@ -17,14 +17,10 @@
 namespace taskflowadapter_ksw\usecases\statuschanges;
 
 use advanced_testcase;
-use local_taskflow\form\notrelevantforme;
 use local_taskflow\local\requests;
-use local_taskflow\local\rules\rules;
-use mod_booking\singleton_service;
 use tool_mocktesttime\time_mock;
 use local_taskflow\event\rule_created_updated;
 use local_taskflow\local\assignment_status\assignment_status_facade;
-use local_taskflow\local\external_adapter\external_api_base;
 use local_taskflow\local\external_adapter\external_api_repository;
 
 /**
