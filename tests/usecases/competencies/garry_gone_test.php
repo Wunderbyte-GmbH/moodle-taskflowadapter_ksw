@@ -345,6 +345,5 @@ final class garry_gone_test extends advanced_testcase {
         $now = time();
 
         $assignment = $DB->get_record('local_taskflow_assignment', ['userid' => $user1->id]);
-
     }
 }
