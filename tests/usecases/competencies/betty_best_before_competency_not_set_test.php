@@ -17,9 +17,7 @@
 namespace taskflowadapter_ksw\usecases\competencies;
 
 use advanced_testcase;
-use local_taskflow\local\external_adapter\external_api_base;
 use local_taskflow\local\external_adapter\external_api_repository;
-use local_taskflow\local\rules\rules;
 use tool_mocktesttime\time_mock;
 use context_system;
 use core_competency\api;
@@ -177,7 +175,6 @@ final class betty_best_before_competency_not_set_test extends advanced_testcase 
         // Not completed because wront competency was set on option.
         $this->assertSame((int)$assignment->status, assignment_status_facade::get_status_identifier('assigned'));
 
-
         // Forward to overdue.
         time_mock::set_mock_time(strtotime('+ 31 days', time()));
         $plugingeneratortf->runtaskswithintime($cronlock, $lock, time());
@@ -193,17 +190,16 @@ final class betty_best_before_competency_not_set_test extends advanced_testcase 
         $option1->competencies = $competency->get('id');
         $option1 = $plugingenerator->create_option($option1);
 
-        // Delete "old" assignment workaround.
-        // $DB->delete_records('local_taskflow_assignment', ['userid' => $user2->id ]);
-
         // Save rule again.
-        $event = rule_created_updated::create([
+        $event = rule_created_updated::create(
+            [
             'objectid' => $rule['id'],
             'context'  => context_system::instance(),
             'other'    => [
-                'ruledata' => $rule,
-                    ],
-                ]);
+                    'ruledata' => $rule,
+                ],
+            ]
+        );
         $event->trigger();
         $plugingeneratortf->runtaskswithintime($cronlock, $lock, time());
 
