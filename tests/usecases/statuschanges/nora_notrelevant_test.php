@@ -147,7 +147,7 @@ final class nora_notrelevant_test extends advanced_testcase {
         // Nora has not interest in her assignment.
         // She claims it's not relevant for her job.
         $requestid = requests::create(
-            notrelevantforme::REQUEST_NOTRELEVANT,
+            requests::REQUEST_NOTRELEVANT,
             $user->id,
             $assignment->id
         );
