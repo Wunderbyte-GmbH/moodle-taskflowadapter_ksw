@@ -152,7 +152,7 @@ final class chris_drops_out_via_cohort_test extends advanced_testcase {
     /**
      * Setup the test environment.
      * @param int $unitid
-     * @param int $courseid
+     * @param int $targetid
      * @param array $messageids
      * @return array
      */
