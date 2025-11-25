@@ -23,9 +23,7 @@ use core_competency\competency;
 use core_competency\user_competency;
 use local_taskflow\event\rule_created_updated;
 use local_taskflow\local\assignment_status\assignment_status_facade;
-use local_taskflow\local\external_adapter\external_api_base;
 use local_taskflow\local\external_adapter\external_api_repository;
-use local_taskflow\local\rules\rules;
 use mod_booking\singleton_service;
 use stdClass;
 use tool_mocktesttime\time_mock;
@@ -660,7 +658,7 @@ final class chris_drops_out_via_cohort_test extends advanced_testcase {
         $option = singleton_service::get_instance_of_booking_option($settings->cmid, $settings->id);
         $plugingeneratortf = self::getDataGenerator()->get_plugin_generator('local_taskflow');
         $plugingeneratortf->runtaskswithintime($cronlock, $lock, time());
-       
+
         $userbertaid = $DB->get_record('user', ['firstname' => 'Berta'])->id;
         $userchrisemail = $DB->get_record('user', ['firstname' => 'Chris'])->email;
         $userbertaemail = $DB->get_record('user', ['firstname' => 'Berta'])->email;
@@ -716,7 +714,6 @@ final class chris_drops_out_via_cohort_test extends advanced_testcase {
         $plugingeneratortf->runtaskswithintime($cronlock, $lock, time());
         $assignment = $DB->get_record('local_taskflow_assignment', ['userid' => $userchrisid]);
         $this->assertSame((int)$assignment->status, assignment_status_facade::get_status_identifier('completed'));
-
 
         $user = $DB->get_record('user', ['firstname' => 'Chris']);
         profile_load_custom_fields($user);

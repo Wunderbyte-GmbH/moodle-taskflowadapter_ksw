@@ -17,23 +17,13 @@
 namespace taskflowadapter_ksw\usecases\competencies;
 
 use advanced_testcase;
-use core_user;
-use DateTime;
 use local_taskflow\local\external_adapter\external_api_base;
 use local_taskflow\local\external_adapter\external_api_repository;
-use local_taskflow\local\rules\rules;
 use local_taskflow\plugininfo\taskflowadapter;
 use tool_mocktesttime\time_mock;
 use context_system;
-use core_competency\api;
-use core_competency\competency;
-use core_competency\user_competency;
 use local_taskflow\event\rule_created_updated;
 use local_taskflow\local\assignment_status\assignment_status_facade;
-use mod_booking\singleton_service;
-use stdClass;
-use mod_booking_generator;
-use function PHPUnit\Framework\assertSame;
 
 /**
  * Tests for booking rules.
@@ -356,8 +346,5 @@ final class garry_gone_test extends advanced_testcase {
 
         $assignment = $DB->get_record('local_taskflow_assignment', ['userid' => $user1->id]);
 
-        // Not yet implemented in KSW.
-        // $this->assertSame(assignment_status_facade::get_status_identifier('assigned'), (int)$assignment->status);
-        // $this->assertSame($now + 86400 * 420, (int)$assignment->duedate); // Its 420 days in the future.
     }
 }
