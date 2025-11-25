@@ -17,9 +17,7 @@
 namespace taskflowadapter_ksw\usecases\competencies;
 
 use advanced_testcase;
-use local_taskflow\local\external_adapter\external_api_base;
 use local_taskflow\local\external_adapter\external_api_repository;
-use local_taskflow\local\rules\rules;
 use tool_mocktesttime\time_mock;
 use context_system;
 use core_competency\api;
@@ -171,7 +169,6 @@ final class betty_best_completion_after_overdue_test extends advanced_testcase {
         // Now the booking option is being completed by user2.
         $this->assertSame(0, $option->user_completed_option());
         $option->toggle_user_completion($user2->id);
-
 
         // Should stay overdue.
         $plugingeneratortf->runtaskswithintime($cronlock, $lock, time());
