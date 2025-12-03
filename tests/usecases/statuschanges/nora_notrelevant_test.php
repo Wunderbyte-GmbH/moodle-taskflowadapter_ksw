@@ -18,6 +18,7 @@ namespace taskflowadapter_ksw\usecases\statuschanges;
 
 use advanced_testcase;
 use local_taskflow\local\requests;
+use local_taskflow\local\requests\request_types\types\allowselfnotrelevant;
 use tool_mocktesttime\time_mock;
 use local_taskflow\event\rule_created_updated;
 use local_taskflow\local\assignment_status\assignment_status_facade;
@@ -143,7 +144,7 @@ final class nora_notrelevant_test extends advanced_testcase {
         // Nora has not interest in her assignment.
         // She claims it's not relevant for her job.
         $requestid = requests::create(
-            requests::REQUEST_NOTRELEVANT,
+            allowselfnotrelevant::ID,
             $user->id,
             $assignment->id
         );
