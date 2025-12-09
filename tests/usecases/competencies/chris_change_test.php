@@ -466,7 +466,7 @@ final class chris_change_test extends advanced_testcase {
         $userbertaid = $DB->get_record('user', ['firstname' => 'Berta'])->id;
         $userchrisemail = $DB->get_record('user', ['firstname' => 'Chris'])->email;
         $userbertaemail = $DB->get_record('user', ['firstname' => 'Berta'])->email;
-        $activecohortprechange = $DB->get_records('local_taskflow_unit_members', ['active' => 1, 'userid' => $userchrisid]);
+        $activecohortprechange = $DB->get_record('local_taskflow_unit_members', ['active' => 1, 'userid' => $userchrisid]);
         $activeassignmentsprechange = $DB->get_records('local_taskflow_assignment', ['userid' => $userchrisid, 'active' => 1]);
         // Chris one assignment of rule one.
         $id = $rule['id'];
@@ -503,20 +503,21 @@ final class chris_change_test extends advanced_testcase {
         time_mock::set_mock_time(strtotime('+ 30 days', time()));
         $user = $DB->get_record('user', ['firstname' => 'Chris']);
         profile_load_custom_fields($user);
+        $oldorgunitname = $user->profile['orgunit'];
         $user->profile_field_orgunit = $user->profile['orgunit']  . '\\' . $secondcohort->name;
         $user->profile_field_Org2 = $secondcohort->name;
         profile_save_data($user);
         \core\event\user_updated::create_from_userid($user->id)->trigger();
 
-        $activecohortpostchange = $DB->get_records('local_taskflow_unit_members', ['active' => 1, 'userid' => $userchrisid]);
+        $activecohortpostchange = $DB->get_record('local_taskflow_unit_members', ['active' => 1, 'userid' => $userchrisid]);
         $inactiveassignmentspostchange = $DB->get_records('local_taskflow_assignment', ['userid' => $userchrisid, 'active' => 0]);
-        $this->assertNotSame($activecohortprechange, $activecohortpostchange);
+        $this->assertNotSame($activecohortprechange->unitid, $activecohortpostchange->unitid);
         // Rule 1 assignment is inactive now for Chris.
         $this->assertCount(1, $inactiveassignmentspostchange);
         if (count($inactiveassignmentspostchange) >= 1) {
-            $assignpost = array_pop($inactiveassignmentspostchange);
-            $this->assertSame((int)$assignpost->ruleid, $id);
-            $this->assertSame((int)$assignpost->status, assignment_status_facade::get_status_identifier('droppedout'));
+            $assignfirstpost = array_pop($inactiveassignmentspostchange);
+            $this->assertSame((int)$assignfirstpost->ruleid, $id);
+            $this->assertSame((int)$assignfirstpost->status, assignment_status_facade::get_status_identifier('droppedout'));
         }
 
         // Should not have new assigned message.
@@ -557,5 +558,28 @@ final class chris_change_test extends advanced_testcase {
             $this->assertSame($assignpost->status, '0');
             $this->assertSame((int)$assignpost->ruleid, ($secondrule['id']));
         }
+
+        // Come back to first cohort again.
+        // We still have $assignpost variable from above.
+        time_mock::set_mock_time(strtotime('+ 30 days', time()));
+
+        // We need to destroy all statics.
+        $plugingeneratortf->teardown();
+
+        $user->profile_field_orgunit = $oldorgunitname;
+        $user->profile_field_Org2 = '';
+        profile_save_data($user);
+        \core\event\user_updated::create_from_userid($user->id)->trigger();
+
+        time_mock::set_mock_time(strtotime('+ 6 minutes', time()));
+        $plugingeneratortf->runtaskswithintime($cronlock, $lock, time());
+
+        // Make sure we are in the same cohort again.
+        $activecohortpostchange = $DB->get_record('local_taskflow_unit_members', ['active' => 1, 'userid' => $userchrisid]);
+        $this->assertSame($activecohortprechange->unitid, $activecohortpostchange->unitid);
+
+        // Get assignment again.
+        $assignment = $DB->get_record('local_taskflow_assignment', ['id' => $assignfirstpost->id]);
+        $this->assertSame((int)$assignment->status, assignment_status_facade::get_status_identifier('assigned'));
     }
 }
