@@ -209,6 +209,7 @@ final class change_assignment_via_form_test extends advanced_testcase {
         $this->assertCount(1, $assignedmail);
         $this->assertCount(1, $completedmail);
         $this->assertCount(2, $sentmessages);
+        $this->tearDown();
     }
 
     /**
@@ -338,6 +339,7 @@ final class change_assignment_via_form_test extends advanced_testcase {
         $this->assertCount(1, $assignedmail);
         $this->assertCount(0, $completedmail);
         $this->assertCount(1, $sentmessages);
+        $this->tearDown();
     }
 
     /**
@@ -483,6 +485,7 @@ final class change_assignment_via_form_test extends advanced_testcase {
         $this->assertCount(1, $overduemail);
         $this->assertCount(0, $completedmail);
         $this->assertCount(4, $sentmessages);
+        $this->tearDown();
     }
 
     /**
