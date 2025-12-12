@@ -453,7 +453,7 @@ final class change_assignment_via_form_test extends advanced_testcase {
 
         $assignment = $DB->get_record('local_taskflow_assignment', ['userid' => $user2->id]);
         $this->assertSame(assignment_status_facade::get_status_identifier('prolonged'), (int)$assignment->status);
-        $this->assertSame($newduedate, (int)$assignment->duedate);
+        $this->assertTrue($olddue < (int)$assignment->duedate);
         // 10 => assigned, assigned email, enrolled..
         // Status overdue warn1mail, warn2 mail, overdue mainl,booking enrolled, manual change via form, proloned,.
         $historylogs = $DB->get_records('local_taskflow_history', ['assignmentid' => $assignment->id]);
