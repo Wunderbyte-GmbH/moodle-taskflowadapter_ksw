@@ -493,6 +493,7 @@ final class betty_best_partially_rule_update_test extends advanced_testcase {
                         "timecreated" => 23233232222,
                         "usermodified" => 1,
                         "recursive" => 0,
+                        "inheritance" => 1,
                         "filter" => [
                             [
                                 "filtertype" => "user_profile_field",

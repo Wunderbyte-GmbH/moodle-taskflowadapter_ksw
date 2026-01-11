@@ -175,6 +175,7 @@ final class chris_change_test extends advanced_testcase {
                         "timemodified" => 23233232222,
                         "timecreated" => 23233232222,
                         "usermodified" => 1,
+                        "inheritance" => 1,
                         "actions" => [
                             [
                                 "targets" => [

@@ -173,6 +173,7 @@ final class chris_drops_out_via_cohort_test extends advanced_testcase {
                         "timemodified" => time(),
                         "timecreated" => time(),
                         "usermodified" => 1,
+                        "inheritance" => 1,
                          "actions" => [
                             [
                                 "targets" => [
