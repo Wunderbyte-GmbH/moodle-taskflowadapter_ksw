@@ -666,6 +666,7 @@ final class change_assignment_via_form_test extends advanced_testcase {
                         "timecreated" => time(),
                         "usermodified" => 1,
                         "recursive" => 0,
+                        "inheritance" => 1,
                         "filter" => [
                             [
                                 "filtertype" => "user_profile_field",
