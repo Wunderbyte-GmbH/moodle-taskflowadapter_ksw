@@ -172,6 +172,7 @@ final class garry_gone_test extends advanced_testcase {
                         "timecreated" => 23233232222,
                         "usermodified" => 1,
                         "recursive" => 0,
+                        "inheritance" => 1,
                         "filter" => [
                             [
                                 "filtertype" => "user_profile_field",
