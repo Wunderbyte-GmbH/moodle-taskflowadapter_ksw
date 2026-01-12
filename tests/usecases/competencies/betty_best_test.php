@@ -622,9 +622,6 @@ final class betty_best_test extends advanced_testcase {
 
         $user3 = $DB->get_record('user', ['email' => 'berta.boss@ksw.ch']);
 
-
-
-
         $assignments = $DB->get_records('local_taskflow_assignment', ['userid' => $user3->id ]);
         $this->assertCount(1, $assignments);
         $assignment = array_shift($assignments);
@@ -704,6 +701,202 @@ final class betty_best_test extends advanced_testcase {
         // Should be assigned + assigned msg.
         $countafter = count($assignmenthistory = $DB->get_records('local_taskflow_history', ['assignmentid' => $assignment->id]));
         $this->assertSame($initialcount + 7, $countafter);
+
+        $this->assertSame(1, $option->user_completed_option());
+        $assignments = $DB->get_records('local_taskflow_assignment', ['userid' => $user3->id ]);
+        $this->assertCount(1, $assignments);
+        $assignment = array_shift($assignments);
+        $this->assertSame((int)$assignment->status, assignment_status_facade::get_status_identifier('completed'));
+        $sentmessages = $DB->get_records('local_taskflow_sent_messages', ['userid' => $user3->id ]);
+        // Should have no msg.
+        $this->assertCount(1, $sentmessages);
+        $messagesink = array_filter($sink->get_messages(), function ($message) {
+            return strpos($message->subject, 'Taskflow -') === 0;
+        });
+        $messagesinkuser2 = array_filter($messagesink, function ($msg) use ($user3) {
+            return $msg->to === $user3->email;
+        });
+        $this->assertCount(1, $sentmessages);
+        $this->assertCount(1, $messagesinkuser2);
+        $this->assertCount(3, $messagesink);
+
+        // Some time passes, we trigger the rule again, status should be unchanged.
+        time_mock::set_mock_time(strtotime('+ 6 minutes', time()));
+
+        $rule = (array)$DB->get_record('local_taskflow_rules', []);
+
+        // Run all adhoc tasks now.
+        $event = rule_created_updated::create([
+            'objectid' => $rule['id'],
+            'context'  => context_system::instance(),
+            'other'    => [
+                'ruledata' => $rule,
+            ],
+        ]);
+        $event->trigger();
+        $plugingenerator->runtaskswithintime($cronlock, $lock, time());
+
+        $assignments = $DB->get_records('local_taskflow_assignment', ['userid' => $user3->id ]);
+        $this->assertCount(1, $assignments);
+        $assignment = array_shift($assignments);
+        $this->assertSame((int)$assignment->status, assignment_status_facade::get_status_identifier('completed'));
+    }
+
+    /**
+     * Test rulestemplate on option being completed for user.
+     *
+     * @covers \mod_booking\option\fields\competencies
+     *
+     * @param array $bdata
+     * @throws \coding_exception
+     *
+     * @dataProvider booking_common_settings_provider
+     */
+    public function test_assign_competency_on_course_completion_in_hierarchy_multi(array $bdata): void {
+        global $DB, $CFG;
+
+        [$user1, $user2, $booking, $course, $competency, $competency2] = $this->betty_best_base($bdata);
+
+        require_once($CFG->dirroot . '/completion/criteria/completion_criteria_self.php');
+        require_once($CFG->dirroot . '/completion/completion_completion.php');
+        require_once($CFG->dirroot . '/completion/criteria/completion_criteria_self.php');
+
+        $completion = new completion_info($course);
+        $criteriadata = new stdClass();
+        $criteriadata->id = $course->id;
+        $criteriadata->criteria_self = 1;
+
+        $criterion = new completion_criteria_self();
+        $criterion->update_config($criteriadata);
+
+        $course2 = $this->set_db_course2();
+
+         $sink = $this->redirectEmails();
+        /** @var mod_booking_generator $plugingenerator */
+        $plugingenerator = self::getDataGenerator()->get_plugin_generator('mod_booking');
+        $lock = $this->createMock(\core\lock\lock::class);
+        $cronlock = $this->createMock(\core\lock\lock::class);
+        // Create booking option 1.
+        $record = new stdClass();
+        $record->bookingid = $booking->id;
+        $record->text = 'football';
+        $record->chooseorcreatecourse = 1; // Connected existing course.
+        $record->courseid = $course->id;
+        $record->description = 'Will start tomorrow';
+        $record->optiondateid_0 = "0";
+        $record->daystonotify_0 = "0";
+        $record->coursestarttime_0 = strtotime('20 June 2050 15:00');
+        $record->courseendtime_0 = strtotime('20 July 2050 14:00');
+        $record->teachersforoption = $user1->username;
+        $record->teachersforoption = 0;
+        $record->competencies = [$competency->get('id')];
+        $option1 = $plugingenerator->create_option($record);
+
+        $record = new stdClass();
+        $record->bookingid = $booking->id;
+        $record->text = 'football';
+        $record->chooseorcreatecourse = 1; // Connected existing course.
+        $record->courseid = $course2->id;
+        $record->description = 'Will start tomorrow';
+        $record->optiondateid_0 = "0";
+        $record->daystonotify_0 = "0";
+        $record->coursestarttime_0 = strtotime('20 June 2050 15:00');
+        $record->courseendtime_0 = strtotime('20 July 2050 14:00');
+        $record->teachersforoption = $user1->username;
+        $record->teachersforoption = 0;
+        $record->competencies = [$competency2->get('id')];
+        $option2 = $plugingenerator->create_option($record);
+
+        singleton_service::destroy_instance();
+
+        $user3 = $DB->get_record('user', ['email' => 'berta.boss@ksw.ch']);
+
+        $assignments = $DB->get_records('local_taskflow_assignment', ['userid' => $user3->id ]);
+        $this->assertCount(1, $assignments);
+        $assignment = array_shift($assignments);
+        $this->assertSame((int)$assignment->status, assignment_status_facade::get_status_identifier('assigned'));
+
+        // Count should be 1 - assigned.
+        $initialcount = count($assignmenthistory = $DB->get_records('local_taskflow_history', ['assignmentid' => $assignment->id]));
+        $this->assertSame(1, $initialcount);
+        time_mock::set_mock_time(strtotime('+ 6 minutes', time()));
+        $plugingeneratortf = self::getDataGenerator()->get_plugin_generator('local_taskflow');
+        $plugingeneratortf->runtaskswithintime($cronlock, $lock, time());
+
+        // Assigned + assigned mail.
+        $countafter = count($assignmenthistory = $DB->get_records('local_taskflow_history', ['assignmentid' => $assignment->id]));
+        $this->assertSame($initialcount + 1, $countafter);
+
+        // Create a booking option answer - book user2.
+        $result = $plugingenerator->create_answer(['optionid' => $option1->id, 'userid' => $user3->id]);
+
+        $result = $plugingenerator->create_answer(['optionid' => $option2->id, 'userid' => $user3->id]);
+
+        $this->assertSame(MOD_BOOKING_BO_COND_ALREADYBOOKED, $result);
+        singleton_service::destroy_instance();
+
+        // Complete booking option for user2.
+        $settings = singleton_service::get_instance_of_booking_option_settings($option1->id);
+        $option = singleton_service::get_instance_of_booking_option($settings->cmid, $settings->id);
+
+        $assignments = $DB->get_records('local_taskflow_assignment', ['userid' => $user3->id ]);
+        $this->assertCount(1, $assignments);
+        $assignment = array_shift($assignments);
+        // We dont exclude enrolled in this project.
+        $this->assertSame((int)$assignment->status, assignment_status_facade::get_status_identifier('enrolled'));
+
+        $plugingenerator = self::getDataGenerator()->get_plugin_generator('local_taskflow');
+        $plugingenerator->runtaskswithintime($cronlock, $lock, time());
+
+        // Should be assigned + assigned msg + enrolled + booking course enrol1 + booking course enrol2.
+        $countafter = count($assignmenthistory = $DB->get_records('local_taskflow_history', ['assignmentid' => $assignment->id]));
+        $this->assertSame($initialcount + 4, $countafter);
+
+        $sentmessages = $DB->get_records('local_taskflow_sent_messages', ['userid' => $user3->id ]);
+        // Assignment mail should be sent.
+        $this->assertCount(1, $sentmessages);
+        $messagesink = array_filter($sink->get_messages(), function ($message) {
+            return strpos($message->subject, 'Taskflow -') === 0;
+        });
+        $messagesinkuser2 = array_filter($messagesink, function ($msg) use ($user3) {
+            return $msg->to === $user3->email;
+        });
+        $this->assertCount(1, $messagesinkuser2);
+        $this->assertCount(3, $messagesink);
+
+        $this->assertSame(0, $option->user_completed_option());
+
+        $this->setUser($user3);
+        $ccompletion = new completion_completion(['userid' => $user3->id, 'course' => $course->id]);
+        $ccompletion->mark_complete();
+
+        // Run all adhoc tasks now.
+        $this->setAdminUser();
+        time_mock::set_mock_time(strtotime('+ 1 minute', time()));
+        $plugingenerator->runtaskswithintime($cronlock, $lock, time());
+
+        // Should be assigned + assigned msg + enrolled + booking course enrol1
+        // + booking course enrol2 + completed status + comp1 completed + comp2 completed.
+        $countafter = count($assignmenthistory = $DB->get_records('local_taskflow_history', ['assignmentid' => $assignment->id]));
+        $this->assertSame($initialcount + 6, $countafter);
+
+        $this->setUser($user3);
+        $ccompletion = new completion_completion(['userid' => $user3->id, 'course' => $course2->id]);
+        $ccompletion->mark_complete();
+
+        $this->setAdminUser();
+        $plugingenerator->runtaskswithintime($cronlock, $lock, time());
+
+        require_once($CFG->dirroot . '/user/lib.php');
+        user_update_user((object)[
+            'id' => $user3->id,
+            'firstname' => 'UpdatedFirstName',
+            'lastname' => 'UpdatedLastName',
+        ]);
+
+        // Should be assigned + assigned msg.
+        $countafter = count($assignmenthistory = $DB->get_records('local_taskflow_history', ['assignmentid' => $assignment->id]));
+        $this->assertSame($initialcount + 8, $countafter);
 
         $this->assertSame(1, $option->user_completed_option());
         $assignments = $DB->get_records('local_taskflow_assignment', ['userid' => $user3->id ]);
@@ -1041,6 +1234,21 @@ final class betty_best_test extends advanced_testcase {
         $course = $this->getDataGenerator()->create_course([
             'fullname' => 'Test Course',
             'shortname' => 'TC101',
+            'category' => 1,
+            'enablecompletion' => 1,
+        ]);
+        return $course;
+    }
+
+    /**
+     * Setup the test environment.
+     * @return object
+     */
+    protected function set_db_course2(): mixed {
+        // Create a user.
+        $course = $this->getDataGenerator()->create_course([
+            'fullname' => 'Test Course 2',
+            'shortname' => 'TC102',
             'category' => 1,
             'enablecompletion' => 1,
         ]);
