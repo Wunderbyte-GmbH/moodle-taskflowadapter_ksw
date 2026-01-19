@@ -42,7 +42,8 @@ function taskflowadapter_ksw_render_navbar_output(\renderer_base $renderer) {
     $templatedata = [];
 
     $urluser = new moodle_url('/local/taskflow#user-pane-' . $USER->id . '-');
-    $courselist = new moodle_url('/mod/booking/mybookings.php?completed=1');
+    $params = ['completed' => 1, 'filter' => 1, 'typefilter' => 1];
+    $courselist = new moodle_url('/mod/booking/mybookings.php', $params);
 
     $items = [
         ['label' => get_string('mylearningprofile', 'taskflowadapter_ksw'), 'link' => $urluser->out(false)],
