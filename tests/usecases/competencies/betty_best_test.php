@@ -1151,7 +1151,7 @@ final class betty_best_test extends advanced_testcase {
      *
      * @dataProvider booking_common_settings_provider
      */
-    public function test_assign_competency_on_course_completion(array $bdata): void {
+    public function test_assign_competency_on_course_completion_v2(array $bdata): void {
         global $DB, $CFG;
 
         [$user1, $user2, $booking, $course, $competency, $competency2] = $this->betty_best_base($bdata);
@@ -1321,7 +1321,7 @@ final class betty_best_test extends advanced_testcase {
      *
      * @dataProvider booking_common_settings_provider
      */
-    public function test_assign_competency_on_course_completion_in_hierarchy(array $bdata): void {
+    public function test_assign_competency_on_course_completion_in_hierarchy_v2(array $bdata): void {
         global $DB, $CFG;
 
         [$user1, $user2, $booking, $course, $competency, $competency2] = $this->betty_best_base($bdata);
