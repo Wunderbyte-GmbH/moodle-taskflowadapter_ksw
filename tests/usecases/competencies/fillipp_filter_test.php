@@ -648,7 +648,7 @@ final class fillipp_filter_test extends advanced_testcase {
                 'value' => 'a',
             ],
         ];
-        $rule['rulejson'] = json_encode((object)$rulejson['rulejson']);
+        $rule['rulejson'] = json_encode($rulejson);
         $DB->update_record('local_taskflow_rules', (object)['id' => $rule['id'], 'rulejson' => $rule['rulejson']]);
 
         // We need to destroy instance.
@@ -681,7 +681,7 @@ final class fillipp_filter_test extends advanced_testcase {
         // - activate filter again -> status is 16 again.
         // - update user to match new filter -> status 0 again.
         $rulejson['rulejson']['rule']['filter'] = [];
-        $rule['rulejson'] = json_encode((object)$rulejson['rulejson']);
+        $rule['rulejson'] = json_encode((object)$rulejson);
         $DB->update_record('local_taskflow_rules', (object)['id' => $rule['id'], 'rulejson' => $rule['rulejson']]);
 
         rules::destroy_instance();
@@ -715,8 +715,8 @@ final class fillipp_filter_test extends advanced_testcase {
             ],
         ];
 
-        $rule['rulejson'] = json_encode((object)$rulejson['rulejson']);
-        $DB->update_record('local_taskflow_rules', (object)['id' => $rule['id']]);
+        $rule['rulejson'] = json_encode((object)$rulejson);
+        $DB->update_record('local_taskflow_rules', (object)['id' => $rule['id'], 'rulejson' => $rule['rulejson']]);
 
         rules::destroy_instance();
         // Trigger rule update and run tasks again.
