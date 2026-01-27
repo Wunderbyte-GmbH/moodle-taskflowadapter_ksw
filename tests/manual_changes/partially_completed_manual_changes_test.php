@@ -50,51 +50,121 @@ final class partially_completed_manual_changes_test extends manual_changes_base 
                 16, // Status.
                 16, // Outputform.
                 16, // Outputimport.
+                0, // Dont keep changes.
+            ],
+            'droppedout_keep' => [
+                16, // Status.
+                16, // Outputform.
+                16, // Outputimport.
+                1, // Keep changes.
             ],
             'completed' => [
                 15, // Status.
                 15, // Outputform.
                 15, // Status is overwritten.
+                0, // Dont keep changes.
+            ],
+            'completed_keep' => [
+                15, // Status.
+                15, // Outputform.
+                15, // Status is overwritten.
+                1, // Keep changes.
             ],
             'sanction' => [
                 12, // Status.
                 12, // Outputform.
                 12, // Status is overwritten.
+                0, // Dont keep changes.
+            ],
+            'sanction_keep' => [
+                12, // Status.
+                12, // Outputform.
+                12, // Status is overwritten.
+                1, // Keep changes.
             ],
             'reprimand' => [
                 11, // Status.
                 11, // Outputform.
                 11, // Status is overwritten.
+                0, // Dont keep changes.
+            ],
+            'reprimand_keep' => [
+                11, // Status.
+                11, // Outputform.
+                11, // Status is overwritten.
+                1, // Keep changes.
             ],
             'overdue' => [
                 10, // Status.
                 10, // Outputform.
                 10, // Outputimport.
+                0, // Dont keep changes.
+            ],
+            'overdue_keep' => [
+                10, // Status.
+                10, // Outputform.
+                10, // Outputimport.
+                1, // Keep changes.
             ],
             'partially_completed' => [
                 7, // Status.
                 7, // Outputform.
                 7, // Status is not reached.
+                0, // Dont keep changes.
+            ],
+            'partially_completed_keep' => [
+                7, // Status.
+                7, // Outputform.
+                7, // Status is not reached.
+                1, // Keep changes.
             ],
             'prolonged' => [
                 5, // Status.
                 5, // Outputform.
                 5, // Outputimport.
+                0, // Dont keep changes.
+            ],
+            'prolonged_keep' => [
+                5, // Status.
+                5, // Outputform.
+                5, // Outputimport.
+                1, // Keep changes.
             ],
             'paused' => [
                 4, // Status.
                 4, // Outputform.
                 4, // Outputimport.
+                0, // Dont keep changes.
+            ],
+            'paused_keep' => [
+                4, // Status.
+                4, // Outputform.
+                4, // Outputimport.
+                1, // Keep changes.
             ],
             'enrolled' => [
                 3, // Status.
                 3, // Outputform.
                 3, // Status is not allowed.
+                0, // Dont keep changes.
+            ],
+            'enrolled_keep' => [
+                3, // Status.
+                3, // Outputform.
+                3, // Status is not allowed.
+                1, // Keep changes.
             ],
             'assigned' => [
                 0, // Status.
                 0, // Outputform.
                 0, // Outputimport.
+                0, // Dont keep changes.
+            ],
+            'assigned_keep' => [
+                0, // Status.
+                0, // Outputform.
+                0, // Outputimport.
+                1, // Keep changes.
             ],
         ];
     }
@@ -105,6 +175,7 @@ final class partially_completed_manual_changes_test extends manual_changes_base 
      * @param int $status
      * @param int $outputform
      * @param int $outputimport
+     * @param int $keepchanges
      * @return void
      * @dataProvider status_and_outputs
      * @covers \local_taskflow\local\rules\rules
@@ -113,7 +184,8 @@ final class partially_completed_manual_changes_test extends manual_changes_base 
     public function test_manual_change(
         int $status,
         int $outputform,
-        int $outputimport
+        int $outputimport,
+        int $keepchanges
     ): void {
         global $DB;
         [$user1, $user2, $booking, $course, $competency, $competency2, $externaldata] = $this->manual_changes_base_case();
@@ -157,7 +229,7 @@ final class partially_completed_manual_changes_test extends manual_changes_base 
             'change_reason' => 0,
             'duedate' => $assignment->duedate,
             'comment' => 'UNIT TEST COMMENT',
-            'keepchanges' => 0,
+            'keepchanges' => $keepchanges,
             'overduecounter' => $assignment->overduecounter,
             'prolongedcounter' => $assignment->prolongedcounter,
         ];
