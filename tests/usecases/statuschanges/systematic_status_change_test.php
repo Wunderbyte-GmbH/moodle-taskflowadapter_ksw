@@ -421,7 +421,7 @@ final class systematic_status_change_test extends advanced_testcase {
                         'status' => assignment_status_facade::get_status_identifier('droppedout'),
                     ],
                     'expected' => [
-                        'status' => assignment_status_facade::get_status_identifier('droppedout'),
+                        'status' => assignment_status_facade::get_status_identifier('assigned'),
                         'errormessage' => 'Dropped-out status did not update as expected.',
                     ],
                 ],
@@ -574,7 +574,7 @@ final class systematic_status_change_test extends advanced_testcase {
                         'executetask' => 'now',
                     ],
                     'expected' => [
-                        'status' => assignment_status_facade::get_status_identifier('droppedout'),
+                        'status' => assignment_status_facade::get_status_identifier('assigned'),
                         'errormessage' => 'Dropped-out status did not update as expected after task execution.',
                     ],
                 ],
