@@ -180,7 +180,7 @@ final class betty_best_test extends advanced_testcase {
 
         $this->assertSame(0, $option->user_completed_option());
 
-        // setUser_completion now uses a task to complete the option.
+        // SetUser_completion now uses a task to complete the option.
         $this->setUser($user2);
         $option->toggle_user_completion($user2->id);
 
@@ -1362,9 +1362,6 @@ final class betty_best_test extends advanced_testcase {
         singleton_service::destroy_instance();
 
         $user3 = $DB->get_record('user', ['email' => 'berta.boss@ksw.ch']);
-
-
-
 
         $assignments = $DB->get_records('local_taskflow_assignment', ['userid' => $user3->id ]);
         $this->assertCount(1, $assignments);

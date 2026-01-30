@@ -630,7 +630,10 @@ final class fillipp_filter_test extends advanced_testcase {
         if (count($activeassignmentsprechange) === 0) {
             time_mock::set_mock_time(strtotime('+ 6 minutes', time()));
             $plugingeneratortf->runtaskswithintime($cronlock, $lock, time());
-            $activeassignmentsprechange = $DB->get_records('local_taskflow_assignment', ['userid' => $userchris->id, 'active' => 1]);
+            $activeassignmentsprechange = $DB->get_records(
+                'local_taskflow_assignment',
+                ['userid' => $userchris->id, 'active' => 1]
+            );
         }
         $this->assertCount(1, $activeassignmentsprechange);
         $activeassignmentprechange = array_pop($activeassignmentsprechange);
