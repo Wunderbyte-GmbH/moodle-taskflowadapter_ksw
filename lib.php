@@ -46,8 +46,6 @@ function taskflowadapter_ksw_render_navbar_output(\renderer_base $renderer) {
     $courselist = new moodle_url('/mod/booking/mybookings.php', $params);
 
     $items = [
-        ['label' => "Mandant 1", 'link' => '/course/index.php?categoryid=10'],
-        ['label' => "Mandant 2", 'link' => '/course/index.php?categoryid=11'],
         ['label' => get_string('mylearningprofile', 'taskflowadapter_ksw'), 'link' => $urluser->out(false)],
         ['label' => get_string('mycourses', 'taskflowadapter_ksw'), 'link' => $courselist->out(false)],
     ];
