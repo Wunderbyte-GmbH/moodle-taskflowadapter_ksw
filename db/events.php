@@ -27,7 +27,7 @@ defined('MOODLE_INTERNAL') || die();
 
 $observers = [
     [
-        'eventname' => '\local_taskflow\event\assignment_completed',
-        'callback' => '\taskflowadapter_ksw\observer::assignment_completed',
+        'eventname' => '\core\event\user_updated',
+        'callback' => '\taskflowadapter_ksw\observer::user_updated',
     ],
  ];

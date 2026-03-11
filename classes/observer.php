@@ -25,8 +25,12 @@
 
 namespace taskflowadapter_ksw;
 
+use core\event\user_updated;
+use core_user;
 use local_taskflow\event\assignment_completed;
 use local_taskflow\local\assignments\assignment;
+use mod_booking\booking_answers\booking_answers;
+use mod_booking\singleton_service;
 use tool_certificate\template;
 
 /**
@@ -34,38 +38,50 @@ use tool_certificate\template;
  */
 class observer {
     /**
-     * Creates a certificate when assingment is complted.
+     * Handles the user_updated event.
      *
-     * @param assignment_completed $event
+     * @param user_updated $event
      *
      * @return void
      *
      */
-    public static function assignment_completed(assignment_completed $event) {
-        global $DB;
+    public static function user_updated(user_updated $event) {
+        global $CFG, $DB;
+        require_once($CFG->dirroot . '/mod/booking/lib.php');
         $data = $event->get_data();
-        $search = '%BLS%';
-        $sql = "SELECT *
-                FROM {local_taskflow_rules}
-                WHERE " . $DB->sql_like('rulename', ':rulename');
-
-        $params = ['rulename' => $search];
-        $blsrules = $DB->get_records_sql($sql, $params);
-        if (empty($blsrules)) {
+        $user = core_user::get_user($data['relateduserid']);
+        if ($user->suspended == 0) {
             return;
         }
-        $assignment = new assignment($data['other']['assignmentid']);
-        foreach ($blsrules as $rule) {
-            if ($assignment->ruleid === $rule->id) {
-                $certificateid = (int) get_config('taskflowadapter_ksw', 'blscertificatekey');
-                $template = template::instance($certificateid);
-                $id = $template->issue_certificate(
-                    $assignment->userid
-                );
-                // Get the issue and create the PDF.
-                $issue = $DB->get_record('tool_certificate_issues', ['id' => $id]);
-                $pdf = $template->create_issue_file($issue, false);
+        $now = time();
+        $sql = "SELECT {booking_answers}.id, {booking_answers}.optionid, {booking_options}.json
+        FROM {booking_answers}
+        JOIN {booking_options} ON {booking_answers}.optionid = {booking_options}.id
+        WHERE userid = :userid
+        AND waitinglist = :waitinglist
+        AND {booking_options}.coursestarttime > :currenttime";
+
+        $answers = $DB->get_records_sql(
+            $sql,
+            [
+            'userid' => $user->id,
+            'waitinglist' => MOD_BOOKING_STATUSPARAM_BOOKED,
+            'currenttime' => $now,
+            ]
+        );
+
+        foreach ($answers as $answer) {
+            $optionjson = json_decode($answer->json ?? '');
+            // Keep only options where selflearningcourse is 0.
+            if (
+                isset($optionjson->selflearningcourse) && $optionjson->selflearningcourse != 0
+            ) {
+                continue;
             }
+
+            $settings = singleton_service::get_instance_of_booking_option_settings($answer->optionid);
+            $option = singleton_service::get_instance_of_booking_option($settings->cmid, $answer->optionid);
+            $option->user_delete_response($user->id);
         }
     }
 }
