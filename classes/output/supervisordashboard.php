@@ -102,7 +102,7 @@ class supervisordashboard implements renderable, templatable {
         $data['supervisorassignments'] = shortcodes::supervisorassignments(
             '',
             [
-                    'columns' => 'fullname,targets,status,info',
+                    'columns' => 'fullname,targets,statussortkey,info',
                     'deputyselect' => 1,
                     'noheading' => 1,
             ],

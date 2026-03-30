@@ -82,7 +82,7 @@ class admindashboard implements renderable, templatable {
         $data['assignments'] = shortcodes::assignmentsdashboard(
             '',
             [
-                'columns' => 'fullname, targets, rulename, status, timecreated, timemodified, actions',
+                'columns' => 'fullname, targets, rulename, statussortkey, timecreated, timemodified, actions',
                 'noheading' => 1,
             ],
             null,
