@@ -17,6 +17,7 @@
 namespace taskflowadapter_ksw\usecases\statuschanges;
 
 use advanced_testcase;
+use local_taskflow\local\assignments\assignment;
 use local_taskflow\local\external_adapter\external_api_repository;
 use local_taskflow\task\update_rule;
 use tool_mocktesttime\time_mock;
@@ -194,6 +195,7 @@ final class systematic_status_change_test extends advanced_testcase {
         }
 
         $DB->update_record('local_taskflow_assignment', $assignment1);
+        assignment::destroy_instance($assignment1->id);
 
         // Execute the rule update task to trigger status re-evaluation.
         // We use this instead of event to avoid triggering a couple of tasks at the same time.
