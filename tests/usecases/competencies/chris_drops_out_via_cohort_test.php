@@ -595,6 +595,7 @@ final class chris_drops_out_via_cohort_test extends advanced_testcase {
         $this->assertCount(8, $historylogs);
         // 1 assign mail because this table was flused on droput.
         $this->assertCount(1, $sentmessagesrule1);
+        self::tearDown();
     }
 
     /**
@@ -726,8 +727,11 @@ final class chris_drops_out_via_cohort_test extends advanced_testcase {
         $activecohortpostchange = $DB->get_records('local_taskflow_unit_members', ['active' => 1, 'userid' => $userchrisid]);
         $inactiveassignmentspostchange = $DB->get_records('local_taskflow_assignment', ['userid' => $userchrisid, 'active' => 0]);
         $this->assertNotSame($activecohortprechange, $activecohortpostchange);
-        // Rule 1 assignment is inactive now for Chris.
-        $this->assertCount(0, $inactiveassignmentspostchange);
+        // Stays on completed now. But assignment should be inactive now. We check if it is inactive and the status is correct.
+        $this->assertCount(1, $inactiveassignmentspostchange);
+        $assignment = $inactiveassignmentspostchange[array_key_first($inactiveassignmentspostchange)];
+        $this->assertSame((int)$assignment->status, assignment_status_facade::get_status_identifier('completed'));
+
 
         // Should not have new assigned message.
         $plugingeneratortf->runtaskswithintime($cronlock, $lock, time());
