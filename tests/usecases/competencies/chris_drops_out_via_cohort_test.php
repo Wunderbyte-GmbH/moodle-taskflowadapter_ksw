@@ -732,7 +732,6 @@ final class chris_drops_out_via_cohort_test extends advanced_testcase {
         $assignment = $inactiveassignmentspostchange[array_key_first($inactiveassignmentspostchange)];
         $this->assertSame((int)$assignment->status, assignment_status_facade::get_status_identifier('completed'));
 
-
         // Should not have new assigned message.
         $plugingeneratortf->runtaskswithintime($cronlock, $lock, time());
         $sentmessages = $DB->get_records('local_taskflow_sent_messages');
