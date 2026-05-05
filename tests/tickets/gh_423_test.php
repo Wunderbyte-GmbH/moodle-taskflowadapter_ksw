@@ -101,7 +101,8 @@ final class gh_423_test extends advanced_testcase {
         /** @var mod_booking_generator $plugingenerator */
         $plugingenerator = self::getDataGenerator()->get_plugin_generator('mod_booking');
 
-        // We first check if only one event is triggered and not multiple. Since the redirect hinders the observer we execute the reschdule task again.
+        /*We first check if only one event is triggered and not multiple.
+        Since the redirect hinders the observer we execute the reschdule task again. */
         $sink = $this->redirectEvents();
         $task = new reschedule_rules();
         $task->execute();
