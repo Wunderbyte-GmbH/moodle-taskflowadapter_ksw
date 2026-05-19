@@ -19,8 +19,8 @@ jobs:
         moodle-plugin-ci add-plugin --branch master Wunderbyte-GmbH/moodle-local_multistepform
         moodle-plugin-ci add-plugin --branch master branchup/moodle-filter_shortcodes
         moodle-plugin-ci add-plugin --branch main Wunderbyte-GmbH/moodle-tool_mocktesttime
-        moodle-plugin-ci add-plugin --branch main Wunderbyte-GmbH/moodle-mod_booking
-        moodle-plugin-ci add-plugin --branch inestests Wunderbyte-GmbH/Moodle-local_taskflow
+        moodle-plugin-ci add-plugin --branch KSW Wunderbyte-GmbH/moodle-mod_booking
+        moodle-plugin-ci add-plugin --branch KSW-W Wunderbyte-GmbH/Moodle-local_taskflow
 
       # If you need to ignore specific paths (third-party libraries are ignored by default)
       # ignore_paths: "vue3,moodle/tests/fixtures,moodle/Sniffs,moodle/vue3,OpenTBS,TinyButStrong"
