@@ -1,4 +1,6 @@
 <?php
+
+use local_taskflow\taskflow_stringmanager;
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -46,22 +48,22 @@ function taskflowadapter_ksw_render_navbar_output(\renderer_base $renderer) {
     $courselist = new moodle_url('/mod/booking/mybookings.php', $params);
 
     $items = [
-        ['label' => get_string('mylearningprofile', 'taskflowadapter_ksw'), 'link' => $urluser->out(false)],
-        ['label' => get_string('mycourses', 'taskflowadapter_ksw'), 'link' => $courselist->out(false)],
+        ['label' => taskflow_stringmanager::get_string('mylearningprofile'), 'link' => $urluser->out(false)],
+        ['label' => taskflow_stringmanager::get_string('mycourses'), 'link' => $courselist->out(false)],
     ];
 
     if (has_capability('local/taskflow:issupervisor', $context)) {
         $urlsupervisor = new moodle_url('/local/taskflow/');
-        $items[] = ['label' => get_string('supervisor', 'taskflowadapter_ksw'), 'link' => $urlsupervisor->out(false)];
+        $items[] = ['label' => taskflow_stringmanager::get_string('supervisor'), 'link' => $urlsupervisor->out(false)];
     }
 
     if (user_has_role_assignment($USER->id, 18, $context->id)) {
         $course1 = new moodle_url('/course/view.php?id=9');
         $course2 = new moodle_url('/course/view.php?id=8');
         $course3 = new moodle_url('/course/view.php?id=29');
-        $items[] = ['label' => get_string('contentdatabase', 'taskflowadapter_ksw'), 'link' => $course1];
-        $items[] = ['label' => get_string('trainingcourse', 'taskflowadapter_ksw'), 'link' => $course2];
-        $items[] = ['label' => get_string('archive', 'taskflowadapter_ksw'), 'link' => $course3];
+        $items[] = ['label' => taskflow_stringmanager::get_string('contentdatabase'), 'link' => $course1];
+        $items[] = ['label' => taskflow_stringmanager::get_string('trainingcourse'), 'link' => $course2];
+        $items[] = ['label' => taskflow_stringmanager::get_string('archive'), 'link' => $course3];
     }
 
     $templatedata['dropdown'] = [
