@@ -31,6 +31,7 @@ use admin_setting_configtext;
 use admin_setting_heading;
 use local_taskflow\local\external_adapter\external_api_base;
 use local_taskflow\plugininfo\taskflowadapter;
+use local_taskflow\taskflow_stringmanager;
 
 /**
  * Class for the KSW taskflow adapter.
@@ -66,7 +67,7 @@ class taskflowadapter_ksw extends taskflowadapter {
             new admin_setting_heading(
                 self::COMPONENTNAME . '_api_settings',
                 get_string('apisettings', self::COMPONENTNAME),
-                get_string('apisettings_desc', self::COMPONENTNAME)
+                taskflow_stringmanager::get_string('apisettings_desc')
             )
         );
         if (!empty($allusercustomfields)) {
@@ -82,8 +83,8 @@ class taskflowadapter_ksw extends taskflowadapter {
             $settings->add(
                 new admin_setting_configtext(
                     self::COMPONENTNAME . '/' . 'translator_user_' . $key,
-                    get_string('jsonkey', self::COMPONENTNAME) . $label,
-                    get_string('enter_value', self::COMPONENTNAME),
+                    taskflow_stringmanager::get_string('jsonkey') . $label,
+                    taskflow_stringmanager::get_string('enter_value'),
                     '',
                     PARAM_TEXT
                 )
@@ -91,8 +92,8 @@ class taskflowadapter_ksw extends taskflowadapter {
              $settings->add(
                  new admin_setting_configselect(
                      self::COMPONENTNAME . '/' . $key,
-                     get_string('function', self::COMPONENTNAME) . $label,
-                     get_string('set:function', self::COMPONENTNAME),
+                     taskflow_stringmanager::get_string('function') . $label,
+                     taskflow_stringmanager::get_string('set:function'),
                      "",
                      $userlabelsettings,
                  )
@@ -102,8 +103,8 @@ class taskflowadapter_ksw extends taskflowadapter {
             $settings->add(
                 new admin_setting_configtext(
                     self::COMPONENTNAME . '/' . $key,
-                    get_string('jsonkey', self::COMPONENTNAME) . $label,
-                    get_string('enter_value', self::COMPONENTNAME),
+                    taskflow_stringmanager::get_string('jsonkey') . $label,
+                    taskflow_stringmanager::get_string('enter_value'),
                     '',
                     PARAM_TEXT
                 )
@@ -112,8 +113,8 @@ class taskflowadapter_ksw extends taskflowadapter {
         if (adapter::is_allowed_to_react_on_user_events()) {
             $settings->add(new admin_setting_configmultiselect(
                 self::COMPONENTNAME . "/necessaryuserprofilefields",
-                get_string('necessaryuserprofilefields', self::COMPONENTNAME),
-                get_string('necessaryuserprofilefieldsdesc', self::COMPONENTNAME),
+                taskflow_stringmanager::get_string('necessaryuserprofilefields'),
+                taskflow_stringmanager::get_string('necessaryuserprofilefieldsdesc'),
                 [],
                 $usercustomfields
             ));
@@ -121,8 +122,8 @@ class taskflowadapter_ksw extends taskflowadapter {
         $settings->add(
             new admin_setting_configtext(
                 self::COMPONENTNAME . "/blscertificatekey",
-                get_string('blscertificatekey', self::COMPONENTNAME) . $label,
-                get_string('blscertificatekey_desc', self::COMPONENTNAME),
+                taskflow_stringmanager::get_string('blscertificatekey') . $label,
+                taskflow_stringmanager::get_string('blscertificatekey_desc'),
                 '',
                 PARAM_TEXT
             )
@@ -142,17 +143,19 @@ class taskflowadapter_ksw extends taskflowadapter {
             return (object)[];
         }
 
-        $sql = "SELECT su.*
-                FROM {user} u
-                JOIN {user_info_data} uid ON uid.userid = u.id
-                JOIN {user_info_field} uif ON uif.id = uid.fieldid
-                JOIN {user} su ON su.id = " . $DB->sql_cast_char2int('uid.data') . "
-                WHERE u.id = :userid
-                AND uif.shortname = :supervisor";
-        $parms = [
+        $supervisorfieldid = $DB->get_field('user_info_field', 'id', ['shortname' => $fieldname], IGNORE_MISSING);
+        if (empty($supervisorfieldid)) {
+            return (object)[];
+        }
+
+        $supervisorid = $DB->get_field('user_info_data', 'data', [
             'userid' => $userid,
-            'supervisor' => $fieldname,
-        ];
-        return $DB->get_record_sql($sql, $parms, IGNORE_MISSING);
+            'fieldid' => $supervisorfieldid,
+        ], IGNORE_MISSING);
+
+        if (empty($supervisorid)) {
+            return (object)[];
+        }
+        return $DB->get_record('user', ['id' => (int)$supervisorid], '*', IGNORE_MISSING);
     }
 }
