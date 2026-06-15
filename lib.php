@@ -1,6 +1,4 @@
 <?php
-
-use local_taskflow\taskflow_stringmanager;
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -16,6 +14,7 @@ use local_taskflow\taskflow_stringmanager;
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+use local_taskflow\taskflow_stringmanager;
 /**
  * Library of common module functions and constants.
  *
