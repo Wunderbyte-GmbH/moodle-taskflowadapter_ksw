@@ -1,0 +1,38 @@
+[
+  {
+    "class": "standard",
+    "message": "{\"heading\": \"Test assignee\", \"body\":{\"text\": \"Hello <firstname> <lastname>\",\"format\":1}}",
+    "priority": 10,
+    "sending_settings": "{\"recipientrole\": [\"assignee\"], \"senddirection\": \"after\", \"sendstart\": \"start\", \"senddays\": \"0\"}",
+    "usermodified": 0,
+    "timecreated": 23234233223,
+    "timemodified": 23234233223
+  },
+  {
+    "class": "standard",
+    "message": "{\"heading\": \"Test supervisor\", \"body\":{\"text\": \"Hello <supervisor_firstname> <supervisor_lastname>\",\"format\":1}}",
+    "priority": 10,
+    "sending_settings": "{\"recipientrole\": [\"supervisor\"], \"senddirection\": \"after\", \"sendstart\": \"start\", \"senddays\": \"0\"}",
+    "usermodified": 0,
+    "timecreated": 23234233223,
+    "timemodified": 23234233223
+  },
+  {
+    "class": "standard",
+    "message": "{\"heading\": \"Test specificuser\", \"body\":{\"text\": \"Hello specific user\",\"format\":1}}",
+    "priority": 10,
+    "sending_settings": "{\"recipientrole\": [\"specificuser\"], \"userid\": \"CHANGETOUSERID\", \"senddirection\": \"after\", \"sendstart\": \"start\", \"senddays\": \"0\"}",
+    "usermodified": 0,
+    "timecreated": 23234233223,
+    "timemodified": 23234233223
+  },
+  {
+    "class": "standard",
+    "message": "{\"heading\": \"Test ccspecificuser\", \"body\":{\"text\": \"Hello cc user\",\"format\":1}}",
+    "priority": 10,
+    "sending_settings": "{\"recipientrole\": [], \"carboncopyrole\": [\"ccspecificuser\"], \"ccuserid\": \"CHANGETOUSERID\", \"senddirection\": \"after\", \"sendstart\": \"start\", \"senddays\": \"0\"}",
+    "usermodified": 0,
+    "timecreated": 23234233223,
+    "timemodified": 23234233223
+  }
+]
