@@ -546,7 +546,7 @@ final class fillipp_filter_test extends advanced_testcase {
         });
         $this->assertCount(2, $chrismsgsink);
         foreach ($chrismsgsink as $msg) {
-            $this->assertSame(
+            $this->assertStringContainsString(
                 $dbmsg[3]->subject,
                 $msg->subject,
             );

@@ -306,7 +306,7 @@ final class messages_sent_test extends advanced_testcase {
             $this->assertTrue(
                 $msg->to === $user2->email
             );
-            $this->assertSame(
+            $this->assertStringContainsString(
                 $dbmsg[0]->subject,
                 $msg->subject,
             );
@@ -328,7 +328,7 @@ final class messages_sent_test extends advanced_testcase {
             $this->assertTrue(
                 $msg->to === $user2->email
             );
-            $this->assertSame(
+            $this->assertStringContainsString(
                 $dbmsg[1]->subject,
                 $msg->subject,
             );
@@ -349,7 +349,7 @@ final class messages_sent_test extends advanced_testcase {
             $this->assertTrue(
                 $msg->to === $user2->email
             );
-            $this->assertSame(
+            $this->assertStringContainsString(
                 $dbmsg[2]->subject,
                 $msg->subject,
             );

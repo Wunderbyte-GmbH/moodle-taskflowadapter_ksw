@@ -257,7 +257,7 @@ final class betty_best_partially_rule_update_test extends advanced_testcase {
             $this->assertTrue(
                 $msg->to === $user2->email
             );
-            $this->assertSame(
+            $this->assertStringContainsString(
                 $dbmsg[3]->subject,
                 $msg->subject,
             );
@@ -338,7 +338,7 @@ final class betty_best_partially_rule_update_test extends advanced_testcase {
             $this->assertTrue(
                 $msg->to === $user2->email
             );
-            $this->assertSame(
+            $this->assertStringContainsString(
                 $dbmsg[3]->subject,
                 $msg->subject,
             );

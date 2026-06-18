@@ -717,6 +717,7 @@ final class systematic_status_change_test extends advanced_testcase {
                 ],
             ],
             'droppedout, after task execution, with keepchanges' => [
+                // phpcs:ignore moodle.Commenting.TodoComment.MissingInfoInline
                 // TODO: Make sure logic is sound. Keepchanges might be wrong.
                 [
                     'input' => [

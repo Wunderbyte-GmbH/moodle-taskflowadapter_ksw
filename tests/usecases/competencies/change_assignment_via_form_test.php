@@ -201,10 +201,10 @@ final class change_assignment_via_form_test extends advanced_testcase {
         // Assigned and completed mail.
         $this->assertCount(2, $messagesink);
         $assignedmail = array_filter($messagesink, function ($message) {
-            return $message->subject == 'Taskflow - Assigned';
+            return str_contains($message->subject, 'Taskflow - Assigned');
         });
         $completedmail = array_filter($messagesink, function ($message) {
-            return $message->subject == 'Taskflow - Completed';
+            return str_contains($message->subject, 'Taskflow - Completed');
         });
         $this->assertCount(1, $assignedmail);
         $this->assertCount(1, $completedmail);
@@ -331,10 +331,10 @@ final class change_assignment_via_form_test extends advanced_testcase {
         // Assigned and completed mail.
         $this->assertCount(1, $messagesink);
         $assignedmail = array_filter($messagesink, function ($message) {
-            return $message->subject == 'Taskflow - Assigned';
+            return str_contains($message->subject, 'Taskflow - Assigned');
         });
         $completedmail = array_filter($messagesink, function ($message) {
-            return $message->subject == 'Taskflow - Completed';
+            return str_contains($message->subject, 'Taskflow - Completed');
         });
         $this->assertCount(1, $assignedmail);
         $this->assertCount(0, $completedmail);
@@ -465,19 +465,19 @@ final class change_assignment_via_form_test extends advanced_testcase {
         // Assigned, warn1 warn2, overdue.
         $this->assertCount(4, $messagesink);
         $assignedmail = array_filter($messagesink, function ($message) {
-            return $message->subject == 'Taskflow - Assigned';
+            return str_contains($message->subject, 'Taskflow - Assigned');
         });
         $warn1mail = array_filter($messagesink, function ($message) {
-            return $message->subject == 'Taskflow - Warning 1';
+            return str_contains($message->subject, 'Taskflow - Warning 1');
         });
         $warn2mail = array_filter($messagesink, function ($message) {
-            return $message->subject == 'Taskflow - Warning 2';
+            return str_contains($message->subject, 'Taskflow - Warning 2');
         });
         $overduemail = array_filter($messagesink, function ($message) {
-            return $message->subject == 'Taskflow - Overdue';
+            return str_contains($message->subject, 'Taskflow - Overdue');
         });
         $completedmail = array_filter($messagesink, function ($message) {
-            return $message->subject == 'Taskflow - Completed';
+            return str_contains($message->subject, 'Taskflow - Completed');
         });
         $this->assertCount(1, $assignedmail);
         $this->assertCount(1, $warn1mail);

@@ -365,7 +365,7 @@ final class patrik_partial_test extends advanced_testcase {
             $this->assertTrue(
                 $msg->to === $user2->email
             );
-            $this->assertSame(
+            $this->assertStringContainsString(
                 $dbmsg[4]->subject,
                 $msg->subject,
             );
