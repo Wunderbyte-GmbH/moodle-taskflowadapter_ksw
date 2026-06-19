@@ -38,6 +38,8 @@ $string['internalid'] = 'Internal ID';
 $string['jsonkey'] = 'JSON key for userprofilefield: ';
 $string['ksw'] = "KSW API";
 $string['lessfunctions'] = '<div class="alert alert-danger" role="alert">Nicht alle Funktionen wurden beim letzten Speichern ausgewählt. Dies kann zu Fehlern führen.</div>';
+$string['mandant1'] = "Mandant 1";
+$string['mandant2'] = "Mandant 2";
 $string['manyfunctions'] = '<div class="alert alert-danger" role="alert">Funktionen wurden mehrfach ausgewählt beim letzten Speichern. Dies kann zu Fehlern führen.</div>';
 $string['mappingdescription'] = 'Taskflow key-value pair explanation';
 $string['mappingdescription_desc'] = 'This creates the mapping. The upper field indicates which JSON field is linked to the user profile field. The lower field indicates which function this field represents. Not every user profile field must have a function.';

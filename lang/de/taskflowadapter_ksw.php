@@ -38,6 +38,8 @@ $string['jsonkey'] = 'JSON Schlüssel für Benutzerprofilfeld: ';
 $string['ksw'] = "KSW API";
 $string['lessfunctions'] = '<div class="alert alert-danger" role="alert">Nicht alle Funktionen wurden beim letzten Speichern ausgewählt. Dies kann zu Fehlern führen.</div>';
 $string['manyfunctions'] = '<div class="alert alert-danger" role="alert">Funktionen wurden mehrfach ausgewählt beim letzten Speichern. Dies kann zu Fehlern führen.</div>';
+$string['mandant1'] = "Mandant 1";
+$string['mandant2'] = "Mandant 2";
 $string['mappingdescription'] = 'Taskflow-Schlüssel-Wert-Paare Erklärung';
 $string['mappingdescription_desc'] = 'Hier wird die Verknüpfung erstellt. Das obere Feld gibt an zu welchen JSON- Feld mit dem Benutzerprofilfeld verknüpft werden soll. Das untere Feld gibt an, welche Fuktion dieses Feld representiert. Nicht jedes Benutzerprofilfeld muss eine Funktion haben.';
 $string['mycourses'] = 'Meine Kurse';
