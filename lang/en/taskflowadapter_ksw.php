@@ -32,5 +32,7 @@ $string['ksw'] = "KSW API";
 $string['lessfunctions'] = '<div class="alert alert-danger" role="alert">Not all functions were selected during the last save. This may lead to errors.</div>';
 $string['manyfunctions'] = '<div class="alert alert-danger" role="alert">Functions were selected multiple times during the last save. This may lead to errors.</div>';
 $string['pluginname'] = "KSW";
+$string['protectedcohorts'] = 'Protected cohorts';
+$string['protectedcohorts_desc'] = 'Members of these cohorts are never removed by the KSW user sync when a user is updated. Use this for cohorts (units) that are filled manually. Cohorts from all contexts are listed.';
 $string['quickaccess'] = 'Quickaccess';
 $string['supervisor'] = 'Supervisor Overview';

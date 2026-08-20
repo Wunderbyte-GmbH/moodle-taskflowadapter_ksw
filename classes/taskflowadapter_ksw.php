@@ -119,6 +119,13 @@ class taskflowadapter_ksw extends taskflowadapter {
                 $usercustomfields
             ));
         }
+        $settings->add(new admin_setting_configmultiselect(
+            self::COMPONENTNAME . "/protectedcohorts",
+            get_string('protectedcohorts', self::COMPONENTNAME),
+            get_string('protectedcohorts_desc', self::COMPONENTNAME),
+            [],
+            self::get_all_cohort_options()
+        ));
         $settings->add(
             new admin_setting_configtext(
                 self::COMPONENTNAME . "/blscertificatekey",
@@ -128,6 +135,38 @@ class taskflowadapter_ksw extends taskflowadapter {
                 PARAM_TEXT
             )
         );
+    }
+
+    /**
+     * Returns all cohorts of all contexts (system and course categories) as select options.
+     *
+     * @return array cohortid => label
+     */
+    private static function get_all_cohort_options(): array {
+        global $DB;
+        $options = [];
+        try {
+            $cohorts = $DB->get_records('cohort', null, 'name ASC', 'id, name, idnumber, contextid');
+        } catch (\Throwable $e) {
+            // Table might not be available during install.
+            return $options;
+        }
+        foreach ($cohorts as $cohort) {
+            $label = format_string($cohort->name);
+            $details = [];
+            $context = \core\context::instance_by_id($cohort->contextid, IGNORE_MISSING);
+            if ($context) {
+                $details[] = $context->get_context_name(false);
+            }
+            if (!empty($cohort->idnumber)) {
+                $details[] = s($cohort->idnumber);
+            }
+            if (!empty($details)) {
+                $label .= ' (' . implode(', ', $details) . ')';
+            }
+            $options[$cohort->id] = $label;
+        }
+        return $options;
     }
 
     /**

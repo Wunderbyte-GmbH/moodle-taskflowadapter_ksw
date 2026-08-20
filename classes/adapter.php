@@ -351,7 +351,8 @@ class adapter extends external_api_base implements external_api_interface {
         $newuserunits,
         $userid
     ) {
-        $invalidunits = array_diff($olduserunits, $newuserunits);
+        // Protected cohorts are maintained manually and must never be removed by the sync.
+        $invalidunits = array_diff($olduserunits, $newuserunits, self::get_protected_cohortids());
         if (count($invalidunits) >= 1) {
             foreach ($invalidunits as $invalidunit) {
                 if (cohort_is_member($invalidunit, $userid)) {
@@ -368,6 +369,22 @@ class adapter extends external_api_base implements external_api_interface {
                 $invalidunits
             );
         }
+    }
+
+    /**
+     * Returns the ids of cohorts that are protected from being removed by the sync.
+     * Configured via the setting taskflowadapter_ksw/protectedcohorts (comma separated ids).
+     *
+     * @return int[]
+     */
+    public static function get_protected_cohortids(): array {
+        $config = get_config('taskflowadapter_ksw', 'protectedcohorts');
+        if (empty($config)) {
+            return [];
+        }
+        $ids = is_array($config) ? $config : explode(',', (string)$config);
+        $ids = array_map('intval', array_map('trim', $ids));
+        return array_values(array_filter($ids));
     }
 
     /**
