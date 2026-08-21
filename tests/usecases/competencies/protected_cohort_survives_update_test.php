@@ -197,7 +197,10 @@ final class protected_cohort_survives_update_test extends advanced_testcase {
         $plugingenerator->runtaskswithintime($cronlock, $lock, time());
 
         $this->assertTrue(cohort_is_member($manualcohort->id, $user->id));
-        $this->assertTrue($DB->record_exists('local_taskflow_unit_members', ['userid' => $user->id, 'unitid' => $manualcohort->id]));
+        $this->assertTrue($DB->record_exists(
+            'local_taskflow_unit_members',
+            ['userid' => $user->id, 'unitid' => $manualcohort->id]
+        ));
         $this->assertCount(
             1,
             $DB->get_records('local_taskflow_assignment', ['userid' => $user->id, 'ruleid' => $rule['id'], 'active' => 1])
@@ -233,7 +236,10 @@ final class protected_cohort_survives_update_test extends advanced_testcase {
         $this->update_user($user);
 
         $this->assertTrue(cohort_is_member($manualcohort->id, $user->id), 'Protected cohort membership must survive.');
-        $this->assertTrue($DB->record_exists('local_taskflow_unit_members', ['userid' => $user->id, 'unitid' => $manualcohort->id]));
+        $this->assertTrue($DB->record_exists(
+            'local_taskflow_unit_members',
+            ['userid' => $user->id, 'unitid' => $manualcohort->id]
+        ));
         $this->assertCount(
             1,
             $DB->get_records('local_taskflow_assignment', ['userid' => $user->id, 'ruleid' => $rule['id'], 'active' => 1]),
