@@ -27,9 +27,7 @@ use core_reportbuilder\local\filters\select;
 use core_reportbuilder\local\filters\text;
 use core_reportbuilder\manager;
 use core_reportbuilder\tests\core_reportbuilder_testcase;
-use PHPUnit\Framework\Attributes\CoversClass;
 use stdClass;
-use taskflowadapter_ksw\reportbuilder\local\entities\content;
 
 /**
  * Content bank datasource tests.
@@ -39,8 +37,6 @@ use taskflowadapter_ksw\reportbuilder\local\entities\content;
  * @copyright  2026 Wunderbyte GmbH <https://www.wunderbyte.at>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-#[CoversClass(contentbank_datasource::class)]
-#[CoversClass(content::class)]
 final class contentbank_datasource_test extends core_reportbuilder_testcase {
     /**
      * Set up.
@@ -130,6 +126,9 @@ final class contentbank_datasource_test extends core_reportbuilder_testcase {
 
     /**
      * Test the default report: default columns and sorting by name.
+     * @covers \taskflowadapter_ksw\reportbuilder\datasource\contentbank_datasource::get_default_columns
+     * @covers \taskflowadapter_ksw\reportbuilder\datasource\contentbank_datasource::get_default_column_sorting
+     * @covers \taskflowadapter_ksw\reportbuilder\local\entities\content::get_all_columns
      */
     public function test_datasource_default(): void {
         global $DB;
@@ -180,6 +179,9 @@ final class contentbank_datasource_test extends core_reportbuilder_testcase {
 
     /**
      * Test the content columns, the creator entity and content without a file.
+     * @covers \taskflowadapter_ksw\reportbuilder\datasource\contentbank_datasource
+     * @covers \taskflowadapter_ksw\reportbuilder\local\entities\content::get_all_columns
+     * @covers \taskflowadapter_ksw\reportbuilder\local\entities\content::initialise
      */
     public function test_content_columns(): void {
         global $DB;
@@ -234,6 +236,8 @@ final class contentbank_datasource_test extends core_reportbuilder_testcase {
 
     /**
      * Test that the context condition restricts the report to one context.
+     * @covers \taskflowadapter_ksw\reportbuilder\datasource\contentbank_datasource::get_default_conditions
+     * @covers \taskflowadapter_ksw\reportbuilder\local\entities\content::get_default_tables
      */
     public function test_context_condition(): void {
         $user = $this->getDataGenerator()->create_user();
@@ -262,6 +266,8 @@ final class contentbank_datasource_test extends core_reportbuilder_testcase {
 
     /**
      * Test the name, content type and visibility filters.
+     * @covers \taskflowadapter_ksw\reportbuilder\datasource\contentbank_datasource::get_default_filters
+     * @covers \taskflowadapter_ksw\reportbuilder\local\entities\content::get_all_filters
      */
     public function test_filters(): void {
         global $DB;
@@ -298,6 +304,8 @@ final class contentbank_datasource_test extends core_reportbuilder_testcase {
 
     /**
      * Stress test datasource.
+     * @covers \taskflowadapter_ksw\reportbuilder\datasource\contentbank_datasource
+     * @covers \taskflowadapter_ksw\reportbuilder\local\entities\content
      */
     public function test_stress_datasource(): void {
         $user = $this->getDataGenerator()->create_user();
