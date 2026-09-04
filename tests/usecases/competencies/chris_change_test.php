@@ -52,6 +52,9 @@ final class chris_change_test extends advanced_testcase {
         time_mock::init();
         time_mock::set_mock_time(strtotime('now'));
         $this->resetAfterTest(true);
+        // The user_created/updated handler is gated off in phpunit by default
+        // (see local_taskflow core_user_created_updated::handle()); this test needs it.
+        set_config('enableeventhandlersinphpunit', 1, 'local_taskflow');
         $this->preventResetByRollback();
         $this->externaldata = file_get_contents(__DIR__ . '/external_json/betty_best_two_cohorts_ksw.json');
         $plugingenerator = self::getDataGenerator()->get_plugin_generator('local_taskflow');
