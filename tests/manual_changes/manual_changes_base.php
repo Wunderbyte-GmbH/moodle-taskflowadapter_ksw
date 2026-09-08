@@ -42,9 +42,15 @@ abstract class manual_changes_base extends advanced_testcase {
      * Tests set up.
      */
     public function setUp(): void {
+        global $CFG;
         parent::setUp();
         time_mock::init();
         time_mock::set_mock_time(strtotime('now'));
+        // Core queues adhoc tasks via the \core\clock service, which the time() override
+        // does not reach. Freeze it to the mock time so immediately queued tasks are
+        // never stamped after the mock time and skipped by runtaskswithintime().
+        require_once($CFG->libdir . '/testing/classes/frozen_clock.php');
+        \core\di::set(\core\clock::class, new \frozen_clock(time_mock::get_mock_time()));
         $this->resetAfterTest();
         singleton_service::destroy_instance();
         rules::reset_instances();
