@@ -81,7 +81,7 @@ class supervisordashboard implements renderable, templatable {
         if (has_capability('local/taskflow:issupervisor', context_system::instance())) {
               $data['approvals'] = bookingshortcodes::listtoapprove(
                   '',
-                  ['reduced' => 1, 'cfinclude' => 'chf'],
+                  ['reduced' => 1, 'cfinclude' => 'chf', 'perpage' => 10],
                   null,
                   $env,
                   $next
@@ -92,7 +92,7 @@ class supervisordashboard implements renderable, templatable {
         }
         $data['supervisorteam'] = bookingshortcodes::supervisorteam(
             '',
-            ['reduced' => 1, 'cfinclude' => 'typen'],
+            ['reduced' => 1, 'cfinclude' => 'typen', 'perpage' => 10],
             null,
             $env,
             $next
