@@ -78,7 +78,13 @@ class admindashboard implements renderable, templatable {
         $env = new stdClass();
         $next = fn($a) => $a;
         // TODO: requests shortcode for BLS.
-        $data['requests'] = shortcodes::requests('', ['noheader' => 1, 'perpage' => 10], null, $env, $next) ?: '';
+        $data['requests'] = shortcodes::requests(
+            '',
+            ['noheader' => 1, 'perpage' => 10, 'scope' => 'admin'],
+            null,
+            $env,
+            $next
+        ) ?: '';
         $data['assignments'] = shortcodes::assignmentsdashboard(
             '',
             [

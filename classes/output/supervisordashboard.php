@@ -97,7 +97,7 @@ class supervisordashboard implements renderable, templatable {
             $env,
             $next
         );
-        $data['requests'] = shortcodes::requests('', ['noheader' => 1], null, $env, $next) ?: '';
+        $data['requests'] = shortcodes::requests('', ['noheader' => 1, 'scope' => 'supervisor'], null, $env, $next) ?: '';
 
         $data['supervisorassignments'] = shortcodes::supervisorassignments(
             '',
