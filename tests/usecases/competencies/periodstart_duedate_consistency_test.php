@@ -209,6 +209,228 @@ final class periodstart_duedate_consistency_test extends advanced_testcase {
     }
 
     /**
+     * Betty's old completion has expired, the assignment is reopened at rule creation.
+     * While the assignment is dropped out, Betty completes again, the assignment does not react.
+     * When the rule is processed again, the assignment becomes completed. The reopening is when the
+     * renewed completion expires and does not run right away from the old completion date.
+     *
+     * @covers \local_taskflow\local\assignment_process\assignments\assignments_controller::construct_and_process_assignment
+     * @covers \local_taskflow\local\completion_process\scheduling_cyclic_adhoc::reschedule_reset
+     *
+     * @param array $bdata
+     *
+     * @dataProvider booking_common_settings_provider
+     */
+    public function test_completion_by_rule_processing_does_not_reopen_from_old_completeddate(array $bdata): void {
+        global $DB;
+
+        $lock = $this->createMock(\core\lock\lock::class);
+        $cronlock = $this->createMock(\core\lock\lock::class);
+        /** @var \local_taskflow_generator $plugingenerator */
+        $plugingenerator = self::getDataGenerator()->get_plugin_generator('local_taskflow');
+
+        // Completed 400 days ago, the cycle of 365 days has expired.
+        $completiontime = strtotime('- 400 days', strtotime('now'));
+        [$betty, $competency1, $competency2] = $this->setup_completed_option($bdata, $completiontime);
+
+        time_mock::set_mock_time(strtotime('now'));
+        $ruleid = $this->create_rule($betty, $competency1, $competency2, self::CYCLICDURATION);
+        $plugingenerator->runtaskswithintime($cronlock, $lock, time());
+
+        $assignment = $DB->get_record('local_taskflow_assignment', ['userid' => $betty->id, 'ruleid' => $ruleid], '*', MUST_EXIST);
+        $this->assertSame(assignment_status_facade::get_status_identifier('assigned'), (int)$assignment->status);
+        $this->assertSame($completiontime, (int)$assignment->completeddate);
+
+        // The assignment drops out, Betty completes again in the meantime.
+        time_mock::set_mock_time(strtotime('+ 10 days', time()));
+        $DB->update_record('local_taskflow_assignment', (object)[
+            'id' => $assignment->id,
+            'status' => assignment_status_facade::get_status_identifier('droppedout'),
+            'active' => 0,
+        ]);
+        \cache::make('local_taskflow', 'assignments')->purge();
+        $renewedcompletiontime = time();
+        $DB->set_field('booking_answers', 'timemodified', $renewedcompletiontime, ['userid' => $betty->id, 'completed' => 1]);
+        singleton_service::destroy_instance();
+
+        // Processing the rule finds the assignment completed.
+        time_mock::set_mock_time(strtotime('+ 1 day', time()));
+        $recompletiontime = time();
+        $this->resave_rule($ruleid, self::CYCLICDURATION);
+        $plugingenerator->runtaskswithintime($cronlock, $lock, time());
+
+        $assignment = $DB->get_record('local_taskflow_assignment', ['id' => $assignment->id], '*', MUST_EXIST);
+        $this->assertSame(
+            assignment_status_facade::get_status_identifier('completed'),
+            (int)$assignment->status,
+            'The assignment must not be reopened right after the completion.'
+        );
+        $this->assertSame($recompletiontime, (int)$assignment->completeddate);
+        $this->assertSame(
+            [$renewedcompletiontime + self::CYCLICDURATION],
+            $this->reset_task_times($assignment->id),
+            'The reopening is when the renewed completion expires.'
+        );
+    }
+
+    /**
+     * A reopening that runs while the targets are still valid, e.g. scheduled by an older calculation,
+     * does not reopen the assignment. It is scheduled again for when the targets expire.
+     *
+     * @covers \local_taskflow\task\reset_cyclic_assignment
+     * @covers \local_taskflow\local\completion_process\completion_operator::get_valid_until
+     *
+     * @param array $bdata
+     *
+     * @dataProvider booking_common_settings_provider
+     */
+    public function test_reopening_while_targets_valid_is_rescheduled(array $bdata): void {
+        global $DB;
+
+        $lock = $this->createMock(\core\lock\lock::class);
+        $cronlock = $this->createMock(\core\lock\lock::class);
+        /** @var \local_taskflow_generator $plugingenerator */
+        $plugingenerator = self::getDataGenerator()->get_plugin_generator('local_taskflow');
+
+        $completiontime = strtotime('- 100 days', strtotime('now'));
+        [$betty, $competency1, $competency2] = $this->setup_completed_option($bdata, $completiontime);
+
+        time_mock::set_mock_time(strtotime('now'));
+        $ruleid = $this->create_rule($betty, $competency1, $competency2, self::CYCLICDURATION);
+        $plugingenerator->runtaskswithintime($cronlock, $lock, time());
+        $assignment = $DB->get_record('local_taskflow_assignment', ['userid' => $betty->id, 'ruleid' => $ruleid], '*', MUST_EXIST);
+        $this->assertSame(assignment_status_facade::get_status_identifier('completed'), (int)$assignment->status);
+
+        // The reopening is due now, although the completion is valid for another 265 days.
+        $DB->set_field_select(
+            'task_adhoc',
+            'nextruntime',
+            time() - 1,
+            'classname = :classname',
+            ['classname' => '\local_taskflow\task\reset_cyclic_assignment']
+        );
+        $plugingenerator->runtaskswithintime($cronlock, $lock, time());
+
+        $assignment = $DB->get_record('local_taskflow_assignment', ['id' => $assignment->id], '*', MUST_EXIST);
+        $this->assertSame(assignment_status_facade::get_status_identifier('completed'), (int)$assignment->status);
+        $this->assertSame([$completiontime + self::CYCLICDURATION], $this->reset_task_times($assignment->id));
+    }
+
+    /**
+     * Betty has approved certificates for both competencies: one valid for 30 days, one without a date
+     * of validity, approved 100 days ago, which is valid for one cyclic duration from its approval.
+     * The assignment is completed and reopened when the first certificate expires.
+     *
+     * @covers \local_taskflow\local\completion_process\types\competency::get_valid_until
+     * @covers \local_taskflow\local\completion_process\completion_operator::get_valid_until
+     * @covers \local_taskflow\task\reset_cyclic_assignment
+     */
+    public function test_certificates_reopen_when_first_expires(): void {
+        global $DB;
+
+        $lock = $this->createMock(\core\lock\lock::class);
+        $cronlock = $this->createMock(\core\lock\lock::class);
+        /** @var \local_taskflow_generator $plugingenerator */
+        $plugingenerator = self::getDataGenerator()->get_plugin_generator('local_taskflow');
+
+        $this->setAdminUser();
+        $apidatamanager = external_api_repository::create($this->externaldata);
+        $apidatamanager->process_incoming_data();
+        $betty = $DB->get_record('user', ['email' => 'betty.best@ksw.ch'], '*', MUST_EXIST);
+        [$competency1, $competency2] = $this->create_competencies();
+
+        $ruleid = $this->create_rule($betty, $competency1, $competency2, self::CYCLICDURATION);
+        $plugingenerator->runtaskswithintime($cronlock, $lock, time());
+        $assignment = $DB->get_record('local_taskflow_assignment', ['userid' => $betty->id, 'ruleid' => $ruleid], '*', MUST_EXIST);
+        $this->assertSame(assignment_status_facade::get_status_identifier('assigned'), (int)$assignment->status);
+
+        $datedexpiry = strtotime('+ 30 days', time());
+        $undatedapproval = strtotime('- 100 days', time());
+        $this->insert_approved_certificate($betty->id, $competency1->get('id'), $assignment->id, time(), $datedexpiry);
+        $this->insert_approved_certificate($betty->id, $competency2->get('id'), $assignment->id, $undatedapproval, null);
+
+        $target = new \local_taskflow\local\completion_process\types\competency($competency2->get('id'), $betty->id, 'competency');
+        $this->assertSame($undatedapproval + self::CYCLICDURATION, $target->get_valid_until($assignment));
+
+        // Processing the rule finds the assignment completed.
+        time_mock::set_mock_time(strtotime('+ 1 day', time()));
+        $this->resave_rule($ruleid, self::CYCLICDURATION);
+        $plugingenerator->runtaskswithintime($cronlock, $lock, time());
+        $assignment = $DB->get_record('local_taskflow_assignment', ['id' => $assignment->id], '*', MUST_EXIST);
+        $this->assertSame(assignment_status_facade::get_status_identifier('completed'), (int)$assignment->status);
+        $this->assertSame([$datedexpiry], $this->reset_task_times($assignment->id));
+
+        // The first certificate expires: the assignment is reopened.
+        time_mock::set_mock_time($datedexpiry + HOURSECS);
+        $plugingenerator->runtaskswithintime($cronlock, $lock, time());
+        $assignment = $DB->get_record('local_taskflow_assignment', ['id' => $assignment->id], '*', MUST_EXIST);
+        $this->assertSame(assignment_status_facade::get_status_identifier('assigned'), (int)$assignment->status);
+        $this->assertSame([], $this->reset_task_times($assignment->id));
+    }
+
+    /**
+     * An undated certificate approved longer ago than one cyclic duration is no longer valid.
+     *
+     * @covers \local_taskflow\local\completion_process\types\competency::is_completed
+     */
+    public function test_undated_certificate_expires_after_cycle(): void {
+        global $DB;
+
+        $lock = $this->createMock(\core\lock\lock::class);
+        $cronlock = $this->createMock(\core\lock\lock::class);
+        /** @var \local_taskflow_generator $plugingenerator */
+        $plugingenerator = self::getDataGenerator()->get_plugin_generator('local_taskflow');
+
+        $this->setAdminUser();
+        $apidatamanager = external_api_repository::create($this->externaldata);
+        $apidatamanager->process_incoming_data();
+        $betty = $DB->get_record('user', ['email' => 'betty.best@ksw.ch'], '*', MUST_EXIST);
+        [$competency1, $competency2] = $this->create_competencies();
+        $ruleid = $this->create_rule($betty, $competency1, $competency2, self::CYCLICDURATION);
+        $plugingenerator->runtaskswithintime($cronlock, $lock, time());
+        $assignment = $DB->get_record('local_taskflow_assignment', ['userid' => $betty->id, 'ruleid' => $ruleid], '*', MUST_EXIST);
+
+        $approvaltime = strtotime('- 400 days', time());
+        $this->insert_approved_certificate($betty->id, $competency1->get('id'), $assignment->id, $approvaltime, null);
+        $target = new \local_taskflow\local\completion_process\types\competency($competency1->get('id'), $betty->id, 'competency');
+        $this->assertFalse($target->is_completed($assignment));
+
+        $approvaltime = strtotime('- 10 days', time());
+        $this->insert_approved_certificate($betty->id, $competency1->get('id'), $assignment->id, $approvaltime, null);
+        $this->assertTrue($target->is_completed($assignment));
+    }
+
+    /**
+     * Insert an approved certificate of a user for a competency.
+     *
+     * @param int $userid
+     * @param int $competencyid
+     * @param int $assignmentid
+     * @param int $approvaltime
+     * @param int|null $validationondate
+     * @return void
+     */
+    private function insert_approved_certificate(
+        int $userid,
+        int $competencyid,
+        int $assignmentid,
+        int $approvaltime,
+        ?int $validationondate
+    ): void {
+        global $DB;
+        $DB->insert_record('local_taskflow_assgin_comp', (object)[
+            'assignmentid' => $assignmentid,
+            'userid' => $userid,
+            'competencyid' => $competencyid,
+            'competencyevidenceid' => 0,
+            'status' => 'approved',
+            'timecreated' => $approvaltime,
+            'timemodified' => $approvaltime,
+            'validationondate' => $validationondate,
+        ]);
+    }
+
+    /**
      * Next run times of the cyclic reset tasks of an assignment.
      *
      * @param int $assignmentid

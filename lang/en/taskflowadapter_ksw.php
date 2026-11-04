@@ -51,6 +51,7 @@ $string['heading:organisation'] = 'Organisation';
 $string['heading:required'] = 'Employees required to hold BLS (total)';
 $string['heading:valid'] = 'Valid certificates';
 $string['heading:validshare'] = 'Share of valid certificates';
+$string['keepchangesonimport'] = 'Keep manual changes on automatic updates';
 $string['ksw'] = "KSW API";
 $string['lessfunctions'] = '<div class="alert alert-danger" role="alert">Not all functions were selected during the last save. This may lead to errors.</div>';
 $string['manyfunctions'] = '<div class="alert alert-danger" role="alert">Functions were selected multiple times during the last save. This may lead to errors.</div>';
