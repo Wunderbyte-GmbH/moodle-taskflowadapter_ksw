@@ -92,7 +92,7 @@ class supervisordashboard implements renderable, templatable {
         }
         $data['supervisorteam'] = bookingshortcodes::supervisorteam(
             '',
-            ['reduced' => 1, 'cfinclude' => 'typen', 'perpage' => 10],
+            ['reduced' => 1, 'cfinclude' => 'typen', 'perpage' => 10, 'futureonly' => 1],
             null,
             $env,
             $next
