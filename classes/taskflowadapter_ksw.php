@@ -25,6 +25,7 @@
 
 namespace taskflowadapter_ksw;
 
+use admin_setting_configcheckbox;
 use admin_setting_configmultiselect;
 use admin_setting_configselect;
 use admin_setting_configtext;
@@ -125,6 +126,12 @@ class taskflowadapter_ksw extends taskflowadapter {
             get_string('protectedcohorts_desc', self::COMPONENTNAME),
             [],
             self::get_all_cohort_options()
+        ));
+        $settings->add(new admin_setting_configcheckbox(
+            self::COMPONENTNAME . "/hvpresultmodal",
+            get_string('hvpresultmodal', self::COMPONENTNAME),
+            get_string('hvpresultmodal_desc', self::COMPONENTNAME),
+            0
         ));
         $settings->add(
             new admin_setting_configtext(
