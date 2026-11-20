@@ -79,7 +79,7 @@ final class hook_callbacks_test extends advanced_testcase {
         $this->assertNull(hook_callbacks::get_hvp_pass_limits($withpass));
 
         set_config('hvpresultmodal', 1, 'taskflowadapter_ksw');
-        $this->assertSame([8.0, 10.0], hook_callbacks::get_hvp_pass_limits($withpass));
+        $this->assertSame([8.0, 100.0], hook_callbacks::get_hvp_pass_limits($withpass));
         $this->assertNull(hook_callbacks::get_hvp_pass_limits($withoutpass));
         $this->assertNull(hook_callbacks::get_hvp_pass_limits($otherpage));
 
