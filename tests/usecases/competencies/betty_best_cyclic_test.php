@@ -31,6 +31,7 @@ use local_taskflow\local\assignment_status\assignment_status_facade;
 use mod_booking\singleton_service;
 use stdClass;
 use mod_booking_generator;
+
 use function PHPUnit\Framework\assertSame;
 
 /**

@@ -15,6 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 use local_taskflow\taskflow_stringmanager;
+
 /**
  * Library of common module functions and constants.
  *
