@@ -29,13 +29,16 @@ import {getString} from 'core/str';
 const COMPONENT = 'taskflowadapter_ksw';
 const GRADEDVERBS = ['completed', 'answered'];
 const TOLERANCE = 0.00001;
+const SUBCONTENTID = 'http://h5p.org/x-api/h5p-subContentId';
 
 let modalopen = false;
 
 /**
  * Returns the score of a statement mod_hvp uses for grading, null for all other statements.
  *
- * Mirrors H5P.xAPICompletedListener: verb completed/answered on the root content only.
+ * Like H5P.xAPICompletedListener (verb completed/answered without parent), but restricted to the
+ * main content: Interactive Book chapters send "completed" without a parent whenever a chapter is
+ * done, the result is only final when the book itself reports (Submit Report button).
  *
  * @param {Object} event the H5P xAPI event
  * @returns {Object|null} score with raw and max
@@ -50,6 +53,9 @@ const getGradedScore = (event) => {
         return null;
     }
     if (statement.context?.contextActivities?.parent) {
+        return null;
+    }
+    if (statement.object?.definition?.extensions?.[SUBCONTENTID]) {
         return null;
     }
     const score = statement.result?.score;
