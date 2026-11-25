@@ -31,6 +31,7 @@ use local_taskflow\event\assignment_completed;
 use local_taskflow\local\assignments\assignment;
 use mod_booking\booking_answers\booking_answers;
 use mod_booking\singleton_service;
+use taskflowadapter_ksw\local\leaver_assignments;
 use tool_certificate\template;
 
 /**
@@ -52,6 +53,10 @@ class observer {
         $user = core_user::get_user($data['relateduserid']);
         if ($user->suspended == 0) {
             return;
+        }
+        // A suspended user has left, so the open assignments are dropped out.
+        if (get_config('local_taskflow', 'external_api_option') === 'ksw') {
+            leaver_assignments::drop_open_assignments((int)$user->id);
         }
         $now = time();
         $sql = "SELECT {booking_answers}.id, {booking_answers}.optionid, {booking_options}.json

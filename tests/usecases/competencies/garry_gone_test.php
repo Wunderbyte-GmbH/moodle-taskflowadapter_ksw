@@ -233,7 +233,7 @@ final class garry_gone_test extends advanced_testcase {
         $endinfo = external_api_base::return_jsonkey_for_functionname(taskflowadapter::TRANSLATOR_USER_CONTRACTEND);
         $startinfo = external_api_base::return_jsonkey_for_functionname(taskflowadapter::TRANSLATOR_USER_CONTRACTEND);
         $jsondecoded[1]->{$startinfo} = 20201010;
-        $jsondecoded[1]->{$endinfo} = 20261111;
+        $jsondecoded[1]->{$endinfo} = (int)date('Ymd', strtotime('+ 1 year', time()));
         $this->externaldata = json_encode($jsondecoded);
 
         // Now create the persons.
